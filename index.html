@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>cigarOS — Home</title>
+<link rel="icon" href="/img/placeholder.svg">
+<style>
+  :root{--fg:#111827;--muted:#6b7280}
+  body{font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;margin:0;color:var(--fg);background:#fff}
+  header{padding:16px 18px;font-size:22px;font-weight:800;letter-spacing:.02em}
+  .wrap{padding:12px 18px 28px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px}
+  .card{border:1px solid #e5e7eb;border-radius:16px;padding:18px;text-decoration:none;color:inherit;display:flex;flex-direction:column;gap:10px;background:#fff}
+  .icon{width:56px;height:56px;border-radius:14px;display:grid;place-items:center;font-size:28px;background:#111827;color:#fff}
+  .title{font-weight:700;font-size:18px}
+  .sub{color:var(--muted);font-size:13px;line-height:1.25}
+  nav{position:sticky;bottom:0;background:#fff;border-top:1px solid #e5e7eb;padding:8px 18px;display:flex;gap:12px}
+  nav a{color:#2563eb;text-decoration:none}
+</style>
+</head>
+<body>
+  <header>cigarOS</header>
+  <div class="wrap">
+    <div class="grid">
+      <a class="card" href="/pos.html">
+        <div class="icon">➕</div>
+        <div class="title">POS</div>
+        <div class="sub">Sell items, add to receipt, confirm sale.</div>
+      </a>
+
+      <a class="card" href="/reports.html">
+        <div class="icon">📊</div>
+        <div class="title">Reports</div>
+        <div class="sub">Bill history & daily totals.</div>
+      </a>
+
+      <a class="card" href="/loyalty.html">
+        <div class="icon">👥</div>
+        <div class="title">Loyalty</div>
+        <div class="sub">Customer list & quick attach to bills.</div>
+      </a>
+
+      <a class="card" href="/learn.html">
+        <div class="icon">📚</div>
+        <div class="title">Learn</div>
+        <div class="sub">Documents to show customers.</div>
+      </a>
+    </div>
+  </div>
+
+  <nav>
+    <a href="/pos.html">POS</a>
+    <a href="/reports.html">Reports</a>
+    <a href="/loyalty.html">Loyalty</a>
+    <a href="/learn.html">Learn</a>
+  </nav>
+</body>
+</html>

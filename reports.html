@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>cigarOS — Reports</title>
+<style>
+  body{font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;margin:0;color:#111827}
+  header{padding:16px 18px;font-size:20px;font-weight:800}
+  .bar{display:flex;gap:10px;align-items:center;padding:0 18px 12px}
+  input,button,select{border:1px solid #e5e7eb;border-radius:10px;padding:8px 10px;background:#fff}
+  button.primary{background:#111827;color:#fff;border:none}
+  .wrap{padding:0 18px 28px}
+  h3{margin:18px 0 8px}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th,td{padding:8px 6px;border-bottom:1px solid #f1f5f9}
+  th{text-align:left;color:#6b7280;text-transform:uppercase;font-size:12px}
+  .muted{color:#6b7280}
+  .pill{display:inline-block;padding:3px 8px;border-radius:999px;font-size:12px;background:#111827;color:#fff}
+  .totals{display:flex;gap:16px;flex-wrap:wrap;margin:10px 0}
+  .box{border:1px solid #e5e7eb;border-radius:12px;padding:10px 14px}
+</style>
+</head>
+<body>
+  <header>Reports</header>
+
+  <div class="bar">
+    <label class="muted">Day:</label>
+    <input id="day" type="date"/>
+    <button id="reloadBtn" class="primary">Load</button>
+    <button id="prevBtn">◀ Prev</button>
+    <button id="nextBtn">Next ▶</button>
+    <div style="margin-left:auto;display:flex;gap:8px">
+      <button id="exportCsvBtn">Export CSV</button>
+      <a href="/" style="text-decoration:none;padding:8px 10px;border:1px solid #e5e7eb;border-radius:10px">Home</a>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="totals">
+      <div class="box">Draft bills: <strong id="draftCount">0</strong></div>
+      <div class="box">Confirmed bills: <strong id="confCount">0</strong></div>
+      <div class="box">Transactions: <strong id="txCount">0</strong></div>
+      <div class="box">Revenue: <strong id="revenue">$0.00</strong></div>
+    </div>
+
+    <h3>Confirmed Bills</h3>
+    <table>
+      <thead><tr>
+        <th>Time</th><th>Customer</th><th>Method</th><th>Items</th><th>Subtotal</th><th>Tax</th><th>Total</th>
+      </tr></thead>
+      <tbody id="confirmedTbody"></tbody>
+    </table>
+
+    <h3 style="margin-top:22px">Draft Bills</h3>
+    <table>
+      <thead><tr>
+        <th>Time</th><th>Customer</th><th>Items</th><th>Subtotal</th><th>Tax</th><th>Total</th>
+      </tr></thead>
+      <tbody id="draftTbody"></tbody>
+    </table>
+
+    <h3 style="margin-top:22px">Transactions (rollup)</h3>
+    <table>
+      <thead><tr>
+        <th>Time</th><th>Customer</th><th>Method</th><th>Items</th><th>Total</th>
+      </tr></thead>
+      <tbody id="txTbody"></tbody>
+    </table>
+  </div>
+
+<script type="module">
+const dayEl = document.getElementById('day');
+const confirmedTbody = document.getElementById('confirmedTbody');
+const draftTbody = document.getElementById('draftTbody');
+const txTbody = document.getElementById('txTbody');
+const draftCount = document.getElementById('draftCount');
+const confCount = document.getElementById('confCount');
+const txCount = document.getElementById('txCount');
+const revenue = document.getElementById('revenue');
+const money = n => `$${(+n).toFixed(2)}`;
+const today = ()=> new Date().toISOString().slice(0,10);
+
+dayEl.value = today();
+
+document.getElementById('reloadBtn').onclick = load;
+document.getElementById('prevBtn').onclick   = ()=> shiftDay(-1);
+document.getElementById('nextBtn').onclick   = ()=> shiftDay(1);
+document.getElementById('exportCsvBtn').onclick = exportCsv;
+
+function shiftDay(delta){
+  const d = new Date(dayEl.value + 'T00:00:00');
+  d.setDate(d.getDate()+delta);
+  dayEl.value = d.toISOString().slice(0,10);
+  load();
+}
+
+async function load(){
+  const token = localStorage.getItem('ADMIN_TOKEN') || prompt('Enter ADMIN_TOKEN for reports:');
+  if (token) localStorage.setItem('ADMIN_TOKEN', token);
+
+  const res = await fetch(`/.netlify/functions/list-bills?day=${dayEl.value}`,{
+    headers:{ 'x-admin-token': token || '' }
+  });
+  if (!res.ok){ alert('Failed to load'); return; }
+  const data = await res.json();
+
+  confCount.textContent  = data.confirmed.length;
+  draftCount.textContent = data.pending.length;
+  txCount.textContent    = data.transactions.length;
+
+  const rev = data.transactions.reduce((a,b)=> a + Number(b.total||0), 0);
+  revenue.textContent = money(rev);
+
+  confirmedTbody.innerHTML = data.confirmed.map(b=> `
+    <tr>
+      <td>${fmt(b.when)}</td>
+      <td>${b.loyalty||''}</td>
+      <td><span class="pill">${b.paymentMethod||''}</span></td>
+      <td>${b.items.reduce((a,i)=>a+i.qty,0)}</td>
+      <td>${money(b.subtotal)}</td>
+      <td>${money(b.tax)}</td>
+      <td>${money(b.total)}</td>
+    </tr>
+  `).join('');
+
+  draftTbody.innerHTML = data.pending.map(b=> `
+    <tr>
+      <td>${fmt(b.when)}</td>
+      <td>${b.loyalty||''}</td>
+      <td>${b.items.reduce((a,i)=>a+i.qty,0)}</td>
+      <td>${money(b.subtotal)}</td>
+      <td>${money(b.tax)}</td>
+      <td>${money(b.total)}</td>
+    </tr>
+  `).join('');
+
+  txTbody.innerHTML = data.transactions.map(t=> `
+    <tr>
+      <td>${fmt(t.when)}</td>
+      <td>${t.customer||''}</td>
+      <td><span class="pill">${t.method||''}</span></td>
+      <td>${t.itemCount||0}</td>
+      <td>${money(t.total||0)}</td>
+    </tr>
+  `).join('');
+}
+
+function fmt(iso){ try{ return new Date(iso).toLocaleTimeString(); } catch{ return iso } }
+
+function exportCsv(){
+  const rows = [['when','customer','method','items','subtotal','tax','total']];
+  const trs = confirmedTbody.querySelectorAll('tr');
+  trs.forEach(tr=>{
+    const tds = [...tr.querySelectorAll('td')].map(td=> td.textContent.trim());
+    rows.push([tds[0], tds[1], tds[2].replace(/\s+/g,' '), tds[3], tds[4], tds[5], tds[6]]);
+  });
+  const csv = rows.map(r=> r.map(x => '"' + x.replaceAll('"','""') + '"').join(',')).join('\n');
+  const blob = new Blob([csv], {type:'text/csv'});
+  const url = URL.createObjectURL(blob);
+  const a = Object.assign(document.createElement('a'), {href:url, download:`bills-${dayEl.value}.csv`});
+  a.click(); URL.revokeObjectURL(url);
+}
+
+load();
+</script>
+</body>
+</html>
