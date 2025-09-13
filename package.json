@@ -1,0 +1,14 @@
+{
+  "name": "cigaros",
+  "version": "1.0.0",
+  "description": "CigarOS POS + Reports + Loyalty + Learn",
+  "main": "index.html",
+  "type": "module",
+  "scripts": {
+    "build": "echo 'No build step required'",
+    "start": "netlify dev"
+  },
+  "dependencies": {
+    "@netlify/blobs": "^6.5.0"
+  }
+}
