@@ -1,9 +1,6 @@
-[[redirects]]
-  from = "/pos"
-  to = "/pos.html"
-  status = 200
+[build]
+  publish = "."
+  functions = "netlify/functions"
 
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
+[functions]
+  node_bundler = "esbuild"
