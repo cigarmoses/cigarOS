@@ -1,21 +1,12 @@
 // netlify/functions/get-data.js
 import { getStore } from '@netlify/blobs';
 
-// Public read: returns [{brand,item,vitola,price,inventory,icon}, ...]
 export default async () => {
-  const store = getStore('smokepos');
-  // Try the main key you’ve been using; fallbacks included
-  const keys = ['inventory', 'data', 'pos-data', 'smoke-pos-data'];
-
-  let rows = [];
-  for (const key of keys) {
-    try {
-      const arr = await store.get(key, { type: 'json' });
-      if (Array.isArray(arr) && arr.length) { rows = arr; break; }
-    } catch {}
-  }
-
-  return new Response(JSON.stringify(rows || []), {
-    headers: { 'Content-Type': 'application/json' }
+  const store = getStore('smoke-pos');
+  const txt = await store.get('data.json', { type: 'text' });
+  const json = txt ? JSON.parse(txt) : [];
+  return new Response(JSON.stringify(json), {
+    status: 200,
+    headers: { 'content-type': 'application/json' }
   });
-}
+};
