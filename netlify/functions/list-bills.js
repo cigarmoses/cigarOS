@@ -1,24 +1,26 @@
 import { getStore } from '@netlify/blobs';
-import { verifyToken } from './verify-token.js';
+
+function dayKey(dateStr) {
+  // expects YYYY-MM-DD
+  return (dateStr || new Date().toISOString().slice(0,10));
+}
 
 export default async (req) => {
-  const { searchParams } = new URL(req.url);
-  const day = searchParams.get('day'); // YYYY-MM-DD
-  if (!day) return new Response('Missing day', { status: 400 });
+  try {
+    const url = new URL(req.url);
+    const day = dayKey(url.searchParams.get('day'));
 
-  const ok = await verifyToken(req);
-  if (!ok) return new Response('Unauthorized', { status: 401 });
+    const bills = getStore('bills');           // namespaces used by reports
+    const txs   = getStore('transactions');
 
-  const store = getStore('smokepos');
-  const safeGet = async (key) => {
-    try { return await store.get(key, { type: 'json' }) ?? []; }
-    catch { return []; }
-  };
+    const confirmed = JSON.parse((await bills.get(`confirmed:${day}.json`)) || '[]');
+    const drafts    = JSON.parse((await bills.get(`pending:${day}.json`))   || '[]');
+    const rollup    = JSON.parse((await txs.get(`rollup:${day}.json`))      || '[]');
 
-  const pending      = await safeGet(`bills:pending:${day}`);
-  const confirmed    = await safeGet(`bills:confirmed:${day}`);
-  const transactions = await safeGet(`transactions:${day}`);
-
-  const body = JSON.stringify({ pending, confirmed, transactions });
-  return new Response(body, { headers: { 'Content-Type': 'application/json' } });
-}
+    return new Response(JSON.stringify({ confirmed, drafts, rollup }), {
+      headers: { 'content-type': 'application/json; charset=utf-8' }
+    });
+  } catch (e) {
+    return new Response(JSON.stringify({ error: 'list-bills failed', detail: String(e) }), { status: 500 });
+  }
+};
