@@ -1,46 +1,83 @@
-// netlify/functions/save-data.js
 import { getStore } from '@netlify/blobs';
-import verifyToken from './verify-token.js';
+import { verifyToken } from './verify-token.js';
+
+function dayKey(dateStr) {
+  // YYYY-MM-DD; fall back to "today"
+  return (dateStr || new Date().toISOString().slice(0, 10));
+}
+
+// Utility: JSON response with CORS
+function json(data, init = {}) {
+  const headers = {
+    'content-type': 'application/json; charset=utf-8',
+    'access-control-allow-origin': '*',
+    'access-control-allow-headers': 'content-type, authorization, x-admin-token',
+    'access-control-allow-methods': 'OPTIONS, POST',
+    ...init.headers,
+  };
+  return new Response(JSON.stringify(data), { ...init, headers });
+}
 
 export default async (req) => {
-  if (req.method !== 'POST') return new Response('Method not allowed', { status: 405 });
+  // Handle preflight quickly
+  if (req.method === 'OPTIONS') return json({ ok: true });
 
-  // Protect writes (use the same ADMIN_TOKEN as admin/reports)
-  const ok = await verifyToken(req);
-  if (!ok) return new Response('Unauthorized', { status: 401 });
+  try {
+    // ---- Admin auth
+    const ok = await verifyToken(req);
+    if (!ok) return json({ error: 'unauthorized' }, { status: 401 });
 
-  const body = await req.json(); // { collection, status, day, bill }
-  const { collection, bill } = body || {};
-  if (!collection || !bill) {
-    return new Response('Missing body', { status: 400 });
+    // ---- Parse input
+    const url = new URL(req.url);
+    const qDay = url.searchParams.get('day'); // optional ?day=YYYY-MM-DD
+    const body = await req.json().catch(() => ({}));
+
+    // supported payloads:
+    // { type: 'draft'|'confirmed'|'transaction', day?: 'YYYY-MM-DD', bill?: {...}, tx?: {...} }
+    const type = String(body.type || '').toLowerCase();
+    const day = dayKey(body.day || qDay);
+
+    // storage
+    const bills = getStore('bills');          // namespaces used by reports
+    const txs   = getStore('transactions');
+
+    // read/append/write helper
+    async function appendJSON(store, key, item) {
+      const raw = (await store.get(key)) || '[]';
+      const arr = Array.isArray(raw) ? raw : JSON.parse(raw);
+      arr.push(item);
+      await store.set(key, JSON.stringify(arr), {
+        contentType: 'application/json',
+      });
+      return arr.length;
+    }
+
+    // Switch on save type
+    if (type === 'draft') {
+      // Expect body.bill
+      if (!body.bill) return json({ error: 'missing bill' }, { status: 400 });
+      const key = `pending:${day}.json`;
+      const count = await appendJSON(bills, key, body.bill);
+      return json({ ok: true, kind: 'draft', day, count });
+
+    } else if (type === 'confirmed') {
+      // Expect body.bill
+      if (!body.bill) return json({ error: 'missing bill' }, { status: 400 });
+      const key = `confirmed:${day}.json`;
+      const count = await appendJSON(bills, key, body.bill);
+      return json({ ok: true, kind: 'confirmed', day, count });
+
+    } else if (type === 'transaction') {
+      // Expect body.tx (rollup entry)
+      if (!body.tx) return json({ error: 'missing tx' }, { status: 400 });
+      const key = `rollup:${day}.json`;
+      const count = await appendJSON(txs, key, body.tx);
+      return json({ ok: true, kind: 'transaction', day, count });
+    }
+
+    return json({ error: 'invalid type' }, { status: 400 });
+
+  } catch (e) {
+    return json({ error: 'save-data failed', detail: String(e) }, { status: 500 });
   }
-
-  const store = getStore('smokepos');
-
-  // Append to array stored at "collection" (e.g., bills:pending:YYYY-MM-DD)
-  const existing = await store.get(collection, { type: 'json' }).catch(() => null);
-  const list = Array.isArray(existing) ? existing : [];
-  list.push(bill);
-  await store.set(collection, JSON.stringify(list));
-
-  // If confirmed, also append a transaction summary for the day
-  if (bill.status === 'confirmed' && bill.day) {
-    const txKey = `transactions:${bill.day}`;
-    const txs = await store.get(txKey, { type: 'json' }).catch(() => null) || [];
-    txs.push({
-      id: bill.id,
-      when: bill.atISO,
-      customer: bill.loyalty || null,
-      method: bill.paymentType || null, // cash/card
-      itemCount: bill.items?.reduce((a,b)=> a + (b.qty||0), 0) || 0,
-      subtotal: bill.subtotal || 0,
-      tax: bill.tax || 0,
-      total: bill.total || 0
-    });
-    await store.set(txKey, JSON.stringify(txs));
-  }
-
-  return new Response(JSON.stringify({ ok: true }), {
-    headers: { 'Content-Type': 'application/json' }
-  });
-}
+};
