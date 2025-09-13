@@ -1,6 +1,6 @@
 // netlify/functions/save-data.js
 import { getStore } from '@netlify/blobs';
-import { verifyToken } from './verify-token.js';
+import verifyToken from './verify-token.js';
 
 export default async (req) => {
   if (req.method !== 'POST') return new Response('Method not allowed', { status: 405 });
