@@ -1,6 +1,8 @@
-export async function verifyToken(req){
-  const hdr = req.headers.get('x-admin-token') || req.headers.get('X-Admin-Token');
-  const token = hdr || new URL(req.url).searchParams.get('token');
-  const expected = process.env.ADMIN_TOKEN;
-  return !!expected && token === expected;
-}
+export default async (req) => {
+  const token = req.headers.get('x-admin-token') || '';
+  const ok = token && token === (process.env.ADMIN_TOKEN || '');
+  return new Response(JSON.stringify({ ok }), {
+    headers: { 'content-type': 'application/json; charset=utf-8' },
+    status: ok ? 200 : 401
+  });
+};
