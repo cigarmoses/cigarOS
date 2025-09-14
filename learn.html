@@ -1,10 +1,102 @@
-<!doctype html><html><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Learn</title>
-<style>body{font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;margin:0;color:#111827}header{padding:16px 18px;font-size:20px;font-weight:800}.wrap{padding:0 18px 28px}</style>
-</head><body>
-<header>Learn</header>
-<div class="wrap">
-  <p>Show product documents / brand guides / quick facts to customers.</p>
-  <p><a href="/">⬅ Home</a></p>
-</div>
-</body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Learn - CigarOS</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      background: #f4f5f7;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px;
+    }
+    header {
+      margin-bottom: 32px;
+      width: 100%;
+      max-width: 900px;
+      display: flex;
+      justify-content: flex-start;
+    }
+    header a {
+      text-decoration: none;
+      font-weight: 600;
+      color: #333;
+      font-size: 1rem;
+    }
+    main {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 32px;
+      width: 100%;
+      max-width: 900px;
+    }
+    .doc-card {
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: 0 8px 20px rgba(0,0,0,.12);
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .doc-card img {
+      width: min(600px, 90vw);
+      height: auto;
+    }
+    h2 {
+      margin: 0 0 16px;
+      font-size: 1.4rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="index.html">← Home</a>
+  </header>
+
+  <main id="learn-container">
+    <!-- Learn content gets injected here -->
+  </main>
+
+  <script>
+    async function loadLearnDocs() {
+      try {
+        // Fetch the img/ directory listing
+        const res = await fetch("img/");
+        const text = await res.text();
+
+        // Extract file names from the directory listing
+        const matches = [...text.matchAll(/href="([^"]+\.svg)"/g)];
+        const svgFiles = matches.map(m => m[1]).filter(name => name.startsWith("learn"));
+
+        const container = document.getElementById("learn-container");
+
+        if (svgFiles.length === 0) {
+          container.innerHTML = "<p>No learning documents found.</p>";
+          return;
+        }
+
+        svgFiles.forEach(file => {
+          const title = file.replace("learn", "").replace(".svg", "").replace(/[-_]/g, " ").trim();
+          const card = document.createElement("div");
+          card.className = "doc-card";
+          card.innerHTML = `
+            <h2>${title || "Learning Document"}</h2>
+            <img src="img/${file}" alt="${title}">
+          `;
+          container.appendChild(card);
+        });
+      } catch (err) {
+        document.getElementById("learn-container").innerHTML = `<p>Error loading docs: ${err}</p>`;
+      }
+    }
+
+    loadLearnDocs();
+  </script>
+</body>
+</html>
