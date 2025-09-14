@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cigar Hub (Master Database)</title>
+  <style>
+    :root{
+      --bg:#f6f7fb; --ink:#111; --muted:#6b7280; --card:#fff; --accent:#111;
+      --bd:#e5e7eb;
+    }
+    *{box-sizing:border-box}
+    body{margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif; color:var(--ink); background:var(--bg)}
+    header{padding:24px 16px; text-align:center}
+    h1{margin:0 0 6px; font-size:28px}
+    header p{margin:0; color:var(--muted)}
+    .wrap{max-width:1200px; margin:0 auto; padding:16px}
+
+    .toolbar{
+      display:flex; gap:12px; flex-wrap:wrap; align-items:center; margin-bottom:12px
+    }
+    .toolbar input[type="search"]{
+      flex:1 1 300px; padding:10px 12px; border:1px solid var(--bd); border-radius:10px; background:#fff; font-size:14px
+    }
+    .btn{appearance:none; border:1px solid var(--bd); background:#fff; padding:9px 12px; border-radius:10px; font-size:14px; cursor:pointer}
+    .btn.primary{background:var(--accent); color:#fff; border-color:var(--accent)}
+    .btn:disabled{opacity:.6; cursor:not-allowed}
+
+    .card{background:var(--card); border:1px solid var(--bd); border-radius:14px; box-shadow:0 6px 20px rgba(0,0,0,0.06); padding:10px}
+    .table-wrap{overflow:auto; border-radius:10px}
+    table{width:100%; border-collapse:collapse; min-width:1000px}
+    th,td{padding:10px 12px; border-bottom:1px solid var(--bd); vertical-align:top; font-size:14px}
+    th{background:#111; color:#fff; position:sticky; top:0; z-index:1; text-align:left}
+    tr:hover td{background:#fafafa}
+    .empty{padding:24px; text-align:center; color:var(--muted)}
+
+    .topbar{display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:10px}
+    a.home{color:var(--ink); text-decoration:none; border:1px solid var(--bd); padding:8px 10px; border-radius:10px}
+    .pill{font-size:12px; color:var(--muted)}
+    .imgthumb{display:inline-block; width:44px; height:44px; object-fit:cover; border-radius:8px; border:1px solid var(--bd)}
+    .nowrap{white-space:nowrap}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Cigar Hub</h1>
+    <p class="pill">Master cigar database (independent from POS inventory)</p>
+  </header>
+
+  <div class="wrap">
+    <div class="topbar">
+      <a class="home" href="index.html">← Home</a>
+      <div class="pill" id="count">0 cigars</div>
+    </div>
+
+    <div class="toolbar">
+      <input id="q" type="search" placeholder="Search by brand, item, wrapper, origin, strength…" />
+      <button class="btn" id="exportCsv">Export CSV</button>
+      <!-- Optional admin-only upload (asks for token at upload time) -->
+      <input type="file" id="csvFile" accept=".csv" style="display:none"/>
+      <button class="btn" id="uploadBtn">Upload CSV</button>
+    </div>
+
+    <div class="card table-wrap">
+      <table id="grid" aria-describedby="Master cigar database">
+        <thead>
+          <tr>
+            <th>Brand</th>
+            <th>Item</th>
+            <th>Vitola</th>
+            <th class="nowrap">Ring</th>
+            <th class="nowrap">Length</th>
+            <th>Price</th>
+            <th class="nowrap">In&nbsp;Production</th>
+            <th>Wrapper</th>
+            <th>Binder</th>
+            <th>Filler</th>
+            <th>Origin</th>
+            <th>Strength</th>
+            <th>Box (L×W×H)</th>
+            <th class="nowrap">Box Weight</th>
+            <th>Cigar Image</th>
+            <th>Band Image</th>
+          </tr>
+        </thead>
+        <tbody id="rows">
+          <tr><td class="empty" colspan="16">Loading…</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    const HUB_FN = "/.netlify/functions/get-hub";     // read
+    const SAVE_FN = "/.netlify/functions/save-hub";   // write (admin)
+
+    /** CSV helpers **/
+    function toCSV(rows, headers){
+      const esc = v => (v==null?'':String(v)).replace(/"/g,'""');
+      const line = arr => arr.map(v=>`"${esc(v)}"`).join(',');
+      const out = [line(headers)];
+      for (const r of rows) out.push(line(headers.map(h=>r[h])));
+      return out.join('\\n');
+    }
+    // light CSV parser (handles quoted fields)
+    function parseCSV(text){
+      const rows=[]; let i=0, cur='', row=[], inQ=false;
+      const push=()=>{ row.push(cur); cur=''; };
+      for(; i<text.length; i++){
+        const c=text[i];
+        if(inQ){
+          if(c=='"'){
+            if(text[i+1]=='"'){ cur+='"'; i++; } else { inQ=false; }
+          } else cur+=c;
+        } else {
+          if(c=='"'){ inQ=true; }
+          else if(c==','){ push(); }
+          else if(c=='\\n' || c=='\\r'){
+            if(c=='\\r' && text[i+1]=='\\n') i++;
+            push(); rows.push(row); row=[];
+          } else cur+=c;
+        }
+      }
+      push(); if(row.length) rows.push(row);
+      return rows.filter(r=>r.length>1 || (r.length==1 && r[0].trim()!=''));
+    }
+
+    const HEADERS = [
+      "brand","item","vitola","ring","length","price","in_production",
+      "wrapper","binder","filler","origin","strength",
+      "box_l","box_w","box_h","box_weight","cigar_image","band_image","inventory" // inventory optional
+    ];
+
+    let allData = [];
+
+    function render(list){
+      const tbody = document.getElementById('rows');
+      document.getElementById('count').textContent = (list?.length||0) + " cigars";
+      if(!list || list.length===0){
+        tbody.innerHTML = '<tr><td class="empty" colspan="16">No cigars found.</td></tr>';
+        return;
+      }
+      const fmt = x => x ?? "";
+      const yn = v => (String(v).toLowerCase()==='yes' || v===true ? 'Yes' : (String(v).toLowerCase()==='no' || v===false ? 'No' : ''));
+      tbody.innerHTML = list.map(r => `
+        <tr>
+          <td>${fmt(r.brand)}</td>
+          <td>${fmt(r.item)}</td>
+          <td>${fmt(r.vitola)}</td>
+          <td class="nowrap">${fmt(r.ring)}</td>
+          <td class="nowrap">${fmt(r.length)}</td>
+          <td class="nowrap">${fmt(r.price)}</td>
+          <td class="nowrap">${yn(r.in_production)}</td>
+          <td>${fmt(r.wrapper)}</td>
+          <td>${fmt(r.binder)}</td>
+          <td>${fmt(r.filler)}</td>
+          <td>${fmt(r.origin)}</td>
+          <td>${fmt(r.strength)}</td>
+          <td class="nowrap">${fmt(r.box_l)}×${fmt(r.box_w)}×${fmt(r.box_h)}</td>
+          <td class="nowrap">${fmt(r.box_weight)}</td>
+          <td>${r.cigar_image ? `<img class="imgthumb" src="${r.cigar_image}" alt="">` : ""}</td>
+          <td>${r.band_image ? `<img class="imgthumb" src="${r.band_image}" alt="">` : ""}</td>
+        </tr>
+      `).join('');
+    }
+
+    function filter(){
+      const q = document.getElementById('q').value.trim().toLowerCase();
+      if(!q){ render(allData); return; }
+      const keys = ["brand","item","vitola","wrapper","binder","filler","origin","strength"];
+      const out = allData.filter(r => keys.some(k => String(r[k]||"").toLowerCase().includes(q)));
+      render(out);
+    }
+
+    async function loadHub(){
+      try{
+        const res = await fetch(HUB_FN);
+        const json = await res.json();
+        allData = Array.isArray(json) ? json : [];
+        render(allData);
+      }catch(e){
+        console.error(e);
+        document.getElementById('rows').innerHTML =
+          '<tr><td class="empty" colspan="16">Failed to load database.</td></tr>';
+      }
+    }
+
+    document.getElementById('q').addEventListener('input', filter);
+
+    document.getElementById('exportCsv').addEventListener('click', () => {
+      const csv = toCSV(allData, HEADERS);
+      const blob = new Blob([csv], {type:"text/csv;charset=utf-8"});
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'cigar-hub.csv';
+      a.click();
+      URL.revokeObjectURL(a.href);
+    });
+
+    // Admin upload flow (CSV -> JSON -> save-hub with ADMIN_TOKEN)
+    document.getElementById('uploadBtn').addEventListener('click', () => {
+      document.getElementById('csvFile').click();
+    });
+
+    document.getElementById('csvFile').addEventListener('change', async (ev) => {
+      const file = ev.target.files?.[0];
+      if(!file) return;
+      const token = prompt("Enter ADMIN_TOKEN to upload:");
+      if(!token){ alert("Upload cancelled."); return; }
+
+      const txt = await file.text();
+      const rows = parseCSV(txt);
+      if(rows.length===0){ alert("No rows found."); return; }
+
+      // header mapping
+      const head = rows[0].map(h => h.trim().toLowerCase());
+      const idx = k => head.indexOf(k);
+      const req = key => idx(key) >= 0 ? idx(key) : -1;
+
+      const mapRow = (r) => {
+        const get = (k)=>{ const i=req(k); return i>=0 ? r[i].trim() : ""; };
+        return {
+          brand: get("brand"),
+          item: get("item"),
+          vitola: get("vitola"),
+          ring: get("ring"),
+          length: get("length"),
+          price: get("price"),
+          in_production: get("current production") || get("in_production") || get("in production"),
+          wrapper: get("wrapper"),
+          binder: get("binder"),
+          filler: get("filler"),
+          origin: get("country of origin") || get("origin"),
+          strength: get("strength"),
+          box_l: get("box l") || get("box length") || get("box_l"),
+          box_w: get("box w") || get("box width")  || get("box_w"),
+          box_h: get("box h") || get("box height") || get("box_h"),
+          box_weight: get("box weight") || get("box_weight"),
+          cigar_image: get("cigar image") || get("cigar_image"),
+          band_image:  get("band image")  || get("band_image"),
+          inventory:   get("inventory") // optional
+        };
+      };
+
+      const data = rows.slice(1).map(mapRow).filter(r => r.brand || r.item);
+      if(!data.length){ alert("No valid data rows."); return; }
+
+      try{
+        const res = await fetch(SAVE_FN, {
+          method:"POST",
+          headers:{ "Content-Type":"application/json", "Authorization":"Bearer "+token },
+          body: JSON.stringify(data)
+        });
+        if(!res.ok){
+          const t = await res.text();
+          throw new Error(t || ("HTTP "+res.status));
+        }
+        alert("Cigar Hub updated.");
+        await loadHub();
+      }catch(e){
+        console.error(e);
+        alert("Upload failed: "+e.message);
+      }finally{
+        ev.target.value = "";
+      }
+    });
+
+    loadHub();
+  </script>
+</body>
+</html>
