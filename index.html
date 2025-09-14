@@ -5,81 +5,102 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>CigarOS</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      background: #f5f5f5;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
+    :root{
+      --bg:#f5f5f5; --card:#ffffff; --text:#111; --muted:#666; --shadow:0 4px 10px rgba(0,0,0,.15);
+      --radius:20px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family:Arial, Helvetica, sans-serif; background:var(--bg);
+      display:flex; flex-direction:column; align-items:center; min-height:100vh;
+    }
+    header{ text-align:center; margin:2rem 0 2.5rem }
+    header img{ max-width:240px; height:auto }
+
+    .home-grid{
+      width:92%; max-width:760px;
+      display:grid; grid-template-columns:repeat(2, 1fr); gap:2rem;
+      justify-content:center; align-items:stretch;
     }
 
-    .home-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 2rem;
-      justify-content: center;
-      align-items: center;
+    a.home-card{
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      text-decoration:none; background:var(--card); border-radius:var(--radius); padding:2rem;
+      box-shadow:var(--shadow); transition:transform .15s ease, box-shadow .15s ease;
+      color:var(--text);
+    }
+    a.home-card:hover{ transform:translateY(-6px); box-shadow:0 6px 16px rgba(0,0,0,.2) }
+
+    .home-icon{
+      width:100px; height:100px; margin-bottom:1rem; object-fit:contain;
+    }
+    .title{ font-size:1.3rem; font-weight:800; letter-spacing:.02em; text-transform:uppercase }
+    .sub{ margin-top:.4rem; font-size:.9rem; color:var(--muted); text-align:center; line-height:1.25 }
+
+    /* Center the last row if odd number of items (Cigar Hub becomes centered) */
+    .home-grid > a:last-child{
+      grid-column:span 2; justify-self:center; width:min(360px, 100%);
     }
 
-    .home-card {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-decoration: none;
-      background: white;
-      border-radius: 16px;
-      padding: 1.5rem;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    /* Small note under grid */
+    .note{
+      margin:1.2rem 0 2rem; color:#777; font-size:.9rem; text-align:center; max-width:760px; padding:0 1rem;
     }
 
-    .home-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    }
-
-    .home-icon {
-      width: 80px;
-      height: 80px;
-      margin-bottom: 0.75rem;
-      object-fit: contain;
-    }
-
-    .home-card strong {
-      font-size: 1.1rem;
-      color: #333;
+    @media (min-width:900px){
+      .home-grid{ max-width:820px }
     }
   </style>
 </head>
 <body>
+  <!-- Top centered logo -->
+  <header>
+    <img src="img/smokehomescreen.svg" alt="Smoke Home Logo" />
+  </header>
+
+  <!-- App tiles -->
   <div class="home-grid">
-    <!-- POS -->
-    <a href="pos.html" class="home-card">
-      <img src="img/iconPOS.svg" alt="POS" class="home-icon"/>
-      <strong>POS</strong>
+    <!-- POS (live selling & receipts) -->
+    <a href="pos.html" class="home-card" aria-label="Open POS">
+      <img src="img/iconPOS.svg" alt="POS icon" class="home-icon"/>
+      <div class="title">POS</div>
+      <div class="sub">Live store, cart & receipts</div>
     </a>
 
     <!-- Reports -->
-    <a href="reports.html" class="home-card">
-      <img src="img/iconREPORTS.svg" alt="Reports" class="home-icon"/>
-      <strong>Reports</strong>
+    <a href="reports.html" class="home-card" aria-label="Open Reports">
+      <img src="img/iconREPORTS.svg" alt="Reports icon" class="home-icon"/>
+      <div class="title">Reports</div>
+      <div class="sub">Bill history, daily totals & export</div>
     </a>
 
     <!-- Loyalty -->
-    <a href="loyalty.html" class="home-card">
-      <img src="img/iconLOYALTY.svg" alt="Loyalty" class="home-icon"/>
-      <strong>Loyalty</strong>
+    <a href="loyalty.html" class="home-card" aria-label="Open Loyalty">
+      <img src="img/iconLOYALTY.svg" alt="Loyalty icon" class="home-icon"/>
+      <div class="title">Loyalty</div>
+      <div class="sub">Customer profiles & future rewards</div>
     </a>
 
     <!-- Learn -->
-    <a href="learn.html" class="home-card">
-      <img src="img/iconLEARN.svg" alt="Learn" class="home-icon"/>
-      <strong>Learn</strong>
+    <a href="learn.html" class="home-card" aria-label="Open Learn">
+      <img src="img/iconLEARN.svg" alt="Learn icon" class="home-icon"/>
+      <div class="title">Learn</div>
+      <div class="sub">Brand guides & cigar education</div>
     </a>
+
+    <!-- Cigar Hub (master database—separate from inventory for now) -->
+    <a href="cigarhub.html" class="home-card" aria-label="Open Cigar Hub">
+      <img src="img/iconCIGARS.svg" alt="Cigar Hub icon" class="home-icon"/>
+      <div class="title">Cigar Hub</div>
+      <div class="sub">Global master database (not linked to POS inventory yet)</div>
+    </a>
+  </div>
+
+  <!-- Clarifying note -->
+  <div class="note">
+    <strong>Note:</strong> <em>Cigar Hub</em> is your master database powering future features
+    (receipt detail pages, similarity recommendations, side-by-side cigar views).
+    It’s separate from the live POS inventory for now.
   </div>
 </body>
 </html>
