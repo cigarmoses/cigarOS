@@ -1,123 +1,353 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Learn — CigarOS</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Learn • cigarOS</title>
+  <meta name="theme-color" content="#f4f5f7"/>
+
   <style>
-    :root {
-      --bg: #f4f5f7;
-      --card: #fff;
-      --shadow: 0 10px 28px rgba(0,0,0,.12);
+    :root{
+      --bg: #f5f6f8;
+      --tile: 130px;
+      --gap: 18px;
       --radius: 22px;
-      --text: #222;
-      --muted: #6b7280;
-      --link: #2563eb;
-    }
-    body {
-      margin: 0;
-      background: var(--bg);
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
-      color: var(--text);
-      display: grid;
-      grid-template-rows: auto 1fr;
-      min-height: 100vh;
-    }
-    header {
-      max-width: 1040px;
-      width: 100%;
-      margin: 16px auto 0;
-      padding: 12px 20px;
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-    header a {
-      color: var(--link);
-      text-decoration: none;
-      font-weight: 600;
-      border: 1px solid rgba(0,0,0,.08);
-      padding: 8px 12px;
-      border-radius: 10px;
-      background: #fff;
-    }
-    main {
-      max-width: 1040px;
-      width: 100%;
-      margin: 0 auto;
-      padding: 20px;
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-      gap: 24px;
-    }
-    .card {
-      background: var(--card);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      align-items: center;
-    }
-    .card h2 {
-      font-size: 1.1rem;
-      margin: 0 0 8px;
-      text-align: center;
-    }
-    .card img {
-      width: 100%;
-      height: auto;
-    }
-    .empty {
-      text-align: center;
-      color: var(--muted);
-      grid-column: 1 / -1;
-      margin-top: 32px;
-    }
-  </style>
-</head>
-<body>
-  <header>
-    <a href="index.html">← Home</a>
-    <span style="color:var(--muted)">Learning Library</span>
-  </header>
+      --shadow: 0 10px 24px rgba(26,39,68,.1), 0 2px 6px rgba(26,39,68,.05);
+      --tile-icon-scale: .9;
+      --logo-max-w: 260px;
+      --canvas-pad: 18px;
 
-  <main id="learn-container">
-    <!-- cards injected here -->
-  </main>
+      --modal-bg: rgba(8,12,20,.72);
+      --modal-radius: 18px;
+      --modal-shadow: 0 18px 50px rgba(0,0,0,.35);
+      --modal-maxw: min(960px, 94vw);
+      --modal-maxh: 86vh;
+      --accent: #0a7dff;
+    }
 
-  <script>
-    async function loadLearn() {
-      const container = document.getElementById('learn-container');
-      container.innerHTML = '';
-
-      try {
-        const res = await fetch('/.netlify/functions/list-learn', { cache: 'no-store' });
-        if (!res.ok) throw new Error('HTTP ' + res.status);
-        const data = await res.json();
-
-        const files = (data && Array.isArray(data.files)) ? data.files : [];
-        if (files.length === 0) {
-          container.innerHTML = '<p class="empty">No learning documents found yet. Add SVGs like <code>learnSomething.svg</code> into <code>/img</code>.</p>';
-          return;
-        }
-
-        for (const f of files) {
-          const card = document.createElement('div');
-          card.className = 'card';
-          card.innerHTML = `
-            <h2>${f.title}</h2>
-            <img src="${f.url}" alt="${f.title}" loading="lazy">
-          `;
-          container.appendChild(card);
-        }
-      } catch (err) {
-        container.innerHTML = `<p class="empty">Error loading learning docs: ${String(err)}</p>`;
+    @media (min-width: 600px){
+      :root{
+        --tile: 160px;
+        --gap: 22px;
+        --radius: 26px;
+        --tile-icon-scale: .85;
+        --logo-max-w: 300px;
+        --canvas-pad: 26px;
       }
     }
 
-    loadLearn();
+    *{ box-sizing:border-box }
+    html,body{
+      margin:0;
+      height:100%;
+      background:var(--bg);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    .wrap{
+      min-height:100dvh;
+      display:grid;
+      grid-template-rows:auto 1fr;
+      place-items:center;
+      padding:var(--canvas-pad);
+    }
+
+    .brand{
+      width:100%;
+      display:grid;
+      place-items:center;
+      margin-bottom:14px;
+    }
+    .brand img{
+      max-width:min(90vw,var(--logo-max-w));
+      height:auto;
+      display:block;
+    }
+    .back{
+      display:inline-block;
+      margin-bottom:16px;
+      font-size:15px;
+      text-decoration:none;
+      color:#0077cc;
+      font-weight:600;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(auto-fill, minmax(var(--tile), 1fr));
+      gap:var(--gap);
+      width:100%;
+      max-width:1000px;
+    }
+    .tile{
+      background:#fff;
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      display:grid;
+      place-items:center;
+      padding:14px;
+      transition:transform .08s ease-out;
+      cursor:pointer;
+      outline:none;
+    }
+    .tile:active{ transform:scale(.97) }
+    .tile img{
+      width:100%;
+      height:auto;
+      max-width:calc(var(--tile) * var(--tile-icon-scale));
+      display:block;
+    }
+    .tile .caption{
+      margin-top:10px;
+      font-size:13px;
+      font-weight:600;
+      color:#2a2f36;
+      text-align:center;
+      opacity:.8;
+    }
+
+    /* Modal (lightbox) */
+    .overlay{
+      position:fixed;
+      inset:0;
+      background:var(--modal-bg);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      z-index:1000;
+      padding:18px;
+    }
+    .overlay.show{ display:flex }
+
+    .modal{
+      width:var(--modal-maxw);
+      max-height:var(--modal-maxh);
+      background:#fff;
+      border-radius:var(--modal-radius);
+      box-shadow:var(--modal-shadow);
+      display:grid;
+      grid-template-rows:auto 1fr auto;
+      overflow:hidden;
+      position:relative;
+      outline:none;
+    }
+    .modal header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:12px 14px;
+      border-bottom:1px solid rgba(0,0,0,.06);
+      gap:8px;
+    }
+    .modal h3{
+      margin:0;
+      font-size:16px;
+      font-weight:700;
+      color:#1d232b;
+    }
+    .modal .x{
+      border:none;
+      background:#f1f4f8;
+      border-radius:10px;
+      padding:8px 10px;
+      font-weight:700;
+      cursor:pointer;
+    }
+
+    .modal main{
+      overflow:auto;
+      padding:10px 14px;
+      display:grid;
+      place-items:center;
+    }
+    .modal main img{
+      max-width:100%;
+      height:auto;
+      display:block;
+    }
+
+    .modal footer{
+      padding:10px 14px 12px;
+      border-top:1px solid rgba(0,0,0,.06);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+    .note{
+      font-size:13px;
+      color:#414a57;
+      opacity:.9;
+    }
+    .nav{
+      display:flex;
+      gap:8px;
+    }
+    .nav button{
+      border:none;
+      background:#eef3fb;
+      color:#0a396e;
+      font-weight:700;
+      padding:8px 12px;
+      border-radius:10px;
+      cursor:pointer;
+    }
+    .nav button:disabled{
+      opacity:.45;
+      cursor:not-allowed;
+    }
+
+    /* hint at the bottom */
+    .hint{
+      margin-top:12px;
+      font-size:12px;
+      color:#758195;
+      text-align:center;
+    }
+  </style>
+</head>
+
+<body>
+  <main class="wrap">
+    <header class="brand">
+      <a href="/index.html" class="back">← Back</a>
+      <img src="/img/smokehomescreen.svg" alt="Smoke Cigar Shop & Lounge">
+    </header>
+
+    <section class="grid" id="grid"></section>
+    <div class="hint">Tap a card to open • Swipe/arrow keys to navigate • Esc to close</div>
+  </main>
+
+  <!-- Lightbox modal -->
+  <div class="overlay" id="overlay" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="m-title" tabindex="-1">
+      <header>
+        <h3 id="m-title">Lesson</h3>
+        <button class="x" id="btnClose" aria-label="Close">✕</button>
+      </header>
+      <main>
+        <img id="m-img" alt="">
+      </main>
+      <footer>
+        <div class="note" id="m-caption"></div>
+        <div class="nav">
+          <button id="btnPrev" aria-label="Previous">← Prev</button>
+          <button id="btnNext" aria-label="Next">Next →</button>
+        </div>
+      </footer>
+    </div>
+  </div>
+
+  <script>
+    // --- 1) Define your lessons here ---
+    const lessons = [
+      {
+        id: 'wrapper-shade',
+        title: 'Wrapper Shade',
+        src: '/img/learnwrappershade.svg',  // you’ve already uploaded this
+        thumb: '/img/learnwrappershade.svg', // can use same SVG as tile
+        caption: 'Understanding wrapper shade and how it correlates to flavor, strength, and burn.',
+      },
+      // Add more lessons later, e.g.:
+      // { id:'strength', title:'Cigar Strength Scale', src:'/img/learnstrength.svg', thumb:'/img/learnstrength.svg', caption:'Mild → Medium → Full, and what drives it.' },
+    ];
+
+    // --- 2) Build the grid from the data ---
+    const grid = document.getElementById('grid');
+    lessons.forEach((l, idx) => {
+      const card = document.createElement('button');
+      card.className = 'tile';
+      card.setAttribute('type','button');
+      card.setAttribute('aria-label', l.title);
+      card.innerHTML = `
+        <img src="${l.thumb}" alt="${l.title}">
+        <div class="caption">${l.title}</div>
+      `;
+      card.addEventListener('click', () => openModal(idx));
+      grid.appendChild(card);
+    });
+
+    // --- 3) Modal controls ---
+    const overlay   = document.getElementById('overlay');
+    const modalEl   = overlay.querySelector('.modal');
+    const mTitle    = document.getElementById('m-title');
+    const mImg      = document.getElementById('m-img');
+    const mCaption  = document.getElementById('m-caption');
+    const btnClose  = document.getElementById('btnClose');
+    const btnPrev   = document.getElementById('btnPrev');
+    const btnNext   = document.getElementById('btnNext');
+
+    let idxOpen = -1;
+
+    function openModal(i){
+      idxOpen = i;
+      const L = lessons[i];
+      mTitle.textContent = L.title;
+      mImg.src = L.src;
+      mImg.alt = L.title;
+      mCaption.textContent = L.caption || '';
+      overlay.classList.add('show');
+      overlay.setAttribute('aria-hidden', 'false');
+      updateNavButtons();
+      // a11y focus trap entry
+      setTimeout(() => modalEl.focus(), 0);
+    }
+
+    function closeModal(){
+      overlay.classList.remove('show');
+      overlay.setAttribute('aria-hidden','true');
+      idxOpen = -1;
+    }
+
+    function updateNavButtons(){
+      btnPrev.disabled = (idxOpen <= 0);
+      btnNext.disabled = (idxOpen >= lessons.length - 1);
+    }
+
+    function next(){
+      if(idxOpen < lessons.length - 1) openModal(idxOpen + 1);
+    }
+    function prev(){
+      if(idxOpen > 0) openModal(idxOpen - 1);
+    }
+
+    // --- 4) Wire events ---
+    btnClose.addEventListener('click', closeModal);
+    btnNext.addEventListener('click', next);
+    btnPrev.addEventListener('click', prev);
+
+    // Close on backdrop click
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) closeModal();
+    });
+
+    // Keyboard: Esc/Arrows/Enter
+    window.addEventListener('keydown', (e) => {
+      if (idxOpen === -1) return;
+      if (e.key === 'Escape') closeModal();
+      if (e.key === 'ArrowRight') next();
+      if (e.key === 'ArrowLeft')  prev();
+      if (e.key === 'Enter') next();
+    });
+
+    // Basic touch swipe (left/right)
+    let touchX = null;
+    overlay.addEventListener('touchstart', e => {
+      touchX = e.touches?.[0]?.clientX ?? null;
+    }, {passive:true});
+    overlay.addEventListener('touchend', e => {
+      if (touchX == null) return;
+      const dx = (e.changedTouches?.[0]?.clientX ?? 0) - touchX;
+      if (Math.abs(dx) > 40) {
+        if (dx < 0) next();
+        else prev();
+      }
+      touchX = null;
+    });
+
   </script>
 </body>
 </html>
