@@ -1,102 +1,123 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Learn - CigarOS</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Learn — CigarOS</title>
   <style>
+    :root {
+      --bg: #f4f5f7;
+      --card: #fff;
+      --shadow: 0 10px 28px rgba(0,0,0,.12);
+      --radius: 22px;
+      --text: #222;
+      --muted: #6b7280;
+      --link: #2563eb;
+    }
     body {
       margin: 0;
+      background: var(--bg);
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
-      background: #f4f5f7;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 24px;
+      color: var(--text);
+      display: grid;
+      grid-template-rows: auto 1fr;
+      min-height: 100vh;
     }
     header {
-      margin-bottom: 32px;
+      max-width: 1040px;
       width: 100%;
-      max-width: 900px;
+      margin: 16px auto 0;
+      padding: 12px 20px;
       display: flex;
-      justify-content: flex-start;
+      align-items: center;
+      gap: 16px;
     }
     header a {
+      color: var(--link);
       text-decoration: none;
       font-weight: 600;
-      color: #333;
-      font-size: 1rem;
+      border: 1px solid rgba(0,0,0,.08);
+      padding: 8px 12px;
+      border-radius: 10px;
+      background: #fff;
     }
     main {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 32px;
+      max-width: 1040px;
       width: 100%;
-      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 24px;
     }
-    .doc-card {
-      background: #fff;
-      border-radius: 20px;
-      box-shadow: 0 8px 20px rgba(0,0,0,.12);
-      padding: 32px;
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 20px;
       display: flex;
       flex-direction: column;
+      gap: 12px;
       align-items: center;
     }
-    .doc-card img {
-      width: min(600px, 90vw);
+    .card h2 {
+      font-size: 1.1rem;
+      margin: 0 0 8px;
+      text-align: center;
+    }
+    .card img {
+      width: 100%;
       height: auto;
     }
-    h2 {
-      margin: 0 0 16px;
-      font-size: 1.4rem;
+    .empty {
+      text-align: center;
+      color: var(--muted);
+      grid-column: 1 / -1;
+      margin-top: 32px;
     }
   </style>
 </head>
 <body>
   <header>
     <a href="index.html">← Home</a>
+    <span style="color:var(--muted)">Learning Library</span>
   </header>
 
   <main id="learn-container">
-    <!-- Learn content gets injected here -->
+    <!-- cards injected here -->
   </main>
 
   <script>
-    async function loadLearnDocs() {
+    async function loadLearn() {
+      const container = document.getElementById('learn-container');
+      container.innerHTML = '';
+
       try {
-        // Fetch the img/ directory listing
-        const res = await fetch("img/");
-        const text = await res.text();
+        const res = await fetch('/.netlify/functions/list-learn', { cache: 'no-store' });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const data = await res.json();
 
-        // Extract file names from the directory listing
-        const matches = [...text.matchAll(/href="([^"]+\.svg)"/g)];
-        const svgFiles = matches.map(m => m[1]).filter(name => name.startsWith("learn"));
-
-        const container = document.getElementById("learn-container");
-
-        if (svgFiles.length === 0) {
-          container.innerHTML = "<p>No learning documents found.</p>";
+        const files = (data && Array.isArray(data.files)) ? data.files : [];
+        if (files.length === 0) {
+          container.innerHTML = '<p class="empty">No learning documents found yet. Add SVGs like <code>learnSomething.svg</code> into <code>/img</code>.</p>';
           return;
         }
 
-        svgFiles.forEach(file => {
-          const title = file.replace("learn", "").replace(".svg", "").replace(/[-_]/g, " ").trim();
-          const card = document.createElement("div");
-          card.className = "doc-card";
+        for (const f of files) {
+          const card = document.createElement('div');
+          card.className = 'card';
           card.innerHTML = `
-            <h2>${title || "Learning Document"}</h2>
-            <img src="img/${file}" alt="${title}">
+            <h2>${f.title}</h2>
+            <img src="${f.url}" alt="${f.title}" loading="lazy">
           `;
           container.appendChild(card);
-        });
+        }
       } catch (err) {
-        document.getElementById("learn-container").innerHTML = `<p>Error loading docs: ${err}</p>`;
+        container.innerHTML = `<p class="empty">Error loading learning docs: ${String(err)}</p>`;
       }
     }
 
-    loadLearnDocs();
+    loadLearn();
   </script>
 </body>
 </html>
