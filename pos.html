@@ -1,445 +1,328 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>cigarOS — POS</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-    :root{
-      --bg:#0b0d10;
-      --card:#12161b;
-      --muted:#73819a;
-      --text:#e8eefc;
-      --pill-red:#f25f5c;
-      --pill-amber:#e9b949;
-      --pill-green:#3ecf8e;
-      --accent:#5aa9ff;
-      --row:#0f1318;
-      --border:#1f2730;
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0; font-family:Inter,-apple-system,system-ui,Segoe UI,Roboto,Arial,sans-serif;
-      background:var(--bg); color:var(--text);
-    }
-    header{
-      padding:18px 20px; display:flex; align-items:center; gap:16px;
-      border-bottom:1px solid var(--border); position:sticky; top:0; background:var(--bg); z-index:5;
-    }
-    header h1{font-size:20px; margin:0; letter-spacing:.5px}
-    .search{
-      flex:1; display:flex; align-items:center; background:#0f1318; border:1px solid var(--border);
-      border-radius:10px; padding:10px 12px;
-    }
-    .search input{
-      width:100%; background:transparent; border:0; outline:0; color:var(--text); font-size:14px;
-    }
-    .wrap{max-width:1100px; margin:24px auto; padding:0 16px;}
-    .table{
-      width:100%; border-collapse:collapse; overflow:hidden; border-radius:14px; border:1px solid var(--border);
-    }
-    .table th,.table td{ padding:14px 12px; }
-    .table thead th{
-      text-align:left; font-size:12px; color:var(--muted); background:#0f1318; position:sticky; top:58px;
-    }
-    .table tbody tr{ background:var(--row); border-bottom:1px solid var(--border); }
-    .brandcell{ display:flex; align-items:center; gap:10px;}
-    .logo{ width:42px; height:42px; border-radius:10px; border:1px solid var(--border); background:#0f1318; overflow:hidden; display:grid; place-items:center;}
-    .logo img{ width:100%; height:100%; object-fit:cover; }
-    .stack{ line-height:1.15}
-    .stack .brand{ font-weight:600}
-    .stack .item{ color:var(--muted); font-size:13px; margin-top:3px }
-    .muted{ color:var(--muted)}
-    .price{ font-weight:700 }
-    .pill{
-      min-width:34px; height:26px; display:inline-grid; place-items:center;
-      padding:0 8px; border-radius:999px; font-weight:700; font-size:12px; color:#0b0d10;
-    }
-    .pill.red{ background:var(--pill-red)}
-    .pill.amber{ background:var(--pill-amber)}
-    .pill.green{ background:var(--pill-green)}
-    .addbtn{
-      border:1px solid var(--border); background:#121821; color:var(--text);
-      width:34px; height:34px; border-radius:999px; display:grid; place-items:center; cursor:pointer;
-    }
-    .addbtn:hover{ border-color:#2a3441}
-    .foot-fab{
-      position:fixed; right:16px; bottom:18px; z-index:9;
-      display:flex; gap:10px; align-items:center;
-    }
-    .fab{
-      width:52px; height:52px; border-radius:999px; background:var(--accent);
-      color:#021527; display:grid; place-items:center; font-weight:900; font-size:24px; cursor:pointer;
-      box-shadow:0 8px 30px rgba(90,169,255,.35);
-    }
-    .fab-label{color:var(--muted); font-size:13px; margin-right:8px}
-    dialog{
-      width:min(820px,92vw); border:1px solid var(--border); background:var(--card); color:var(--text);
-      border-radius:16px; padding:0; overflow:hidden;
-      box-shadow:0 20px 60px rgba(0,0,0,.45)
-    }
-    .dlg-head{ padding:16px 18px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between}
-    .dlg-body{ padding:16px 18px; max-height:60vh; overflow:auto}
-    .dlg-foot{ padding:14px 18px; border-top:1px solid var(--border); display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:flex-end}
-    .btn{
-      appearance:none; border:1px solid var(--border); background:#10161f; color:var(--text);
-      padding:10px 14px; border-radius:10px; font-weight:600; cursor:pointer;
-    }
-    .btn:hover{ border-color:#2a3441}
-    .btn.green{ background:var(--pill-green); color:#052012; border-color:transparent}
-    .btn.red{ background:var(--pill-red); color:#250708; border-color:transparent}
-    .btn.ghost{ background:transparent}
-    .grid2{ display:grid; grid-template-columns:1fr auto; gap:12px; align-items:center}
-    .right{ text-align:right}
-    .bill-row{ display:grid; grid-template-columns: 1fr 88px 90px 96px; gap:10px; align-items:center; padding:8px 0; border-bottom:1px dashed var(--border)}
-    .qtyctrl{ display:flex; gap:8px; align-items:center; justify-content:flex-end}
-    .qbtn{ width:28px; height:28px; display:grid; place-items:center; border-radius:8px; border:1px solid var(--border); cursor:pointer; background:#0f1318}
-    .totalbox{ padding:10px 12px; border:1px solid var(--border); border-radius:12px; background:#0f1318}
-    .field{ display:flex; gap:10px; flex-wrap:wrap; align-items:center}
-    .field input,.field select{
-      background:#0f1318; border:1px solid var(--border); border-radius:10px; color:var(--text); padding:10px 12px;
-    }
-    .helper{ color:var(--muted); font-size:12px }
-    .empty{ color:var(--muted); text-align:center; padding:32px 12px}
-    a.nav-back{ color:var(--muted); text-decoration:none; font-size:14px}
-    .topbar{display:flex; align-items:center; gap:10px}
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>POS — CigarOS</title>
+<link rel="icon" href="/img/iconPOS.svg" />
+<style>
+  :root {
+    --bg:#0f1115; --panel:#141821; --card:#1a2030; --text:#e8eefc; --muted:#9fb0d0;
+    --accent:#60a5fa; --green:#22c55e; --red:#ef4444; --shadow:0 12px 30px rgba(0,0,0,.4);
+    --radius:16px; --line:rgba(255,255,255,.06);
+  }
+  *{box-sizing:border-box}
+  body { margin:0; background:var(--bg); color:var(--text); font:15px/1.5 system-ui,-apple-system,Segoe UI,Inter,Roboto,Arial,sans-serif; }
+  header { display:flex; gap:12px; align-items:center; padding:12px 14px; position:sticky; top:0; background:rgba(15,17,21,.7); backdrop-filter: blur(8px); z-index:10; }
+  header a { color:var(--muted); text-decoration:none }
+  h1 { font-size:18px; margin:0 }
+  .container { padding: 14px; }
+
+  .table { width:100%; background:var(--panel); border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow); }
+  .thead, .trow { display:grid; grid-template-columns: 1.6fr .8fr .7fr .6fr .5fr; gap:8px; padding:10px 12px; }
+  .thead { background:#0b0e14; color:#aab9d9; font-size:12px; text-transform:uppercase; letter-spacing:.04em; }
+  .trow { border-top:1px solid var(--line); align-items:center; }
+  .right { text-align:right }
+  .muted { color:var(--muted) }
+  .btnAdd { border:0; background:#0d172b; color:#cfe1ff; border:1px solid #273555; padding:6px 9px; border-radius:10px; cursor:pointer; }
+  .pill { display:inline-block; background:#0d1220; color:#a8c1ff; padding:6px 9px; border-radius:999px; font-size:13px; }
+
+  .fab { position:fixed; right:16px; bottom:16px; width:56px; height:56px; border-radius:50%; background:var(--accent); color:#051123; display:grid; place-items:center; font-size:26px; box-shadow:var(--shadow); cursor:pointer; }
+
+  dialog { border:0; padding:0; background:transparent; }
+  .sheet { width:min(820px, 92vw); background:var(--card); border-radius:20px; margin:auto; box-shadow:var(--shadow); overflow:hidden; }
+  .sheet header { background:#101625; padding:12px 14px; }
+  .sheet .body { padding:14px; }
+  .line { display:flex; align-items:center; gap:8px; }
+  .grid2 { display:grid; grid-template-columns: 1fr 1fr; gap:10px; }
+  input, select, button { appearance:none; border:1px solid #26304a; background:#111728; color:var(--text); border-radius:12px; padding:10px 12px; font-size:14px; }
+  input::placeholder { color:#6c7ba3 }
+  .row { display:flex; align-items:center; justify-content:space-between; gap:8px; padding:8px 0; border-bottom:1px dashed var(--line); }
+  .row:last-child { border-bottom:0 }
+  .actions { display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end; padding:12px 14px 16px; }
+  .btn { border:0; padding:10px 14px; border-radius:12px; cursor:pointer; }
+  .btn.secondary { background:#0f1629; color:#cfe1ff; border:1px solid #273555;}
+  .btn.green { background:var(--green); color:#03210f; }
+  .btn.blue { background:var(--accent); color:#031326; }
+  .btn.red { background:var(--red); color:#2b0303; }
+
+  /* Loyalty dropdown */
+  .dropdown { position:relative }
+  .dd-panel {
+    position:absolute; top:100%; left:0; right:0; z-index:20;
+    background:#0d1220; border:1px solid #273555; border-radius:12px; margin-top:6px; max-height:240px; overflow:auto;
+    box-shadow:var(--shadow); display:none;
+  }
+  .dd-item { padding:9px 10px; border-bottom:1px solid #172038; cursor:pointer; }
+  .dd-item:last-child { border-bottom:0 }
+  .dd-item:hover { background:#131a2d }
+
+  @media (max-width: 820px){
+    .thead, .trow { grid-template-columns: 1.8fr .9fr .8fr .7fr .6fr; }
+  }
+  @media (max-width: 640px){
+    .thead, .trow { grid-template-columns: 1.8fr .9fr .8fr .7fr .5fr; }
+  }
+</style>
 </head>
 <body>
   <header>
-    <div class="topbar">
-      <a class="nav-back" href="./index.html">← Home</a>
-    </div>
+    <a href="/" class="muted">← Home</a>
     <h1>POS</h1>
-    <div class="search">
-      <input id="q" placeholder="Search by brand, cigar, or vitola…" />
-    </div>
+    <span class="pill" id="cartCount">0 items</span>
+    <span class="pill" id="cartTotal">$0.00</span>
   </header>
 
-  <div class="wrap">
-    <table class="table" id="tbl">
-      <thead>
-        <tr>
-          <th>Brand / Item</th>
-          <th>Vitola</th>
-          <th>Price</th>
-          <th>Inventory</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody id="rows">
-        <!-- filled by JS -->
-      </tbody>
-    </table>
-    <div id="empty" class="empty" style="display:none">No results.</div>
+  <div class="container">
+    <div class="table" id="invTable">
+      <div class="thead">
+        <div>Brand / Item</div>
+        <div class="right">Vitola</div>
+        <div class="right">Price</div>
+        <div class="right">Inventory</div>
+        <div class="right">Add</div>
+      </div>
+      <div id="invRows"></div>
+    </div>
   </div>
 
-  <!-- Floating receipt preview button -->
-  <div class="foot-fab">
-    <span class="fab-label" id="cartCount">0</span>
-    <button class="fab" id="openReceipt">＋</button>
-  </div>
+  <!-- Floating action to open Receipt -->
+  <button class="fab" id="openReceipt" title="Open receipt">＋</button>
 
-  <!-- Receipt dialog -->
-  <dialog id="dlg">
-    <div class="dlg-head">
-      <strong>Receipt</strong>
-      <button class="btn ghost" id="closeDlg">✕</button>
-    </div>
-    <div class="dlg-body">
-      <div class="field" style="justify-content:space-between">
-        <div class="field">
-          <label for="loyalty">Loyalty Customer:</label>
-          <input id="loyalty" placeholder="Name (optional)" />
+  <!-- RECEIPT SHEET -->
+  <dialog id="receipt">
+    <div class="sheet">
+      <header>
+        <h1 style="margin:0;font-size:18px">Receipt</h1>
+      </header>
+      <div class="body">
+
+        <!-- Loyalty: search + select -->
+        <div class="grid2" style="margin-bottom:8px">
+          <div class="dropdown">
+            <label class="muted" style="font-size:12px;display:block;margin-bottom:6px">Link Loyalty Customer</label>
+            <input id="loyaltySearch" placeholder="Search name, email, phone…" autocomplete="off" />
+            <div class="dd-panel" id="loyaltyList"></div>
+            <input type="hidden" id="billCustomer" />
+          </div>
+          <div>
+            <label class="muted" style="font-size:12px;display:block;margin-bottom:6px">Method</label>
+            <select id="payMethod">
+              <option value="cash">Cash</option>
+              <option value="card">Credit / Debit</option>
+            </select>
+          </div>
         </div>
-        <div class="field">
-          <span class="helper">Sales tax</span>
-          <select id="taxRate">
-            <option value="0.07" selected>7%</option>
-            <option value="0.00">0%</option>
-            <option value="0.0825">8.25%</option>
-          </select>
-        </div>
-      </div>
 
-      <div id="billLines">
-        <!-- items injected -->
-      </div>
+        <div class="row"><div class="muted">Items</div><div id="rItems" class="right">0</div></div>
+        <div class="row"><div class="muted">Subtotal</div><div id="rSubtotal" class="right">$0.00</div></div>
+        <input id="receipt-subtotal" type="hidden" value="0">
+        <div class="row"><div class="muted">Tax (7%)</div><div id="rTax" class="right">$0.00</div></div>
+        <div class="row"><div class="muted">Total</div><div id="rTotal" class="right">$0.00</div></div>
 
-      <div style="height:10px"></div>
-
-      <div class="grid2">
-        <div class="helper">Subtotal / Tax / Total</div>
-        <div class="totalbox right" id="totals">$0.00</div>
       </div>
-    </div>
-    <div class="dlg-foot">
-      <button class="btn" id="btnClear">Clear All</button>
-      <button class="btn" id="btnSave">Save Bill (draft)</button>
-      <button class="btn green" id="btnConfirm">Confirm Sale…</button>
+      <div class="actions">
+        <button class="btn secondary" id="saveDraft">Save draft</button>
+        <button class="btn green" id="confirmSale">Confirm sale</button>
+        <button class="btn red" id="closeReceipt">Close</button>
+      </div>
     </div>
   </dialog>
 
-  <script>
-    // ---- helpers
-    const $ = sel => document.querySelector(sel);
-    const $$ = sel => Array.from(document.querySelectorAll(sel));
-    const fmt = n => '$' + Number(n).toFixed(2);
-    const todayKey = () => new Date().toISOString().slice(0,10);
+<script>
+  // -------- Inventory + Cart (you can replace with your real inventory feed) --------
+  const inventory = [
+    // Example seed rows (delete or replace with your data loader)
+    { id:'AF-HEM-ROB', brand:'Arturo Fuente', item:'Hemingway Short Story', vitola:'Perfecto', price:9.99, stock:14 },
+    { id:'PAD-64-EXC', brand:'Padron', item:'1964 Anniversary Exclusivo', vitola:'Robusto', price:15.5, stock:8 },
+    { id:'OLI-SERV-MAD', brand:'Oliva', item:'Serie V', vitola:'Toro', price:10.25, stock:22 }
+  ];
+  let cart = []; // [{id,brand,item,vitola,price,qty}...]
 
-    // ---- state
-    let all = [];          // master inventory from function
-    let filtered = [];     // filtered by query
-    let cart = [];         // {id, brand, item, vitola, price, qty, icon}
+  function money(n){ return `$${(Math.round(n*100)/100).toFixed(2)}`; }
 
-    // ---- load data
-    async function loadData(){
-      const res = await fetch('/.netlify/functions/get-data');
-      if(!res.ok){ throw new Error('get-data failed'); }
-      const arr = await res.json(); // [{brand,item,vitola,price,inventory,icon}]
-      // normalize: price as number
-      all = arr.map((r,i)=>({
-        id: i,
-        brand: r.brand || '',
-        item: r.item || r.TYPE || '',
-        vitola: (r.vitola || r.Vitola || '').toString(),
-        price: parseFloat((r.price || '0').toString().replace(/[^0-9.]/g,'')) || 0,
-        inventory: Number(r.inventory ?? r.qty ?? 0),
-        icon: r.icon || r.logo || '/img/placeholder.svg'
-      }));
-      filtered = all.slice();
-      renderRows();
-    }
-
-    function renderRows(){
-      const q = $('#q').value.trim().toLowerCase();
-      const list = q
-        ? all.filter(r =>
-            (r.brand + ' ' + r.item + ' ' + r.vitola).toLowerCase().includes(q))
-        : all;
-
-      filtered = list;
-      const tbody = $('#rows');
-      tbody.innerHTML = '';
-
-      if(list.length === 0){
-        $('#empty').style.display = '';
-        return;
-      }
-      $('#empty').style.display = 'none';
-
-      for(const r of list){
-        const tr = document.createElement('tr');
-
-        // Brand / Item stacked with icon
-        const tdBrand = document.createElement('td');
-        tdBrand.innerHTML = `
-          <div class="brandcell">
-            <span class="logo">
-              <img src="${r.icon || '/img/placeholder.svg'}" alt="" onerror="this.src='/img/placeholder.svg'">
-            </span>
-            <div class="stack">
-              <div class="brand">${r.brand}</div>
-              <div class="item">${r.item}</div>
-            </div>
-          </div>
-        `;
-        tr.appendChild(tdBrand);
-
-        // vitola
-        const tdVitola = document.createElement('td');
-        tdVitola.className = 'muted';
-        tdVitola.textContent = r.vitola || '';
-        tr.appendChild(tdVitola);
-
-        // price
-        const tdPrice = document.createElement('td');
-        tdPrice.className = 'price';
-        tdPrice.textContent = fmt(r.price);
-        tr.appendChild(tdPrice);
-
-        // inventory pill
-        const tdInv = document.createElement('td');
-        const pillClass = r.inventory<=0 ? 'red' : (r.inventory<=5?'amber':'green');
-        tdInv.innerHTML = `<span class="pill ${pillClass}">${r.inventory}</span>`;
-        tr.appendChild(tdInv);
-
-        // add
-        const tdAdd = document.createElement('td');
-        const btn = document.createElement('button');
-        btn.className = 'addbtn';
-        btn.title = 'Add to receipt';
-        btn.textContent = '+';
-        btn.onclick = ()=> addToCart(r);
-        tdAdd.appendChild(btn);
-        tr.appendChild(tdAdd);
-
-        tbody.appendChild(tr);
-      }
-    }
-
-    function addToCart(row){
-      const existing = cart.find(x=>x.id===row.id);
-      if(existing){ existing.qty += 1; }
-      else{
-        cart.push({
-          id: row.id, brand: row.brand, item: row.item, vitola: row.vitola,
-          price: row.price, qty: 1, icon: row.icon
-        });
-      }
-      updateCartCount();
-    }
-
-    function updateCartCount(){
-      const count = cart.reduce((n,x)=>n+x.qty,0);
-      $('#cartCount').textContent = count;
-    }
-
-    // ---- receipt dialog
-    function openDlg(){
-      renderBill();
-      $('#dlg').showModal();
-    }
-    function closeDlg(){ $('#dlg').close(); }
-
-    function renderBill(){
-      const box = $('#billLines');
-      box.innerHTML = '';
-      if(cart.length===0){
-        box.innerHTML = `<div class="empty">No items yet — add with the ＋ buttons.</div>`;
-        updateTotals();
-        return;
-      }
-      for(const it of cart){
-        const line = document.createElement('div');
-        line.className = 'bill-row';
-        line.innerHTML = `
+  function renderInventory(){
+    const container = document.getElementById('invRows');
+    container.innerHTML = inventory.map(row => {
+      return `
+        <div class="trow" data-id="${row.id}">
           <div>
-            <div style="font-weight:600">${it.brand}</div>
-            <div class="muted" style="font-size:13px">${it.item}${it.vitola?` • ${it.vitola}`:''}</div>
+            <div>${row.brand}</div>
+            <div class="muted" style="font-size:12px">${row.item}</div>
           </div>
-          <div class="qtyctrl">
-            <button class="qbtn" data-act="dec" aria-label="decrease">–</button>
-            <div>${it.qty}</div>
-            <button class="qbtn" data-act="inc" aria-label="increase">＋</button>
-          </div>
-          <div class="right muted">${fmt(it.price)}</div>
-          <div class="right"><strong>${fmt(it.price*it.qty)}</strong></div>
-        `;
-        line.querySelector('[data-act="dec"]').onclick = ()=>{
-          it.qty = Math.max(0, it.qty-1);
-          if(it.qty===0){ cart = cart.filter(x=>x.id!==it.id); }
-          renderBill(); updateCartCount();
-        };
-        line.querySelector('[data-act="inc"]').onclick = ()=>{
-          it.qty += 1; renderBill(); updateCartCount();
-        };
-        box.appendChild(line);
-      }
-      updateTotals();
-    }
-
-    function calcTotals(){
-      const sub = cart.reduce((n,x)=>n + x.price*x.qty, 0);
-      const taxRate = parseFloat($('#taxRate').value || '0') || 0;
-      const tax = +(sub * taxRate).toFixed(2);
-      const total = +(sub + tax).toFixed(2);
-      return {sub,tax,total,rate:taxRate};
-    }
-
-    function updateTotals(){
-      const {sub,tax,total,rate} = calcTotals();
-      $('#totals').innerHTML = `
-        <div>Subtotal: <strong>${fmt(sub)}</strong></div>
-        <div>Tax (${(rate*100).toFixed(2)}%): <strong>${fmt(tax)}</strong></div>
-        <div style="margin-top:4px; font-size:18px">Total: <strong>${fmt(total)}</strong></div>
+          <div class="right">${row.vitola}</div>
+          <div class="right">${money(row.price)}</div>
+          <div class="right">${row.stock}</div>
+          <div class="right"><button class="btnAdd" data-add="${row.id}">Add</button></div>
+        </div>
       `;
+    }).join('');
+  }
+  renderInventory();
+
+  // Add to cart handler
+  document.getElementById('invRows').addEventListener('click', (e)=>{
+    const id = e.target?.dataset?.add;
+    if(!id) return;
+    const row = inventory.find(r=>r.id===id);
+    if(!row) return;
+    const existing = cart.find(c=>c.id===id);
+    if(existing){ existing.qty += 1; }
+    else { cart.push({ id: row.id, brand:row.brand, item:row.item, vitola:row.vitola, price:row.price, qty:1 }); }
+    renderCartSummary();
+  });
+
+  function renderCartSummary(){
+    const items = cart.reduce((s, r) => s + (r.qty||0), 0);
+    const subtotal = cart.reduce((s, r) => s + (r.price * (r.qty||0)), 0);
+    const tax = subtotal * 0.07;
+    const total = subtotal + tax;
+    document.getElementById('cartCount').textContent = `${items} item${items===1?'':'s'}`;
+    document.getElementById('cartTotal').textContent = money(total);
+    return { items, subtotal, tax, total };
+  }
+  renderCartSummary();
+
+  // -------- Loyalty Search Dropdown --------
+  let loyalty = []; // {id,name,email,phone,raw}
+
+  async function loadLoyalty(){
+    try{
+      const res = await fetch('/.netlify/functions/get-loyalty', { cache:'no-store' });
+      const json = await res.json();
+      if (!res.ok || !json.ok) throw new Error(json.error || 'load loyalty failed');
+      loyalty = (json.data||[]).map(r => {
+        const id = (r.id ?? r.email ?? r.phone ?? '').toString().trim();
+        const name = [r.first_name||r.first||'', r.last_name||r.last||''].filter(Boolean).join(' ').trim() || '(no name)';
+        return { id, name, email: r.email||'', phone: r.phone||'', raw:r };
+      }).filter(x=>x.id);
+    }catch(e){
+      console.error(e); loyalty = [];
+    }
+  }
+  loadLoyalty();
+
+  const dd = document.getElementById('loyaltyList');
+  const inp = document.getElementById('loyaltySearch');
+  const hid = document.getElementById('billCustomer');
+
+  function openList(){ dd.style.display = 'block'; }
+  function closeList(){ dd.style.display = 'none'; }
+  function filterList(q){
+    const s = q.trim().toLowerCase();
+    const rows = !s ? loyalty.slice(0,50) : loyalty.filter(x =>
+      x.name.toLowerCase().includes(s) ||
+      x.email.toLowerCase().includes(s) ||
+      x.phone.toLowerCase().includes(s)
+    ).slice(0,50);
+    dd.innerHTML = rows.map(x =>
+      `<div class="dd-item" data-id="${x.id}">
+         <div>${x.name}</div>
+         <div class="muted" style="font-size:12px">${x.email || x.phone || ''}</div>
+       </div>`
+    ).join('') || `<div class="dd-item muted">No matches</div>`;
+  }
+  dd.addEventListener('click', (e)=>{
+    const el = e.target.closest('.dd-item');
+    if (!el || !el.dataset.id) return;
+    const sel = loyalty.find(x => x.id === el.dataset.id) || null;
+    inp.value = sel ? `${sel.name} (${sel.email || sel.phone || sel.id})` : '';
+    hid.value = sel ? sel.id : '';
+    closeList();
+  });
+  inp.addEventListener('focus', ()=>{ openList(); filterList(inp.value); });
+  inp.addEventListener('input', ()=>{ openList(); filterList(inp.value); });
+  document.addEventListener('click', (e)=>{
+    if (!dd.contains(e.target) && e.target !== inp) closeList();
+  });
+
+  // -------- Receipt Modal & Save/Confirm --------
+  const dlg = document.getElementById('receipt');
+  const openBtn = document.getElementById('openReceipt');
+  const closeBtn = document.getElementById('closeReceipt');
+  const saveDraftBtn = document.getElementById('saveDraft');
+  const confirmBtn = document.getElementById('confirmSale');
+  const payMethod = document.getElementById('payMethod');
+  const subtotalInput = document.getElementById('receipt-subtotal');
+
+  function refreshReceipt(){
+    const s = renderCartSummary();
+    document.getElementById('rItems').textContent = s.items;
+    document.getElementById('rSubtotal').textContent = money(s.subtotal);
+    subtotalInput.value = String(+s.subtotal.toFixed(2)); // numeric text
+    document.getElementById('rTax').textContent = money(s.tax);
+    document.getElementById('rTotal').textContent = money(s.total);
+  }
+
+  openBtn.addEventListener('click', ()=>{ refreshReceipt(); dlg.showModal(); });
+  closeBtn.addEventListener('click', ()=> dlg.close());
+
+  async function sendBill(status){ // 'pending' | 'confirmed'
+    const s = renderCartSummary();
+    const custId = document.getElementById('billCustomer').value || '';
+    const custName = document.getElementById('loyaltySearch').value || '';
+
+    const bill = {
+      items: cart,
+      itemsCount: s.items,
+      subtotal: +s.subtotal.toFixed(2),
+      tax: +s.tax.toFixed(2),
+      total: +s.total.toFixed(2),
+      method: payMethod.value,
+      loyalty: { id: custId, name: custName }
+    };
+
+    // 1) Save bill (Netlify function)
+    const res = await fetch('/.netlify/functions/save-data', {
+      method:'POST',
+      headers:{ 'content-type':'application/json' },
+      body: JSON.stringify({ action: status, bill })
+    });
+    const json = await res.json();
+    if (!res.ok) { alert(json.error || 'Save failed'); return; }
+
+    // 2) If confirmed and a customer is linked, award points = rounded subtotal
+    if (status === 'confirmed' && custId) {
+      await awardPointsAfterSale(bill.subtotal, custId);
     }
 
-    // ---- save + confirm
-    async function saveBill(status){
-      if(cart.length===0){
-        alert('Add at least one item to the receipt.'); return;
-      }
-      const {sub,tax,total,rate} = calcTotals();
-      const payload = {
-        id: crypto.randomUUID(),
-        atISO: new Date().toISOString(),
-        day: todayKey(),
-        status,                     // 'pending' or 'confirmed'
-        paymentType: status==='confirmed' ? (await askPaymentType()) : null,
-        taxRate: rate,
-        subtotal: sub,
-        tax,
-        total,
-        loyalty: $('#loyalty').value.trim() || null,
-        items: cart.map(x=>({
-          brand:x.brand, item:x.item, vitola:x.vitola, price:x.price, qty:x.qty
-        }))
-      };
+    if (status === 'confirmed') {
+      // Clear cart
+      cart = [];
+      renderCartSummary();
+    }
 
-      // build collection name (your function can use this to route to blobs/kv)
-      const collection = status==='confirmed'
-        ? `bills:confirmed:${payload.day}`
-        : `bills:pending:${payload.day}`;
+    dlg.close();
+    alert(status === 'confirmed' ? 'Sale recorded' : 'Draft saved');
+  }
 
-      const res = await fetch('/.netlify/functions/save-data', {
-        method:'POST',
-        headers:{'content-type':'application/json'},
-        body: JSON.stringify({ collection, status, day: payload.day, bill: payload })
+  saveDraftBtn.addEventListener('click', ()=> sendBill('pending'));
+  confirmBtn.addEventListener('click', ()=> sendBill('confirmed'));
+
+  // -------- Award Points helper (calls add-loyalty-points.js) --------
+  async function awardPointsAfterSale(subtotal, customerId) {
+    try {
+      const hasCustomer = customerId !== null && customerId !== undefined && String(customerId).trim() !== '';
+      if (!hasCustomer) return;
+      const delta = Math.round(Number(subtotal || 0));
+      if (!delta) return;
+
+      const res = await fetch('/.netlify/functions/add-loyalty-points', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ id: String(customerId), delta })
       });
-      if(!res.ok){
-        const t = await res.text();
-        alert('Save failed: ' + t);
+
+      if (!res.ok) {
+        console.warn('add-loyalty-points failed:', res.status);
         return;
       }
-
-      if(status==='confirmed'){
-        // simulate inventory decrement locally (visual feedback).
-        for(const it of cart){
-          const row = all.find(r=>r.brand===it.brand && r.item===it.item && r.vitola===it.vitola);
-          if(row){ row.inventory = Math.max(0, (row.inventory||0) - it.qty); }
-        }
-        renderRows();
-      }
-
-      if(status==='pending'){ alert('Bill saved as draft.'); }
-      else{ alert('Sale confirmed!'); }
-
-      cart = [];
-      updateCartCount();
-      renderBill();
-      closeDlg();
+      const out = await res.json();
+      console.log(`Awarded ${out.added} pts to #${out.id}. New total: ${out.total}`);
+    } catch (err) {
+      console.warn('add-loyalty-points error:', err);
     }
-
-    function askPaymentType(){
-      return new Promise(resolve=>{
-        const choice = window.prompt('Payment type? Enter "cash" or "card" (credit/debit).','cash');
-        resolve((choice||'cash').toLowerCase().includes('card') ? 'card' : 'cash');
-      });
-    }
-
-    // ---- events
-    $('#q').addEventListener('input', renderRows);
-    $('#openReceipt').onclick = openDlg;
-    $('#closeDlg').onclick = closeDlg;
-    $('#taxRate').onchange = updateTotals;
-    $('#btnClear').onclick = ()=>{
-      if(confirm('Clear all items from the receipt?')){ cart = []; updateCartCount(); renderBill(); }
-    };
-    $('#btnSave').onclick = ()=> saveBill('pending');
-    $('#btnConfirm').onclick = ()=> saveBill('confirmed');
-
-    // go
-    loadData().catch(err=>{
-      console.error(err);
-      $('#rows').innerHTML = '';
-      $('#empty').style.display = '';
-      $('#empty').textContent = 'Could not load inventory.';
-    });
-  </script>
+  }
+</script>
 </body>
 </html>
