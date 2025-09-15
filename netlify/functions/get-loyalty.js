@@ -1,7 +1,7 @@
 // netlify/functions/get-loyalty.js
 import { getStore } from '@netlify/blobs';
 
-// Clean up NaN/Infinity so JSON stays valid
+// Replace invalid JSON tokens (NaN/Infinity) with null
 function sanitizeJsonText(text) {
   return text
     .replace(/:\s*NaN\b/g, ': null')
@@ -9,6 +9,7 @@ function sanitizeJsonText(text) {
     .replace(/:\s*-Infinity\b/g, ': null');
 }
 
+// Deep-clean objects/arrays (turn NaN/undefined into null)
 function deepClean(value) {
   if (Array.isArray(value)) return value.map(deepClean);
   if (value && typeof value === 'object') {
@@ -23,7 +24,7 @@ function deepClean(value) {
 
 export default async () => {
   try {
-    // Primary: pull from Netlify Blobs
+    // Primary: get data from Netlify Blobs
     const store = getStore('contacts');
     const raw = await store.get('contacts.json', { type: 'text' });
     if (!raw) throw new Error('No data found in Blobs');
@@ -35,7 +36,7 @@ export default async () => {
       headers: { 'content-type': 'application/json' }
     });
   } catch (err) {
-    // Fallback to /img/contacts.json if Blobs fails
+    // Fallback: try static file in /img
     try {
       const url = new URL('../../img/contacts.json', import.meta.url);
       const res = await fetch(url);
