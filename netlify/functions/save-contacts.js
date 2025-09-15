@@ -1,8 +1,7 @@
-// ESM function – uploads CSV or JSON and stores it as contacts.json
 import { getStore } from '@netlify/blobs';
 
 function csvToJson(csv) {
-  // very small CSV helper (supports quoted fields)
+  // CSV -> array of objects (handles simple quoted fields)
   const rows = csv.replace(/\r/g,'').split('\n').filter(Boolean);
   if (!rows.length) return [];
   const parse = (line) => {
@@ -43,7 +42,7 @@ export default async (req) => {
       contacts = csvToJson(text);
     }
 
-    // Normalize a few helpful fields
+    // Normalize
     contacts = contacts.map((c, i) => ({
       id: c.id || String(i + 1),
       first_name: c.first_name || c.first || '',
@@ -51,11 +50,11 @@ export default async (req) => {
       email: c.email || '',
       phone: c.phone || c.mobile || '',
       points: Number(c.points || 0),
-      preferences: (c.preferences || c.favorite_brands || '').split(/[;,]/).map(s=>s.trim()).filter(Boolean),
+      preferences: (c.preferences || c.favorite_brands || '')
+        .split(/[;,]/).map(s=>s.trim()).filter(Boolean),
       last_purchase_brand: c.last_purchase_brand || '',
       last_purchase_item: c.last_purchase_item || '',
       notes: c.notes || '',
-      // keep raw for future fields (ring, strength, etc. not necessary here)
       ...c
     }));
 
