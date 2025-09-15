@@ -7,66 +7,35 @@
   <link rel="icon" href="/img/iconLOYALTY.svg" />
   <style>
     :root{
-      --bg:#f5f6f8;
-      --card:#ffffff;
-      --text:#111827;
-      --muted:#6b7280;
-      --line:#e5e7eb;
-      --blue:#1992FE;        /* locker members */
-      --orange:#f59e0b;      /* regulars */
-      --shadow:0 10px 30px rgba(0,0,0,.06);
-      --radius:22px;
+      --bg:#f5f6f8; --card:#ffffff; --text:#111827; --muted:#6b7280; --line:#e5e7eb;
+      --blue:#1992FE; --orange:#f59e0b; --shadow:0 10px 30px rgba(0,0,0,.06); --radius:22px;
     }
     *{box-sizing:border-box}
     html,body{margin:0;background:var(--bg);color:var(--text);font:16px/1.35 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
-    a{color:inherit;text-decoration:none}
-
     .app{max-width:720px;margin-inline:auto;padding:16px 16px 24px}
-
     .topbar{display:flex;align-items:center;gap:10px}
     .back{padding:10px 12px;border-radius:12px;background:var(--card);box-shadow:var(--shadow);display:inline-flex}
     .title{font-weight:700;font-size:20px}
-
     .searchWrap{margin:14px 0}
-    .search{
-      width:100%;padding:14px 16px;border-radius:16px;border:1px solid var(--line);
-      background:var(--card);box-shadow:var(--shadow);font-size:16px;
-    }
+    .search{width:100%;padding:14px 16px;border-radius:16px;border:1px solid var(--line);background:var(--card);box-shadow:var(--shadow);font-size:16px}
     .chips{display:flex;gap:14px;margin-top:10px}
     .chip{display:flex;align-items:center;gap:8px;font-size:13px;color:#374151}
     .dot{width:10px;height:10px;border-radius:50%}
-    .dot.blue{background:var(--blue)}
-    .dot.orange{background:var(--orange)}
-
+    .dot.blue{background:var(--blue)} .dot.orange{background:var(--orange)}
     .list{margin-top:12px;display:flex;flex-direction:column;gap:12px}
-    .row{
-      background:var(--card);border-radius:18px;box-shadow:var(--shadow);padding:14px;
-      display:grid;grid-template-columns:1fr auto auto 1.2fr;gap:10px;align-items:center;
-    }
+    .row{background:var(--card);border-radius:18px;box-shadow:var(--shadow);padding:14px;display:grid;grid-template-columns:1fr auto auto 1.2fr;gap:10px;align-items:center}
     .row .name{font-weight:700}
     .row .aka{font-size:12px;color:var(--muted)}
     .row .points{font-weight:800;text-align:right}
     .row .last{font-size:13px;color:#374151;text-align:right}
     .row .notes{font-size:13px;color:#374151;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:right}
-    .row.locker{outline:2px solid rgba(25,146,254,.25)}
-    .row.locker .name{color:#083b79}
-    .row.regular{outline:2px solid rgba(245,158,11,.25)}
-    .row.regular .name{color:#7a3d00}
-
-    /* mobile compact */
-    @media (max-width:560px){
-      .row{grid-template-columns:1.2fr .5fr .7fr 1fr}
-    }
-
+    .row.locker{outline:2px solid rgba(25,146,254,.25)} .row.locker .name{color:#083b79}
+    .row.regular{outline:2px solid rgba(245,158,11,.25)} .row.regular .name{color:#7a3d00}
+    @media (max-width:560px){ .row{grid-template-columns:1.2fr .5fr .7fr 1fr} }
     .empty{padding:24px;text-align:center;color:var(--muted)}
-
-    /* modal */
     .modalWrap{position:fixed;inset:0;background:rgba(0,0,0,.38);display:none;align-items:flex-end;justify-content:center}
     .modalWrap.show{display:flex}
-    .modal{
-      width:100%;max-width:720px;background:var(--card);border-radius:22px 22px 0 0;
-      box-shadow:0 -10px 30px rgba(0,0,0,.15);padding:18px 16px 28px;max-height:88vh;overflow:auto;
-    }
+    .modal{width:100%;max-width:720px;background:var(--card);border-radius:22px 22px 0 0;box-shadow:0 -10px 30px rgba(0,0,0,.15);padding:18px 16px 28px;max-height:88vh;overflow:auto}
     .modalHeader{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}
     .modalTitle{font-weight:800;font-size:18px}
     .badge{display:inline-flex;gap:8px;align-items:center;font-size:12px;padding:6px 10px;border-radius:999px;background:#eff6ff;color:#0c4a6e}
@@ -80,7 +49,8 @@
     .btn{flex:1;padding:12px 14px;border-radius:14px;border:1px solid var(--line);background:var(--card);font-weight:700}
     .btn.primary{background:#111827;color:#fff;border-color:#111827}
     .btn.icon{flex:0 0 auto;width:auto;padding:10px 12px}
-
+    .pointsEdit{display:flex;align-items:center;gap:12px}
+    .pointsInput{width:110px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;font-weight:800;text-align:right}
     .toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:#111827;color:#fff;padding:10px 14px;border-radius:12px;display:none}
     .toast.show{display:block}
   </style>
@@ -116,7 +86,7 @@
       </div>
       <div id="profile" class="grid"></div>
       <div class="actions">
-        <button id="plusOne" class="btn">+1 point</button>
+        <button id="savePoints" class="btn">Save</button>
         <button id="goPOS" class="btn primary">Checkout</button>
       </div>
     </div>
@@ -125,209 +95,107 @@
   <div id="toast" class="toast">Saved</div>
 
   <script>
-    const $ = (sel, root=document) => root.querySelector(sel);
-    const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+    const $ = (s, r=document)=>r.querySelector(s);
+    let ALL=[], VIEW=[], CURRENT=null;
+    const listEl=$('#list'), emptyEl=$('#empty'), qEl=$('#q'), modalWrap=$('#modalWrap');
+    const profileEl=$('#profile'), modalBadge=$('#modal-badge'), toast=$('#toast');
+    let pointsInputEl=null; // created inside modal
 
-    let ALL = [];      // full dataset
-    let VIEW = [];     // filtered dataset
-    let CURRENT = null;
-
-    const listEl = $('#list');
-    const emptyEl = $('#empty');
-    const qEl = $('#q');
-    const modalWrap = $('#modalWrap');
-    const profileEl = $('#profile');
-    const modalBadge = $('#modal-badge');
-    const toast = $('#toast');
-
-    // --- Load data from Netlify function
     async function loadContacts(){
-      const res = await fetch('/.netlify/functions/get-loyalty', { cache:'no-store' });
-      const j = await res.json();
-      if(!j.ok) throw new Error(j.error || 'Failed to load contacts');
-      // normalize records
-      ALL = (j.data || []).map((r,i) => normalize(r, i));
-      VIEW = ALL.slice();
-      render();
+      const res=await fetch('/.netlify/functions/get-loyalty',{cache:'no-store'});
+      const j=await res.json(); if(!j.ok) throw new Error(j.error||'load failed');
+      ALL=(j.data||[]).map(normalize); VIEW=ALL.slice(); render();
     }
-
-    function normalize(r, i){
-      // expected basic fields (you can add more; everything is kept)
-      const first = (r.first_name || r.first || '').trim();
-      const last  = (r.last_name  || r.last  || '').trim();
-      const aka   = (r.aka || r.nickname || '').trim();
-      const points = Number(r.points || r.total_points || 0);
-      const lastPurchase = r.last_purchase || r.last || '';
-      const notes = r.notes || '';
-      const locker = r.locker || r.locker_number || '';
-      const phone = (r.phone || '').trim();
-      const email = (r.email || '').trim();
-      const bday  = r.birthday || r.bday || '';
-      const ytd   = Number(r.ytd_spend || r.ytd || 0);
-      const visits90 = Number(r.visits_90d || r.visits90 || 0);
-      const gift = Number(r.gift_card || r.gc || 0);
-
+    function normalize(r,i){
+      const first=(r.first_name||r.first||'').trim(), last=(r.last_name||r.last||'').trim();
       return {
         _id: r.id || String(i),
-        first, last, aka,
-        points, lastPurchase, notes,
-        locker, phone, email, birthday: bday,
-        ytdSpend: ytd, visits90, giftCard: gift,
-        ring_pref: r.ring_pref || r.ring || '',
-        favorite_brands: r.favorite_brands || r.fav_brands || [],
-        favorite_cigars: r.favorite_cigars || r.fav_cigars || [],
-        wishlist: r.wishlist || [],
-        family: r.family || r.family_tree || [],
-        // keep original
-        _raw: r
+        first,last,
+        aka:(r.aka||r.nickname||'').trim(),
+        points: Number(r.points||r.total_points||0),
+        lastPurchase: r.last_purchase||r.last||'',
+        notes:r.notes||'',
+        locker:r.locker||r.locker_number||'',
+        phone:(r.phone||'').trim(), email:(r.email||'').trim(),
+        birthday:r.birthday||r.bday||'',
+        ytdSpend:Number(r.ytd_spend||r.ytd||0),
+        visits90:Number(r.visits_90d||r.visits90||0),
+        giftCard:Number(r.gift_card||r.gc||0),
+        ring_pref:r.ring_pref||r.ring||'',
+        favorite_brands:r.favorite_brands||r.fav_brands||[],
+        favorite_cigars:r.favorite_cigars||r.fav_cigars||[],
+        wishlist:r.wishlist||[], family:r.family||r.family_tree||[],
+        _raw:r
       };
     }
-
     function render(){
-      listEl.innerHTML = '';
-      if(!VIEW.length){ emptyEl.hidden = false; return; }
-      emptyEl.hidden = true;
-
+      listEl.innerHTML=''; if(!VIEW.length){emptyEl.hidden=false;return;} emptyEl.hidden=true;
       for(const r of VIEW){
-        const row = document.createElement('button');
-        row.className = 'row ' + (r.locker ? 'locker' : 'regular');
-        row.type = 'button';
-        row.setAttribute('aria-label', `${r.last}, ${r.first}. Points ${r.points}. Last ${r.lastPurchase}`);
-
-        const name = document.createElement('div');
-        name.innerHTML = `
-          <div class="name">${escapeHTML(r.last)}, ${escapeHTML(r.first)}</div>
-          ${r.aka ? `<div class="aka">aka ${escapeHTML(r.aka)}</div>` : ''}
-          ${r.locker ? `<div class="aka">Locker #${escapeHTML(String(r.locker))}</div>` : '' }
-        `;
-
-        const points = document.createElement('div');
-        points.className = 'points';
-        points.textContent = r.points;
-
-        const last = document.createElement('div');
-        last.className = 'last';
-        last.textContent = r.lastPurchase || '—';
-
-        const notes = document.createElement('div');
-        notes.className = 'notes';
-        notes.textContent = r.notes || '—';
-
-        row.append(name, points, last, notes);
-        row.addEventListener('click', () => openProfile(r));
-        listEl.appendChild(row);
+        const row=document.createElement('button');
+        row.className='row '+(r.locker?'locker':'regular'); row.type='button';
+        row.setAttribute('aria-label',`${r.last}, ${r.first}. Points ${r.points}. Last ${r.lastPurchase}`);
+        const name=document.createElement('div');
+        name.innerHTML=`<div class="name">${esc(r.last)}, ${esc(r.first)}</div>${r.aka?`<div class="aka">aka ${esc(r.aka)}</div>`:''}${r.locker?`<div class="aka">Locker #${esc(String(r.locker))}</div>`:''}`;
+        const points=document.createElement('div'); points.className='points'; points.textContent=r.points;
+        const last=document.createElement('div'); last.className='last'; last.textContent=r.lastPurchase||'—';
+        const notes=document.createElement('div'); notes.className='notes'; notes.textContent=r.notes||'—';
+        row.append(name,points,last,notes); row.addEventListener('click',()=>openProfile(r)); listEl.appendChild(row);
       }
     }
+    function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+    qEl.addEventListener('input',()=>{const q=qEl.value.trim().toLowerCase(); VIEW=!q?ALL.slice():ALL.filter(r=>match(r,q)); render();});
+    function match(r,q){const hay=[r.first,r.last,r.aka,r.phone,r.email,r.lastPurchase,r.birthday,String(r.locker||'')].join(' ').toLowerCase(); return hay.includes(q);}
+    $('#closeModal').addEventListener('click',closeProfile); modalWrap.addEventListener('click',e=>{if(e.target===modalWrap) closeProfile()}); $('#goPOS').addEventListener('click',()=>location.href='/pos.html');
 
-    function escapeHTML(s){ return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[m]); }
+    $('#savePoints').addEventListener('click', async ()=>{
+      if(!CURRENT || !pointsInputEl) return;
+      const newVal = Math.max(0, Math.round(Number(pointsInputEl.value||0))); // enforce integer points
+      // optimistic UI
+      CURRENT.points = newVal;
+      const i1=ALL.findIndex(x=>x._id===CURRENT._id); if(i1>=0) ALL[i1].points=newVal;
+      const i2=VIEW.findIndex(x=>x._id===CURRENT._id); if(i2>=0) VIEW[i2].points=newVal;
+      render(); openProfile(CURRENT); showToast('Points updated');
 
-    // --- Search across many fields
-    qEl.addEventListener('input', () => {
-      const q = qEl.value.trim().toLowerCase();
-      if(!q){ VIEW = ALL.slice(); render(); return; }
-      VIEW = ALL.filter(r => matchRecord(r, q));
-      render();
-    });
-
-    function matchRecord(r, q){
-      const hay = [
-        r.first, r.last, r.aka,
-        r.phone, r.email, r.lastPurchase, r.birthday,
-        String(r.locker || '')
-      ].join(' ').toLowerCase();
-      return hay.includes(q);
-    }
-
-    // --- Modal / Profile
-    $('#closeModal').addEventListener('click', closeProfile);
-    modalWrap.addEventListener('click', (e) => { if(e.target === modalWrap) closeProfile(); });
-    $('#goPOS').addEventListener('click', () => location.href = '/pos.html');
-
-    $('#plusOne').addEventListener('click', async () => {
-      if(!CURRENT) return;
-      // local optimistic increment
-      CURRENT.points = (Number(CURRENT.points) || 0) + 1;
-      // Reflect in list immediately
-      const idx = ALL.findIndex(x => x._id === CURRENT._id);
-      if(idx >= 0) ALL[idx].points = CURRENT.points;
-      const vidx = VIEW.findIndex(x => x._id === CURRENT._id);
-      if(vidx >= 0) VIEW[vidx].points = CURRENT.points;
-      render();
-      openProfile(CURRENT); // refresh modal
-      // TODO: When you’re ready to persist, POST to a write function:
-      /*
-      await fetch('/.netlify/functions/update-loyalty', {
-        method:'POST', headers:{'content-type':'application/json'},
-        body: JSON.stringify({ id: CURRENT._id, op:'inc', points:1 })
-      });
-      */
-      showToast('Point added');
+      // persist (if the function exists)
+      try{
+        const res = await fetch('/.netlify/functions/update-loyalty', {
+          method:'POST',
+          headers:{'content-type':'application/json'},
+          body: JSON.stringify({ id: CURRENT._id, points: newVal })
+        });
+        if(!res.ok){ console.warn('update-loyalty returned', res.status); }
+      }catch(err){ console.warn('update-loyalty not available yet:', err); }
     });
 
     function openProfile(r){
-      CURRENT = r;
-      modalBadge.textContent = r.locker ? `Locker #${r.locker}` : 'Regular';
-      modalBadge.classList.toggle('orange', !r.locker);
-      modalBadge.classList.toggle('blue', !!r.locker);
-      profileEl.innerHTML = '';
+      CURRENT=r; $('#modal-badge').textContent=r.locker?`Locker #${r.locker}`:'Regular';
+      modalBadge.classList.toggle('orange',!r.locker); modalBadge.classList.toggle('blue',!!r.locker);
+      profileEl.innerHTML='';
+      addItem('Name', `${esc(r.first)} ${esc(r.last)}${r.aka?`  ·  aka ${esc(r.aka)}`:''}`);
+      if(r.phone) addItem('Phone', r.phone); if(r.email) addItem('Email', r.email); if(r.birthday) addItem('Birthday', r.birthday);
 
-      addItem('Name', `${escapeHTML(r.first)} ${escapeHTML(r.last)}${r.aka ? `  ·  aka ${escapeHTML(r.aka)}` : ''}`);
-      if(r.phone) addItem('Phone', r.phone);
-      if(r.email) addItem('Email', r.email);
-      if(r.birthday) addItem('Birthday', r.birthday);
-      addItem('Points', r.points);
-      addItem('Last purchase', r.lastPurchase || '—');
-      addItem('YTD spend', formatMoney(r.ytdSpend));
-      addItem('Visits (90 days)', r.visits90 || 0);
-      addItem('Gift card', formatMoney(r.giftCard));
+      // Editable points
+      const pointsRow=document.createElement('div'); pointsRow.className='item';
+      pointsRow.innerHTML=`<label>Points</label>`;
+      const editWrap=document.createElement('div'); editWrap.className='pointsEdit';
+      pointsInputEl=document.createElement('input'); pointsInputEl.className='pointsInput'; pointsInputEl.type='number'; pointsInputEl.step='1'; pointsInputEl.min='0'; pointsInputEl.value=r.points||0;
+      editWrap.appendChild(pointsInputEl); pointsRow.appendChild(editWrap); profileEl.appendChild(pointsRow);
+
+      addItem('Last purchase', r.lastPurchase||'—');
+      addItem('YTD spend', money(r.ytdSpend)); addItem('Visits (90 days)', r.visits90||0); addItem('Gift card', money(r.giftCard));
       if(r.ring_pref) addItem('Ring preference', r.ring_pref);
-
-      addTags('Favorite brands', r.favorite_brands);
-      addTags('Favorite cigars', r.favorite_cigars);
-      addTags('Wishlist', r.wishlist);
-      addTags('Family', r.family);
+      addTags('Favorite brands', r.favorite_brands); addTags('Favorite cigars', r.favorite_cigars); addTags('Wishlist', r.wishlist); addTags('Family', r.family);
       if(r.notes) addItem('Notes', r.notes);
 
-      modalWrap.classList.add('show');
-      modalWrap.setAttribute('aria-hidden','false');
+      modalWrap.classList.add('show'); modalWrap.setAttribute('aria-hidden','false');
     }
+    function closeProfile(){ modalWrap.classList.remove('show'); modalWrap.setAttribute('aria-hidden','true'); }
+    function addItem(label,value){ const el=document.createElement('div'); el.className='item'; el.innerHTML=`<label>${esc(label)}</label><div>${esc(String(value))}</div>`; profileEl.appendChild(el); }
+    function addTags(label,arr){ if(!arr||!arr.length) return; const el=document.createElement('div'); el.className='item'; el.innerHTML=`<label>${esc(label)}</label>`; const wrap=document.createElement('div'); wrap.className='pill'; for(const t of arr){const tag=document.createElement('span'); tag.className='tag'; tag.textContent=t; wrap.appendChild(tag);} el.appendChild(wrap); profileEl.appendChild(el); }
+    function money(n){ return `$${Number(n||0).toFixed(2)}` }
+    function showToast(m){ toast.textContent=m; toast.classList.add('show'); setTimeout(()=>toast.classList.remove('show'),1200) }
 
-    function closeProfile(){
-      modalWrap.classList.remove('show');
-      modalWrap.setAttribute('aria-hidden','true');
-    }
-
-    function addItem(label, value){
-      const el = document.createElement('div');
-      el.className = 'item';
-      el.innerHTML = `<label>${escapeHTML(label)}</label><div>${escapeHTML(String(value))}</div>`;
-      profileEl.appendChild(el);
-    }
-    function addTags(label, arr){
-      if(!arr || !arr.length) return;
-      const el = document.createElement('div');
-      el.className = 'item';
-      el.innerHTML = `<label>${escapeHTML(label)}</label>`;
-      const wrap = document.createElement('div'); wrap.className = 'pill';
-      for(const t of arr){ const tag = document.createElement('span'); tag.className='tag'; tag.textContent = t; wrap.appendChild(tag); }
-      el.appendChild(wrap);
-      profileEl.appendChild(el);
-    }
-    function formatMoney(n){ return `$${Number(n||0).toFixed(2)}` }
-
-    function showToast(msg){
-      toast.textContent = msg;
-      toast.classList.add('show');
-      setTimeout(()=>toast.classList.remove('show'), 1200);
-    }
-
-    // Kickoff
-    loadContacts().catch(err => {
-      listEl.innerHTML = '';
-      emptyEl.hidden = false;
-      emptyEl.textContent = 'Failed to load.';
-      console.error(err);
-    });
+    loadContacts().catch(err=>{ listEl.innerHTML=''; emptyEl.hidden=false; emptyEl.textContent='Failed to load.'; console.error(err); });
   </script>
 </body>
 </html>
