@@ -1,83 +1,111 @@
+// netlify/functions/save-data.js
+// Save POS bills (draft/confirmed), record transactions, and update loyalty points/history.
+
 import { getStore } from '@netlify/blobs';
-import { verifyToken } from './verify-token.js';
 
 function dayKey(dateStr) {
-  // YYYY-MM-DD; fall back to "today"
-  return (dateStr || new Date().toISOString().slice(0, 10));
+  return (dateStr ? new Date(dateStr) : new Date()).toISOString().slice(0,10); // YYYY-MM-DD
 }
 
-// Utility: JSON response with CORS
-function json(data, init = {}) {
-  const headers = {
-    'content-type': 'application/json; charset=utf-8',
-    'access-control-allow-origin': '*',
-    'access-control-allow-headers': 'content-type, authorization, x-admin-token',
-    'access-control-allow-methods': 'OPTIONS, POST',
-    ...init.headers,
-  };
-  return new Response(JSON.stringify(data), { ...init, headers });
+function clampInt(n) {
+  const v = Number.parseInt(n, 10);
+  return Number.isFinite(v) ? v : 0;
 }
 
 export default async (req) => {
-  // Handle preflight quickly
-  if (req.method === 'OPTIONS') return json({ ok: true });
-
   try {
-    // ---- Admin auth
-    const ok = await verifyToken(req);
-    if (!ok) return json({ error: 'unauthorized' }, { status: 401 });
+    if (req.method !== 'POST') {
+      return new Response('Method Not Allowed', { status: 405 });
+    }
 
-    // ---- Parse input
-    const url = new URL(req.url);
-    const qDay = url.searchParams.get('day'); // optional ?day=YYYY-MM-DD
-    const body = await req.json().catch(() => ({}));
+    const { action, bill } = await req.json();
+    if (!action || !bill) throw new Error('Missing action or bill');
 
-    // supported payloads:
-    // { type: 'draft'|'confirmed'|'transaction', day?: 'YYYY-MM-DD', bill?: {...}, tx?: {...} }
-    const type = String(body.type || '').toLowerCase();
-    const day = dayKey(body.day || qDay);
+    const storeBills = getStore('bills');
+    const storeTx = getStore('transactions');
+    const storeL = getStore('loyalty');
 
-    // storage
-    const bills = getStore('bills');          // namespaces used by reports
-    const txs   = getStore('transactions');
+    const now = new Date();
+    const day = dayKey(now.toISOString());
 
-    // read/append/write helper
-    async function appendJSON(store, key, item) {
-      const raw = (await store.get(key)) || '[]';
-      const arr = Array.isArray(raw) ? raw : JSON.parse(raw);
-      arr.push(item);
-      await store.set(key, JSON.stringify(arr), {
-        contentType: 'application/json',
+    // Validate bill numbers
+    const subtotal = Math.max(0, Number(bill.subtotal || 0));
+    const tax = Math.max(0, Number(bill.tax || 0));
+    const total = Math.max(0, Number(bill.total || 0));
+
+    // authoritative points: 1 point per pre-tax dollar, rounded; then apply manual delta
+    const basePoints = Math.round(subtotal);
+    const manualDelta = clampInt(bill.manualDelta || 0);
+    const finalPoints = basePoints + manualDelta;
+
+    // Compact bill to store
+    const saved = {
+      ts: now.toISOString(),
+      itemsCount: clampInt(bill.itemsCount || 0),
+      items: Array.isArray(bill.items) ? bill.items : [],
+      subtotal: +subtotal.toFixed(2),
+      tax: +tax.toFixed(2),
+      total: +total.toFixed(2),
+      method: bill.method || 'cash',
+      loyalty: {
+        id: bill.loyalty?.id || '',
+        name: bill.loyalty?.name || ''
+      },
+      points: finalPoints
+    };
+
+    // Save bill
+    const key = `${action === 'confirmed' ? 'confirmed' : 'pending'}:${day}.json`;
+    const arr = JSON.parse((await storeBills.get(key, { type: 'json' })) || '[]');
+    arr.push(saved);
+    await storeBills.set(key, JSON.stringify(arr), { metadata: { updated: now.toISOString() } });
+
+    // If confirmed, record transaction rollup & update loyalty
+    if (action === 'confirmed') {
+      // 1) rollup list for reports
+      const txKey = `rollup:${day}.json`;
+      const txArr = JSON.parse((await storeTx.get(txKey, { type: 'json' })) || '[]');
+      txArr.push({
+        ts: saved.ts,
+        customer: saved.loyalty?.name || '',
+        method: saved.method,
+        items: saved.itemsCount,
+        subtotal: saved.subtotal,
+        tax: saved.tax,
+        total: saved.total,
+        points: saved.points
       });
-      return arr.length;
+      await storeTx.set(txKey, JSON.stringify(txArr), { metadata: { updated: now.toISOString() } });
+
+      // 2) loyalty points & history
+      const cid = saved.loyalty?.id || '';
+      if (cid) {
+        const ptsKey = `points:${cid}`;
+        const cur = clampInt(await storeL.get(ptsKey, { type: 'text' }));
+        const next = cur + saved.points;
+        await storeL.set(ptsKey, String(next));
+
+        const histKey = `history:${cid}:${day}.json`;
+        const hArr = JSON.parse((await storeL.get(histKey, { type: 'json' })) || '[]');
+        hArr.push({
+          ts: saved.ts,
+          items: saved.itemsCount,
+          subtotal: saved.subtotal,
+          tax: saved.tax,
+          total: saved.total,
+          points: saved.points
+        });
+        await storeL.set(histKey, JSON.stringify(hArr));
+      }
     }
 
-    // Switch on save type
-    if (type === 'draft') {
-      // Expect body.bill
-      if (!body.bill) return json({ error: 'missing bill' }, { status: 400 });
-      const key = `pending:${day}.json`;
-      const count = await appendJSON(bills, key, body.bill);
-      return json({ ok: true, kind: 'draft', day, count });
-
-    } else if (type === 'confirmed') {
-      // Expect body.bill
-      if (!body.bill) return json({ error: 'missing bill' }, { status: 400 });
-      const key = `confirmed:${day}.json`;
-      const count = await appendJSON(bills, key, body.bill);
-      return json({ ok: true, kind: 'confirmed', day, count });
-
-    } else if (type === 'transaction') {
-      // Expect body.tx (rollup entry)
-      if (!body.tx) return json({ error: 'missing tx' }, { status: 400 });
-      const key = `rollup:${day}.json`;
-      const count = await appendJSON(txs, key, body.tx);
-      return json({ ok: true, kind: 'transaction', day, count });
-    }
-
-    return json({ error: 'invalid type' }, { status: 400 });
-
-  } catch (e) {
-    return json({ error: 'save-data failed', detail: String(e) }, { status: 500 });
+    return new Response(JSON.stringify({ ok: true, saved }), {
+      headers: { 'content-type': 'application/json; charset=utf-8' }
+    });
+  } catch (err) {
+    return new Response(JSON.stringify({ error: 'save-data failed', detail: String(err) }), {
+      status: 500,
+      headers: { 'content-type': 'application/json; charset=utf-8' }
+    });
   }
 };
