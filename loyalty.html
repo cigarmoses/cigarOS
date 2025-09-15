@@ -1,201 +1,141 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Loyalty • CigarOS</title>
-  <link rel="icon" href="/img/iconLOYALTY.svg" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Loyalty</title>
   <style>
-    :root{
-      --bg:#f5f6f8; --card:#ffffff; --text:#111827; --muted:#6b7280; --line:#e5e7eb;
-      --blue:#1992FE; --orange:#f59e0b; --shadow:0 10px 30px rgba(0,0,0,.06); --radius:22px;
-    }
-    *{box-sizing:border-box}
-    html,body{margin:0;background:var(--bg);color:var(--text);font:16px/1.35 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
-    .app{max-width:720px;margin-inline:auto;padding:16px 16px 24px}
-    .topbar{display:flex;align-items:center;gap:10px}
-    .back{padding:10px 12px;border-radius:12px;background:var(--card);box-shadow:var(--shadow);display:inline-flex}
-    .title{font-weight:700;font-size:20px}
-    .searchWrap{margin:14px 0}
-    .search{width:100%;padding:14px 16px;border-radius:16px;border:1px solid var(--line);background:var(--card);box-shadow:var(--shadow);font-size:16px}
-    .chips{display:flex;gap:14px;margin-top:10px}
-    .chip{display:flex;align-items:center;gap:8px;font-size:13px;color:#374151}
-    .dot{width:10px;height:10px;border-radius:50%}
-    .dot.blue{background:var(--blue)} .dot.orange{background:var(--orange)}
-    .list{margin-top:12px;display:flex;flex-direction:column;gap:12px}
-    .row{background:var(--card);border-radius:18px;box-shadow:var(--shadow);padding:14px;display:grid;grid-template-columns:1fr auto auto 1.2fr;gap:10px;align-items:center}
-    .row .name{font-weight:700}
-    .row .aka{font-size:12px;color:var(--muted)}
-    .row .points{font-weight:800;text-align:right}
-    .row .last{font-size:13px;color:#374151;text-align:right}
-    .row .notes{font-size:13px;color:#374151;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:right}
-    .row.locker{outline:2px solid rgba(25,146,254,.25)} .row.locker .name{color:#083b79}
-    .row.regular{outline:2px solid rgba(245,158,11,.25)} .row.regular .name{color:#7a3d00}
-    @media (max-width:560px){ .row{grid-template-columns:1.2fr .5fr .7fr 1fr} }
-    .empty{padding:24px;text-align:center;color:var(--muted)}
-    .modalWrap{position:fixed;inset:0;background:rgba(0,0,0,.38);display:none;align-items:flex-end;justify-content:center}
-    .modalWrap.show{display:flex}
-    .modal{width:100%;max-width:720px;background:var(--card);border-radius:22px 22px 0 0;box-shadow:0 -10px 30px rgba(0,0,0,.15);padding:18px 16px 28px;max-height:88vh;overflow:auto}
-    .modalHeader{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}
-    .modalTitle{font-weight:800;font-size:18px}
-    .badge{display:inline-flex;gap:8px;align-items:center;font-size:12px;padding:6px 10px;border-radius:999px;background:#eff6ff;color:#0c4a6e}
-    .badge.orange{background:#fff7ed;color:#7c2d12}
-    .grid{display:grid;gap:10px;margin-top:10px}
-    .item{display:flex;justify-content:space-between;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:14px}
-    .item label{color:var(--muted);font-size:13px}
-    .pill{display:inline-flex;gap:8px;flex-wrap:wrap}
-    .tag{padding:6px 10px;border-radius:999px;background:#f3f4f6;font-size:12px}
-    .actions{display:flex;gap:10px;margin-top:14px}
-    .btn{flex:1;padding:12px 14px;border-radius:14px;border:1px solid var(--line);background:var(--card);font-weight:700}
-    .btn.primary{background:#111827;color:#fff;border-color:#111827}
-    .btn.icon{flex:0 0 auto;width:auto;padding:10px 12px}
-    .pointsEdit{display:flex;align-items:center;gap:12px}
-    .pointsInput{width:110px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;font-weight:800;text-align:right}
-    .toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:#111827;color:#fff;padding:10px 14px;border-radius:12px;display:none}
-    .toast.show{display:block}
+    body { font-family: system-ui, sans-serif; margin: 0; padding: 0; background: #f9f9f9; }
+    .loyalty-wrap { padding: 12px; }
+    #loyalty-search { width:100%; padding:10px 12px; border-radius:8px; border:1px solid #ddd; }
+    .loyalty-list { list-style:none; margin:12px 0 0; padding:0; }
+    .loyalty-row { display:flex; align-items:center; justify-content:space-between; padding:10px 12px; border-bottom:1px solid #eee; cursor:pointer; }
+    .loyalty-row:hover { background:#fafafa; }
+    .badge { font-size:12px; padding:2px 8px; border-radius:999px; color:#fff; }
+    .badge.blue { background:#2b6cb0; }   /* locker */
+    .badge.orange { background:#dd6b20; } /* regular */
+    .loyalty-modal { position:fixed; inset:0; background:rgba(0,0,0,.4); display:grid; place-items:center; }
+    .modal-card { width:min(680px,92vw); background:#fff; border-radius:12px; padding:16px; box-shadow:0 10px 30px rgba(0,0,0,.2); }
+    .modal-close { float:right; border:0; background:transparent; font-size:18px; cursor:pointer; }
+    .kv { display:grid; grid-template-columns:140px 1fr; gap:6px 12px; margin:10px 0; }
+    .kv b { color:#444; }
+    .truncate { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:52vw; }
   </style>
 </head>
 <body>
-  <div class="app">
-    <div class="topbar">
-      <a class="back" href="/"><span aria-hidden="true">←</span></a>
-      <div class="title">Loyalty</div>
-    </div>
 
-    <div class="searchWrap">
-      <input id="q" class="search" placeholder="Search name, phone, email, aka, last visit, locker, birthday…" autocomplete="off" />
-      <div class="chips">
-        <div class="chip"><span class="dot blue"></span> Locker members</div>
-        <div class="chip"><span class="dot orange"></span> Regulars</div>
-      </div>
-    </div>
-
-    <div id="list" class="list" role="list"></div>
-    <div id="empty" class="empty" hidden>No results.</div>
+  <!-- Loyalty UI -->
+  <div class="loyalty-wrap">
+    <input id="loyalty-search" type="search" placeholder="Search name, phone, email, aka, locker, birthday…" autocomplete="off" />
+    <ul id="loyalty-list" class="loyalty-list"></ul>
   </div>
 
-  <!-- Modal -->
-  <div id="modalWrap" class="modalWrap" aria-hidden="true">
-    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
-      <div class="modalHeader">
-        <div>
-          <div id="modal-title" class="modalTitle">Profile</div>
-          <div id="modal-badge" class="badge">Locker member</div>
-        </div>
-        <button id="closeModal" class="btn icon" aria-label="Close">✕</button>
-      </div>
-      <div id="profile" class="grid"></div>
-      <div class="actions">
-        <button id="savePoints" class="btn">Save</button>
-        <button id="goPOS" class="btn primary">Checkout</button>
-      </div>
+  <!-- Profile Modal -->
+  <div id="loyalty-modal" class="loyalty-modal" hidden>
+    <div class="modal-card">
+      <button class="modal-close" onclick="closeLoyaltyModal()">✕</button>
+      <div id="loyalty-modal-body"></div>
     </div>
   </div>
-
-  <div id="toast" class="toast">Saved</div>
 
   <script>
-    const $ = (s, r=document)=>r.querySelector(s);
-    let ALL=[], VIEW=[], CURRENT=null;
-    const listEl=$('#list'), emptyEl=$('#empty'), qEl=$('#q'), modalWrap=$('#modalWrap');
-    const profileEl=$('#profile'), modalBadge=$('#modal-badge'), toast=$('#toast');
-    let pointsInputEl=null; // created inside modal
+    let LOYALTY_ROWS = [];
+    const FIELDS = {
+      LAST: 'Last Name',
+      FIRST: 'First Name',
+      AKA: 'Nickname “aka”',
+      POINTS: 'Points',
+      LAST_PURCHASE: 'Last Purchase',
+      NOTES: 'Notes',
+      LOCKER: 'Locker #',
+      REGULAR: 'Regular',
+      PHONE: 'Phone',
+      EMAIL: 'Email',
+      BDAY: 'Birthday',
+      YTD: 'YTD spend',
+      VISITS90: '90-day visits',
+      GIFT: 'Gift card balance',
+      RING: 'Ring Pref'
+    };
 
-    async function loadContacts(){
-      const res=await fetch('/.netlify/functions/get-loyalty',{cache:'no-store'});
-      const j=await res.json(); if(!j.ok) throw new Error(j.error||'load failed');
-      ALL=(j.data||[]).map(normalize); VIEW=ALL.slice(); render();
-    }
-    function normalize(r,i){
-      const first=(r.first_name||r.first||'').trim(), last=(r.last_name||r.last||'').trim();
-      return {
-        _id: r.id || String(i),
-        first,last,
-        aka:(r.aka||r.nickname||'').trim(),
-        points: Number(r.points||r.total_points||0),
-        lastPurchase: r.last_purchase||r.last||'',
-        notes:r.notes||'',
-        locker:r.locker||r.locker_number||'',
-        phone:(r.phone||'').trim(), email:(r.email||'').trim(),
-        birthday:r.birthday||r.bday||'',
-        ytdSpend:Number(r.ytd_spend||r.ytd||0),
-        visits90:Number(r.visits_90d||r.visits90||0),
-        giftCard:Number(r.gift_card||r.gc||0),
-        ring_pref:r.ring_pref||r.ring||'',
-        favorite_brands:r.favorite_brands||r.fav_brands||[],
-        favorite_cigars:r.favorite_cigars||r.fav_cigars||[],
-        wishlist:r.wishlist||[], family:r.family||r.family_tree||[],
-        _raw:r
-      };
-    }
-    function render(){
-      listEl.innerHTML=''; if(!VIEW.length){emptyEl.hidden=false;return;} emptyEl.hidden=true;
-      for(const r of VIEW){
-        const row=document.createElement('button');
-        row.className='row '+(r.locker?'locker':'regular'); row.type='button';
-        row.setAttribute('aria-label',`${r.last}, ${r.first}. Points ${r.points}. Last ${r.lastPurchase}`);
-        const name=document.createElement('div');
-        name.innerHTML=`<div class="name">${esc(r.last)}, ${esc(r.first)}</div>${r.aka?`<div class="aka">aka ${esc(r.aka)}</div>`:''}${r.locker?`<div class="aka">Locker #${esc(String(r.locker))}</div>`:''}`;
-        const points=document.createElement('div'); points.className='points'; points.textContent=r.points;
-        const last=document.createElement('div'); last.className='last'; last.textContent=r.lastPurchase||'—';
-        const notes=document.createElement('div'); notes.className='notes'; notes.textContent=r.notes||'—';
-        row.append(name,points,last,notes); row.addEventListener('click',()=>openProfile(r)); listEl.appendChild(row);
-      }
-    }
-    function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
-    qEl.addEventListener('input',()=>{const q=qEl.value.trim().toLowerCase(); VIEW=!q?ALL.slice():ALL.filter(r=>match(r,q)); render();});
-    function match(r,q){const hay=[r.first,r.last,r.aka,r.phone,r.email,r.lastPurchase,r.birthday,String(r.locker||'')].join(' ').toLowerCase(); return hay.includes(q);}
-    $('#closeModal').addEventListener('click',closeProfile); modalWrap.addEventListener('click',e=>{if(e.target===modalWrap) closeProfile()}); $('#goPOS').addEventListener('click',()=>location.href='/pos.html');
+    function val(v){ return (v===undefined||v===null||Number.isNaN(v)) ? '' : String(v); }
+    function isLocker(row){ return val(row[FIELDS.LOCKER]).trim() !== ''; }
+    function badge(row){ return `<span class="badge ${isLocker(row)?'blue':'orange'}">${isLocker(row)?'Locker':'Regular'}</span>`; }
 
-    $('#savePoints').addEventListener('click', async ()=>{
-      if(!CURRENT || !pointsInputEl) return;
-      const newVal = Math.max(0, Math.round(Number(pointsInputEl.value||0))); // enforce integer points
-      // optimistic UI
-      CURRENT.points = newVal;
-      const i1=ALL.findIndex(x=>x._id===CURRENT._id); if(i1>=0) ALL[i1].points=newVal;
-      const i2=VIEW.findIndex(x=>x._id===CURRENT._id); if(i2>=0) VIEW[i2].points=newVal;
-      render(); openProfile(CURRENT); showToast('Points updated');
+    function rowLine(row){
+      const last = val(row[FIELDS.LAST]);
+      const first = val(row[FIELDS.FIRST]);
+      const aka = val(row[FIELDS.AKA]);
+      const points = val(row[FIELDS.POINTS]);
+      const lastPurchase = val(row[FIELDS.LAST_PURCHASE]);
+      const notes = val(row[FIELDS.NOTES]);
+      return `
+        <li class="loyalty-row" onclick='openLoyaltyModal(${JSON.stringify(JSON.stringify(row))})'>
+          <div class="truncate"><strong>${last}, ${first}</strong> ${aka?`(<em>${aka}</em>)`:''}</div>
+          <div class="truncate">→ Points: <strong>${points||'0'}</strong> • ${lastPurchase||'—'} • ${notes||''}</div>
+          ${badge(row)}
+        </li>`;
+    }
 
-      // persist (if the function exists)
-      try{
-        const res = await fetch('/.netlify/functions/update-loyalty', {
-          method:'POST',
-          headers:{'content-type':'application/json'},
-          body: JSON.stringify({ id: CURRENT._id, points: newVal })
-        });
-        if(!res.ok){ console.warn('update-loyalty returned', res.status); }
-      }catch(err){ console.warn('update-loyalty not available yet:', err); }
+    function render(list){
+      document.getElementById('loyalty-list').innerHTML = list.map(rowLine).join('');
+    }
+
+    function filterRows(q){
+      if(!q) return LOYALTY_ROWS;
+      q = q.toLowerCase();
+      const keys = [FIELDS.LAST,FIELDS.FIRST,FIELDS.AKA,FIELDS.PHONE,FIELDS.EMAIL,FIELDS.LOCKER,FIELDS.BDAY];
+      return LOYALTY_ROWS.filter(r => keys.some(k => val(r[k]).toLowerCase().includes(q)));
+    }
+
+    async function fetchLoyalty(){
+      const res = await fetch('/.netlify/functions/get-loyalty', { cache:'no-store' });
+      const json = await res.json();
+      if(!json.ok) throw new Error(json.error || 'Failed to load loyalty data');
+      LOYALTY_ROWS = (json.data || []).map(r=>{
+        for(const k in r){ if(typeof r[k]==='number' && Number.isNaN(r[k])) r[k]=null; }
+        return r;
+      });
+      render(LOYALTY_ROWS);
+    }
+
+    function setupSearch(){
+      document.getElementById('loyalty-search').addEventListener('input', (e)=>{
+        render(filterRows(e.target.value));
+      });
+    }
+
+    function openLoyaltyModal(rowJson){
+      const row = JSON.parse(rowJson);
+      const el = document.getElementById('loyalty-modal-body');
+      el.innerHTML = `
+        <h3>${val(row[FIELDS.FIRST])} ${val(row[FIELDS.LAST])} ${badge(row)}</h3>
+        <div class="kv">
+          <b>AKA</b><div>${val(row[FIELDS.AKA])||'—'}</div>
+          <b>Points</b><div>${val(row[FIELDS.POINTS])||'0'}</div>
+          <b>Last Purchase</b><div>${val(row[FIELDS.LAST_PURCHASE])||'—'}</div>
+          <b>YTD Spend</b><div>${val(row[FIELDS.YTD])||'—'}</div>
+          <b>Visits (90d)</b><div>${val(row[FIELDS.VISITS90])||'—'}</div>
+          <b>Gift Card</b><div>${val(row[FIELDS.GIFT])||'—'}</div>
+          <b>Phone</b><div>${val(row[FIELDS.PHONE])||'—'}</div>
+          <b>Email</b><div>${val(row[FIELDS.EMAIL])||'—'}</div>
+          <b>Birthday</b><div>${val(row[FIELDS.BDAY])||'—'}</div>
+          <b>Ring Pref</b><div>${val(row[FIELDS.RING])||'—'}</div>
+          <b>Locker #</b><div>${val(row[FIELDS.LOCKER])||'—'}</div>
+          <b>Notes</b><div>${val(row[FIELDS.NOTES])||'—'}</div>
+        </div>
+      `;
+      document.getElementById('loyalty-modal').hidden = false;
+    }
+
+    function closeLoyaltyModal(){ document.getElementById('loyalty-modal').hidden = true; }
+    window.closeLoyaltyModal = closeLoyaltyModal;
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      setupSearch();
+      try { await fetchLoyalty(); }
+      catch (e) { console.error(e); document.getElementById('loyalty-list').innerHTML = '<li>Failed to load loyalty data.</li>'; }
     });
-
-    function openProfile(r){
-      CURRENT=r; $('#modal-badge').textContent=r.locker?`Locker #${r.locker}`:'Regular';
-      modalBadge.classList.toggle('orange',!r.locker); modalBadge.classList.toggle('blue',!!r.locker);
-      profileEl.innerHTML='';
-      addItem('Name', `${esc(r.first)} ${esc(r.last)}${r.aka?`  ·  aka ${esc(r.aka)}`:''}`);
-      if(r.phone) addItem('Phone', r.phone); if(r.email) addItem('Email', r.email); if(r.birthday) addItem('Birthday', r.birthday);
-
-      // Editable points
-      const pointsRow=document.createElement('div'); pointsRow.className='item';
-      pointsRow.innerHTML=`<label>Points</label>`;
-      const editWrap=document.createElement('div'); editWrap.className='pointsEdit';
-      pointsInputEl=document.createElement('input'); pointsInputEl.className='pointsInput'; pointsInputEl.type='number'; pointsInputEl.step='1'; pointsInputEl.min='0'; pointsInputEl.value=r.points||0;
-      editWrap.appendChild(pointsInputEl); pointsRow.appendChild(editWrap); profileEl.appendChild(pointsRow);
-
-      addItem('Last purchase', r.lastPurchase||'—');
-      addItem('YTD spend', money(r.ytdSpend)); addItem('Visits (90 days)', r.visits90||0); addItem('Gift card', money(r.giftCard));
-      if(r.ring_pref) addItem('Ring preference', r.ring_pref);
-      addTags('Favorite brands', r.favorite_brands); addTags('Favorite cigars', r.favorite_cigars); addTags('Wishlist', r.wishlist); addTags('Family', r.family);
-      if(r.notes) addItem('Notes', r.notes);
-
-      modalWrap.classList.add('show'); modalWrap.setAttribute('aria-hidden','false');
-    }
-    function closeProfile(){ modalWrap.classList.remove('show'); modalWrap.setAttribute('aria-hidden','true'); }
-    function addItem(label,value){ const el=document.createElement('div'); el.className='item'; el.innerHTML=`<label>${esc(label)}</label><div>${esc(String(value))}</div>`; profileEl.appendChild(el); }
-    function addTags(label,arr){ if(!arr||!arr.length) return; const el=document.createElement('div'); el.className='item'; el.innerHTML=`<label>${esc(label)}</label>`; const wrap=document.createElement('div'); wrap.className='pill'; for(const t of arr){const tag=document.createElement('span'); tag.className='tag'; tag.textContent=t; wrap.appendChild(tag);} el.appendChild(wrap); profileEl.appendChild(el); }
-    function money(n){ return `$${Number(n||0).toFixed(2)}` }
-    function showToast(m){ toast.textContent=m; toast.classList.add('show'); setTimeout(()=>toast.classList.remove('show'),1200) }
-
-    loadContacts().catch(err=>{ listEl.innerHTML=''; emptyEl.hidden=false; emptyEl.textContent='Failed to load.'; console.error(err); });
   </script>
 </body>
 </html>
