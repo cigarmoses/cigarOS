@@ -1,31 +1,54 @@
 // netlify/functions/get-loyalty.js
-// ESM (package.json has "type":"module")
-
 import { getStore } from '@netlify/blobs';
 
-export default async (req) => {
+// Clean up NaN/Infinity so JSON stays valid
+function sanitizeJsonText(text) {
+  return text
+    .replace(/:\s*NaN\b/g, ': null')
+    .replace(/:\s*Infinity\b/g, ': null')
+    .replace(/:\s*-Infinity\b/g, ': null');
+}
+
+function deepClean(value) {
+  if (Array.isArray(value)) return value.map(deepClean);
+  if (value && typeof value === 'object') {
+    const out = {};
+    for (const [k, v] of Object.entries(value)) out[k] = deepClean(v);
+    return out;
+  }
+  if (typeof value === 'number' && Number.isNaN(value)) return null;
+  if (value === undefined) return null;
+  return value;
+}
+
+export default async () => {
   try {
-    // Read the "contacts" store and the single JSON document
+    // Primary: pull from Netlify Blobs
     const store = getStore('contacts');
-    const txt = await store.get('contacts.json');
+    const raw = await store.get('contacts.json', { type: 'text' });
+    if (!raw) throw new Error('No data found in Blobs');
 
-    // If the blob isn't set yet, return empty array
-    const data = txt ? JSON.parse(txt) : [];
+    const safe = sanitizeJsonText(raw);
+    const data = deepClean(JSON.parse(safe));
 
-    return new Response(JSON.stringify({ ok: true, data }), {
-      status: 200,
-      headers: {
-        'content-type': 'application/json; charset=utf-8',
-        'cache-control': 'no-store',
-      },
+    return new Response(JSON.stringify({ ok: true, source: 'blobs', data }), {
+      headers: { 'content-type': 'application/json' }
     });
   } catch (err) {
-    return new Response(
-      JSON.stringify({ ok: false, error: String(err) }),
-      {
-        status: 500,
-        headers: { 'content-type': 'application/json; charset=utf-8' },
-      }
-    );
+    // Fallback to /img/contacts.json if Blobs fails
+    try {
+      const url = new URL('../../img/contacts.json', import.meta.url);
+      const res = await fetch(url);
+      const data = await res.json();
+
+      return new Response(JSON.stringify({ ok: true, source: 'fallback', data }), {
+        headers: { 'content-type': 'application/json' }
+      });
+    } catch (fallbackErr) {
+      return new Response(
+        JSON.stringify({ ok: false, error: fallbackErr.message }),
+        { status: 500, headers: { 'content-type': 'application/json' } }
+      );
+    }
   }
 };
