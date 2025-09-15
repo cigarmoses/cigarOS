@@ -1,10 +1,274 @@
-<!doctype html><html><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Loyalty</title>
-<style>body{font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;margin:0;color:#111827}header{padding:16px 18px;font-size:20px;font-weight:800}.wrap{padding:0 18px 28px}</style>
-</head><body>
-<header>Loyalty</header>
-<div class="wrap">
-  <p>This is a placeholder. We’ll plug in your customer list here and allow quick search/attach to bills.</p>
-  <p><a href="/">⬅ Home</a></p>
-</div>
-</body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Loyalty — cigarOS</title>
+  <style>
+    :root{
+      --bg:#f7f8fa; --card:#fff; --text:#1b1f24; --muted:#667085; --accent:#1677ff;
+      --radius:22px;
+    }
+    body{margin:0;background:var(--bg);color:var(--text);font:16px/1.4 system-ui, -apple-system, Segoe UI, Roboto, Inter, Helvetica, Arial;}
+    .wrap{max-width:1100px;margin:32px auto;padding:0 16px;}
+    header{display:flex;align-items:center;gap:12px;margin-bottom:16px;}
+    header a{color:var(--muted);text-decoration:none}
+    h1{font-size:22px;margin:0}
+    .bar{display:flex;gap:12px;flex-wrap:wrap;margin:16px 0}
+    input[type="search"]{flex:1;min-width:280px;padding:12px 14px;border:1px solid #e5e7eb;border-radius:12px;background:#fff;}
+    .btn{appearance:none;border:0;background:var(--accent);color:#fff;padding:10px 14px;border-radius:12px;cursor:pointer;font-weight:600}
+    .btn.secondary{background:#e8eefc;color:#274060}
+    .grid{display:grid;gap:12px;grid-template-columns: 1fr}
+    @media (min-width:640px){ .grid{ grid-template-columns: 1.5fr 1fr } }
+    .card{background:var(--card);border-radius:var(--radius);box-shadow:0 10px 30px rgba(0,0,0,.06);padding:16px}
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:10px 8px;border-bottom:1px solid #f0f2f5;font-size:14px}
+    th{text-align:left;color:var(--muted);font-weight:600}
+    tr{cursor:pointer}
+    tr:hover{background:#fafbff}
+    .pill{display:inline-block;padding:4px 8px;border-radius:999px;background:#f3f4f6;font-size:12px}
+    .muted{color:var(--muted)}
+    .rowhead{display:flex;align-items:center;gap:10px}
+    .right{display:flex;justify-content:flex-end;gap:8px}
+    .section{margin-top:12px}
+    .title{font-weight:700}
+    .small{font-size:12px;color:var(--muted)}
+    .hint{font-size:13px;color:var(--muted);margin-top:8px}
+    .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+    .hidden{display:none}
+    .list{max-height:70vh;overflow:auto}
+    .footerlink{margin-top:16px}
+    .link{color:var(--accent);text-decoration:none}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <a href="/">&larr; Home</a>
+      <h1>Loyalty</h1>
+    </header>
+
+    <div class="bar">
+      <input id="q" type="search" placeholder="Search name, email, phone, brand preference…" />
+      <button class="btn secondary" id="exportBtn">Export CSV</button>
+      <label class="btn" for="csvFile">Import CSV</label>
+      <input id="csvFile" type="file" accept=".csv" class="hidden" />
+    </div>
+
+    <div class="grid">
+      <!-- LEFT: list -->
+      <div class="card list">
+        <table id="tbl">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th class="muted">Email</th>
+              <th class="muted">Phone</th>
+              <th class="muted">Points</th>
+              <th class="muted">Prefs</th>
+            </tr>
+          </thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </div>
+
+      <!-- RIGHT: details -->
+      <div class="card" id="detail">
+        <div class="small muted">Select a contact…</div>
+      </div>
+    </div>
+
+    <div class="footerlink small">
+      Need to tweak columns from Numbers? Export CSV with headers like:
+      <span class="pill">id</span> <span class="pill">first_name</span> <span class="pill">last_name</span>
+      <span class="pill">email</span> <span class="pill">phone</span> <span class="pill">points</span>
+      <span class="pill">preferences</span> <span class="pill">last_purchase_brand</span> <span class="pill">last_purchase_item</span>
+    </div>
+  </div>
+
+<script>
+const ADMIN_TOKEN = localStorage.getItem('ADMIN_TOKEN') || ''; // set this once on the device if you want to import
+
+let contacts = [];
+let inventory = [];
+
+// ---------- tiny CSV helpers ----------
+function toCSV(arr){
+  if(!arr.length) return '';
+  const cols = Object.keys(arr[0]);
+  const esc = v => `"${String(v ?? '').replace(/"/g,'""')}"`;
+  const head = cols.map(esc).join(',');
+  const body = arr.map(o => cols.map(k=>esc(o[k])).join(',')).join('\n');
+  return head + '\n' + body;
+}
+
+// ---------- data fetch ----------
+async function loadContacts(){
+  const r = await fetch('/.netlify/functions/get-contacts');
+  if(!r.ok) throw new Error('contacts load failed');
+  contacts = await r.json();
+  renderList();
+}
+async function loadInventory(){
+  try{
+    const r = await fetch('/.netlify/functions/get-data');
+    if(!r.ok) return; // not fatal
+    inventory = await r.json();
+  }catch(_){}
+}
+
+// ---------- UI render ----------
+const rowsEl = document.getElementById('rows');
+const qEl = document.getElementById('q');
+const detailEl = document.getElementById('detail');
+
+function renderList(){
+  const q = qEl.value.trim().toLowerCase();
+  const visible = contacts.filter(c=>{
+    if(!q) return true;
+    const hay = `${c.first_name} ${c.last_name} ${c.email} ${c.phone} ${(c.preferences||[]).join(' ')}`.toLowerCase();
+    return hay.includes(q);
+  });
+  rowsEl.innerHTML = visible.map(c=>{
+    const name = `${c.first_name || ''} ${c.last_name || ''}`.trim() || '(no name)';
+    const prefs = (c.preferences||[]).slice(0,2).join(', ');
+    return `
+      <tr data-id="${c.id}">
+        <td class="rowhead"><strong>${name}</strong></td>
+        <td class="muted">${c.email || ''}</td>
+        <td class="muted">${c.phone || ''}</td>
+        <td><span class="pill">${Number(c.points||0)}</span></td>
+        <td class="muted">${prefs}</td>
+      </tr>
+    `;
+  }).join('');
+}
+
+function renderDetail(id){
+  const c = contacts.find(x=>String(x.id) === String(id));
+  if(!c){ detailEl.innerHTML = `<div class="small muted">Select a contact…</div>`; return; }
+
+  const name = `${c.first_name||''} ${c.last_name||''}`.trim() || '(no name)';
+  const prefs = (c.preferences || []).join(', ') || '—';
+
+  const suggestions = suggestCigars(c).slice(0,4);
+  const sgHTML = suggestions.length ? `
+    <div class="section">
+      <div class="title">Suggested cigars</div>
+      <div class="small">Based on preferences & last purchase.</div>
+      <ul>
+        ${suggestions.map(s => `<li>${s.brand} — ${s.item} <span class="small muted">(${s.vitola || ''})</span></li>`).join('')}
+      </ul>
+    </div>
+  ` : '';
+
+  detailEl.innerHTML = `
+    <div class="title" style="font-size:18px">${name}</div>
+    <div class="small">${c.email || ''} ${c.email && c.phone ? ' • ' : ''} ${c.phone || ''}</div>
+
+    <div class="section">
+      <div class="title">Points</div>
+      <div class="actions">
+        <span class="pill" id="pts">${Number(c.points||0)}</span>
+        <button class="btn secondary" data-act="add-5">+5</button>
+        <button class="btn secondary" data-act="add-10">+10</button>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="title">Preferences</div>
+      <div class="small">${prefs}</div>
+      <div class="small">Last: ${c.last_purchase_brand || '—'} ${c.last_purchase_item ? '— '+c.last_purchase_item : ''}</div>
+    </div>
+
+    ${sgHTML}
+
+    <div class="section">
+      <div class="title">Notes</div>
+      <div class="small">${c.notes || '—'}</div>
+    </div>
+  `;
+
+  // attach point buttons
+  detailEl.querySelectorAll('[data-act]').forEach(btn=>{
+    btn.addEventListener('click', async ()=>{
+      const delta = btn.dataset.act === 'add-5' ? 5 : 10;
+      if(!ADMIN_TOKEN){ alert('Set ADMIN_TOKEN in localStorage to update points from this device.'); return; }
+      const r = await fetch('/.netlify/functions/update-points', {
+        method:'POST',
+        headers:{ 'content-type':'application/json','x-admin-token':ADMIN_TOKEN },
+        body: JSON.stringify({ contactId: c.id, delta })
+      });
+      const out = await r.json();
+      if(r.ok){ 
+        c.points = out.contact.points;
+        detailEl.querySelector('#pts').textContent = c.points;
+        // update in list too
+        const row = rowsEl.querySelector(`tr[data-id="${c.id}"]`);
+        if(row) row.querySelector('.pill').textContent = c.points;
+      } else {
+        alert(out.error || 'Failed to update points');
+      }
+    });
+  });
+}
+
+function suggestCigars(c){
+  if(!inventory?.length) return [];
+  const prefs = (c.preferences||[]).map(x=>x.toLowerCase());
+  const lpBrand = (c.last_purchase_brand||'').toLowerCase();
+
+  // score each inventory item by brand preference + last brand + simple stock > 0
+  return inventory
+    .filter(i => (i.inventory == null || Number(i.inventory) > 0))
+    .map(i => {
+      const brand = (i.brand||'').toLowerCase();
+      let score = 0;
+      if (prefs.some(p => brand.includes(p))) score += 2;
+      if (lpBrand && brand.includes(lpBrand)) score += 1;
+      return { ...i, _score: score };
+    })
+    .filter(i => i._score > 0)
+    .sort((a,b)=> b._score - a._score);
+}
+
+// ---------- events ----------
+qEl.addEventListener('input', renderList);
+rowsEl.addEventListener('click', (e)=>{
+  const tr = e.target.closest('tr[data-id]');
+  if(tr) renderDetail(tr.dataset.id);
+});
+
+document.getElementById('exportBtn').addEventListener('click', ()=>{
+  const csv = toCSV(contacts);
+  const blob = new Blob([csv], { type:'text/csv;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'loyalty-contacts.csv';
+  a.click();
+});
+
+document.getElementById('csvFile').addEventListener('change', async (e)=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  if(!ADMIN_TOKEN){ alert('Set ADMIN_TOKEN in localStorage to import.'); e.target.value=''; return; }
+  const text = await file.text();
+  const r = await fetch('/.netlify/functions/save-contacts', {
+    method:'POST',
+    headers:{ 'content-type':'text/plain; charset=utf-8', 'x-admin-token': ADMIN_TOKEN },
+    body: text
+  });
+  const out = await r.json();
+  if(!r.ok){ alert(out.error || 'Import failed'); return; }
+  await loadContacts();
+  alert(`Imported ${out.count} contacts`);
+  e.target.value = '';
+});
+
+// ---------- boot ----------
+(async function init(){
+  await Promise.all([loadContacts(), loadInventory()]);
+})();
+</script>
+</body>
+</html>
