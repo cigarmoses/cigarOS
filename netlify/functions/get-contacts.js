@@ -1,4 +1,3 @@
-// ESM function – returns full contacts JSON
 import { getStore } from '@netlify/blobs';
 
 export default async () => {
