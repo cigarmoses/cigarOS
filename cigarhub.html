@@ -1,271 +1,275 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Cigar Hub (Master Database)</title>
-  <style>
-    :root{
-      --bg:#f6f7fb; --ink:#111; --muted:#6b7280; --card:#fff; --accent:#111;
-      --bd:#e5e7eb;
-    }
-    *{box-sizing:border-box}
-    body{margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif; color:var(--ink); background:var(--bg)}
-    header{padding:24px 16px; text-align:center}
-    h1{margin:0 0 6px; font-size:28px}
-    header p{margin:0; color:var(--muted)}
-    .wrap{max-width:1200px; margin:0 auto; padding:16px}
-
-    .toolbar{
-      display:flex; gap:12px; flex-wrap:wrap; align-items:center; margin-bottom:12px
-    }
-    .toolbar input[type="search"]{
-      flex:1 1 300px; padding:10px 12px; border:1px solid var(--bd); border-radius:10px; background:#fff; font-size:14px
-    }
-    .btn{appearance:none; border:1px solid var(--bd); background:#fff; padding:9px 12px; border-radius:10px; font-size:14px; cursor:pointer}
-    .btn.primary{background:var(--accent); color:#fff; border-color:var(--accent)}
-    .btn:disabled{opacity:.6; cursor:not-allowed}
-
-    .card{background:var(--card); border:1px solid var(--bd); border-radius:14px; box-shadow:0 6px 20px rgba(0,0,0,0.06); padding:10px}
-    .table-wrap{overflow:auto; border-radius:10px}
-    table{width:100%; border-collapse:collapse; min-width:1000px}
-    th,td{padding:10px 12px; border-bottom:1px solid var(--bd); vertical-align:top; font-size:14px}
-    th{background:#111; color:#fff; position:sticky; top:0; z-index:1; text-align:left}
-    tr:hover td{background:#fafafa}
-    .empty{padding:24px; text-align:center; color:var(--muted)}
-
-    .topbar{display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:10px}
-    a.home{color:var(--ink); text-decoration:none; border:1px solid var(--bd); padding:8px 10px; border-radius:10px}
-    .pill{font-size:12px; color:var(--muted)}
-    .imgthumb{display:inline-block; width:44px; height:44px; object-fit:cover; border-radius:8px; border:1px solid var(--bd)}
-    .nowrap{white-space:nowrap}
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>POS — CigarOS</title>
+<link rel="icon" href="/img/favicon.svg">
+<style>
+  :root {
+    --bg:#0f1115; --panel:#141821; --card:#1a2030; --text:#e8eefc; --muted:#9fb0d0;
+    --accent:#60a5fa; --green:#22c55e; --red:#ef4444; --shadow:0 12px 30px rgba(0,0,0,.4);
+    --radius:16px;
+  }
+  *{box-sizing:border-box}
+  body { margin:0; background:var(--bg); color:var(--text); font:15px/1.5 system-ui, -apple-system, Segoe UI, Inter, Roboto, Arial, sans-serif; }
+  header { display:flex; gap:12px; align-items:center; padding:12px 14px; position:sticky; top:0; background:rgba(15,17,21,.7); backdrop-filter: blur(8px); z-index:10; }
+  header a { color:var(--muted); text-decoration:none }
+  h1 { font-size:18px; margin:0 }
+  .container { padding: 14px; }
+  .table { width:100%; background:var(--panel); border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow); }
+  .thead, .trow { display:grid; grid-template-columns: 1.2fr .7fr .6fr .5fr; gap:8px; padding:10px 12px; }
+  .thead { background:#0b0e14; color:#aab9d9; font-size:12px; text-transform:uppercase; letter-spacing:.04em; }
+  .trow { border-top:1px solid rgba(255,255,255,.05); }
+  .right { text-align:right }
+  .pill { display:inline-block; background:#0d1220; color:#a8c1ff; padding:6px 9px; border-radius:999px; font-size:13px; }
+  .fab { position:fixed; right:16px; bottom:16px; width:56px; height:56px; border-radius:50%; background:var(--accent); color:#051123; display:grid; place-items:center; font-size:26px; box-shadow:var(--shadow); cursor:pointer; }
+  dialog { border:0; padding:0; background:transparent; }
+  .sheet { width:min(780px, 92vw); background:var(--card); border-radius:20px; margin:auto; box-shadow:var(--shadow); overflow:hidden; }
+  .sheet header { background:#101625; }
+  .sheet .body { padding:14px; }
+  .line { display:flex; align-items:center; gap:8px; }
+  .grid2 { display:grid; grid-template-columns: 1fr 1fr; gap:10px; }
+  .muted { color:var(--muted) }
+  input, select, button { appearance:none; border:1px solid #26304a; background:#111728; color:var(--text); border-radius:12px; padding:10px 12px; font-size:14px; }
+  input::placeholder { color:#6c7ba3 }
+  .row { display:flex; align-items:center; justify-content:space-between; gap:8px; padding:8px 0; border-bottom:1px dashed rgba(255,255,255,.06); }
+  .row:last-child { border-bottom:0 }
+  .actions { display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end; padding:12px 14px 16px; }
+  .btn { border:0; padding:10px 14px; border-radius:12px; cursor:pointer; }
+  .btn.secondary { background:#0f1629; color:#cfe1ff; }
+  .btn.green { background:var(--green); color:#03210f; }
+  .btn.blue { background:var(--accent); color:#031326; }
+  .btn.red { background:var(--red); color:#2b0303; }
+  .tiny { font-size:12px }
+  /* simple dropdown list */
+  .dropdown { position:relative }
+  .dd-panel {
+    position:absolute; top:100%; left:0; right:0; z-index:20;
+    background:#0d1220; border:1px solid #273555; border-radius:12px; margin-top:6px; max-height:220px; overflow:auto;
+    box-shadow:var(--shadow); display:none;
+  }
+  .dd-item { padding:9px 10px; border-bottom:1px solid #172038; cursor:pointer; }
+  .dd-item:last-child { border-bottom:0 }
+  .dd-item:hover { background:#131a2d }
+  @media (max-width: 720px){
+    .thead, .trow { grid-template-columns: 1.4fr .9fr .7fr .6fr; }
+  }
+</style>
 </head>
 <body>
   <header>
-    <h1>Cigar Hub</h1>
-    <p class="pill">Master cigar database (independent from POS inventory)</p>
+    <a href="/" class="muted">← Home</a>
+    <h1>POS</h1>
+    <span class="pill" id="cartCount">0 items</span>
+    <span class="pill" id="cartTotal">$0.00</span>
   </header>
 
-  <div class="wrap">
-    <div class="topbar">
-      <a class="home" href="index.html">← Home</a>
-      <div class="pill" id="count">0 cigars</div>
-    </div>
-
-    <div class="toolbar">
-      <input id="q" type="search" placeholder="Search by brand, item, wrapper, origin, strength…" />
-      <button class="btn" id="exportCsv">Export CSV</button>
-      <!-- Optional admin-only upload (asks for token at upload time) -->
-      <input type="file" id="csvFile" accept=".csv" style="display:none"/>
-      <button class="btn" id="uploadBtn">Upload CSV</button>
-    </div>
-
-    <div class="card table-wrap">
-      <table id="grid" aria-describedby="Master cigar database">
-        <thead>
-          <tr>
-            <th>Brand</th>
-            <th>Item</th>
-            <th>Vitola</th>
-            <th class="nowrap">Ring</th>
-            <th class="nowrap">Length</th>
-            <th>Price</th>
-            <th class="nowrap">In&nbsp;Production</th>
-            <th>Wrapper</th>
-            <th>Binder</th>
-            <th>Filler</th>
-            <th>Origin</th>
-            <th>Strength</th>
-            <th>Box (L×W×H)</th>
-            <th class="nowrap">Box Weight</th>
-            <th>Cigar Image</th>
-            <th>Band Image</th>
-          </tr>
-        </thead>
-        <tbody id="rows">
-          <tr><td class="empty" colspan="16">Loading…</td></tr>
-        </tbody>
-      </table>
+  <div class="container">
+    <!-- Inventory table placeholder; populate from your existing code -->
+    <div class="table" id="invTable">
+      <div class="thead">
+        <div>Brand / Item</div>
+        <div class="right">Vitola</div>
+        <div class="right">Price</div>
+        <div class="right">Inventory</div>
+      </div>
+      <div id="invRows"></div>
     </div>
   </div>
 
-  <script>
-    const HUB_FN = "/.netlify/functions/get-hub";     // read
-    const SAVE_FN = "/.netlify/functions/save-hub";   // write (admin)
+  <!-- Floating action to open Receipt -->
+  <button class="fab" id="openReceipt">＋</button>
 
-    /** CSV helpers **/
-    function toCSV(rows, headers){
-      const esc = v => (v==null?'':String(v)).replace(/"/g,'""');
-      const line = arr => arr.map(v=>`"${esc(v)}"`).join(',');
-      const out = [line(headers)];
-      for (const r of rows) out.push(line(headers.map(h=>r[h])));
-      return out.join('\\n');
+  <!-- RECEIPT SHEET -->
+  <dialog id="receipt">
+    <div class="sheet">
+      <header>
+        <h1 style="margin:0;font-size:18px">Receipt</h1>
+      </header>
+      <div class="body">
+        <!-- LOYALTY: search + select -->
+        <div class="grid2">
+          <div class="dropdown">
+            <label class="tiny muted">Link Loyalty Customer</label>
+            <input id="loyaltySearch" placeholder="Search name, email, phone…" autocomplete="off" />
+            <div class="dd-panel" id="loyaltyList"></div>
+            <input type="hidden" id="loyaltyId" />
+          </div>
+          <div>
+            <label class="tiny muted">Method</label>
+            <select id="payMethod">
+              <option value="cash">Cash</option>
+              <option value="card">Credit / Debit</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="height:8px"></div>
+        <div class="row"><div class="muted">Items</div><div id="rItems" class="right">0</div></div>
+        <div class="row"><div class="muted">Subtotal</div><div id="rSubtotal" class="right">$0.00</div></div>
+        <div class="row"><div class="muted">Tax (7%)</div><div id="rTax" class="right">$0.00</div></div>
+        <div class="row"><div class="muted">Total</div><div id="rTotal" class="right">$0.00</div></div>
+        <div class="row">
+          <div class="muted">Points (1 / pre-tax $; rounded)</div>
+          <div class="right">
+            <button class="btn secondary tiny" id="ptsMinus">−1</button>
+            <span id="rPoints" class="pill">0</span>
+            <button class="btn secondary tiny" id="ptsPlus">+1</button>
+          </div>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn secondary" id="saveDraft">Save draft</button>
+        <button class="btn green" id="confirmSale">Confirm sale</button>
+        <button class="btn red" id="closeReceipt">Close</button>
+      </div>
+    </div>
+  </dialog>
+
+<script>
+  // --- Minimal cart state (replace/merge with your existing logic) ---
+  let cart = []; // [{brand,item,vitola,price,qty}...]
+
+  function money(n){ return `$${(Math.round(n*100)/100).toFixed(2)}`; }
+  function renderCartSummary(){
+    const items = cart.reduce((s, r) => s + (r.qty||0), 0);
+    const subtotal = cart.reduce((s, r) => s + (r.price * (r.qty||0)), 0);
+    const tax = subtotal * 0.07;
+    const total = subtotal + tax;
+    document.getElementById('cartCount').textContent = `${items} item${items===1?'':'s'}`;
+    document.getElementById('cartTotal').textContent = money(total);
+    return { items, subtotal, tax, total };
+  }
+  // For demo, empty inventory:
+  document.getElementById('invRows').innerHTML = `<div class="trow"><div class="muted">Load your inventory here…</div><div></div><div></div><div></div></div>`;
+  renderCartSummary();
+
+  // ---------- LOYALTY SEARCH ----------
+  let loyalty = []; // loaded from function
+  let selected = null; // {id, name, email, phone}
+
+  async function loadLoyalty(){
+    try{
+      const res = await fetch('/.netlify/functions/get-loyalty');
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || 'load loyalty failed');
+      // build normalized array with id fallback
+      loyalty = (json.data||[]).map(r => {
+        const id = (r.id && r.id.trim()) || (r.email && r.email.trim()) || (r.phone && r.phone.trim()) || '';
+        const name = [r.first_name, r.last_name].filter(Boolean).join(' ').trim() || '(no name)';
+        return { id, name, email: r.email || '', phone: r.phone || '', raw: r };
+      }).filter(x => x.id);
+    }catch(e){
+      console.error(e);
+      loyalty = [];
     }
-    // light CSV parser (handles quoted fields)
-    function parseCSV(text){
-      const rows=[]; let i=0, cur='', row=[], inQ=false;
-      const push=()=>{ row.push(cur); cur=''; };
-      for(; i<text.length; i++){
-        const c=text[i];
-        if(inQ){
-          if(c=='"'){
-            if(text[i+1]=='"'){ cur+='"'; i++; } else { inQ=false; }
-          } else cur+=c;
-        } else {
-          if(c=='"'){ inQ=true; }
-          else if(c==','){ push(); }
-          else if(c=='\\n' || c=='\\r'){
-            if(c=='\\r' && text[i+1]=='\\n') i++;
-            push(); rows.push(row); row=[];
-          } else cur+=c;
-        }
-      }
-      push(); if(row.length) rows.push(row);
-      return rows.filter(r=>r.length>1 || (r.length==1 && r[0].trim()!=''));
-    }
+  }
+  loadLoyalty();
 
-    const HEADERS = [
-      "brand","item","vitola","ring","length","price","in_production",
-      "wrapper","binder","filler","origin","strength",
-      "box_l","box_w","box_h","box_weight","cigar_image","band_image","inventory" // inventory optional
-    ];
+  const dd = document.getElementById('loyaltyList');
+  const inp = document.getElementById('loyaltySearch');
+  const hid = document.getElementById('loyaltyId');
 
-    let allData = [];
+  function openList(){ dd.style.display = 'block'; }
+  function closeList(){ dd.style.display = 'none'; }
+  function filterList(q){
+    const s = q.trim().toLowerCase();
+    const rows = !s ? loyalty.slice(0,50) : loyalty.filter(x =>
+      x.name.toLowerCase().includes(s) ||
+      x.email.toLowerCase().includes(s) ||
+      x.phone.toLowerCase().includes(s)
+    ).slice(0,50);
+    dd.innerHTML = rows.map(x =>
+      `<div class="dd-item" data-id="${x.id}">
+         <div>${x.name}</div>
+         <div class="muted tiny">${x.email || x.phone || ''}</div>
+       </div>`
+    ).join('') || `<div class="dd-item muted">No matches</div>`;
+  }
+  dd.addEventListener('click', (e)=>{
+    const el = e.target.closest('.dd-item');
+    if (!el || !el.dataset.id) return;
+    selected = loyalty.find(x => x.id === el.dataset.id) || null;
+    inp.value = selected ? `${selected.name} (${selected.email || selected.phone || selected.id})` : '';
+    hid.value = selected ? selected.id : '';
+    closeList();
+  });
+  inp.addEventListener('focus', ()=>{ openList(); filterList(inp.value); });
+  inp.addEventListener('input', ()=>{ openList(); filterList(inp.value); });
+  document.addEventListener('click', (e)=>{
+    if (!dd.contains(e.target) && e.target !== inp) closeList();
+  });
 
-    function render(list){
-      const tbody = document.getElementById('rows');
-      document.getElementById('count').textContent = (list?.length||0) + " cigars";
-      if(!list || list.length===0){
-        tbody.innerHTML = '<tr><td class="empty" colspan="16">No cigars found.</td></tr>';
-        return;
-      }
-      const fmt = x => x ?? "";
-      const yn = v => (String(v).toLowerCase()==='yes' || v===true ? 'Yes' : (String(v).toLowerCase()==='no' || v===false ? 'No' : ''));
-      tbody.innerHTML = list.map(r => `
-        <tr>
-          <td>${fmt(r.brand)}</td>
-          <td>${fmt(r.item)}</td>
-          <td>${fmt(r.vitola)}</td>
-          <td class="nowrap">${fmt(r.ring)}</td>
-          <td class="nowrap">${fmt(r.length)}</td>
-          <td class="nowrap">${fmt(r.price)}</td>
-          <td class="nowrap">${yn(r.in_production)}</td>
-          <td>${fmt(r.wrapper)}</td>
-          <td>${fmt(r.binder)}</td>
-          <td>${fmt(r.filler)}</td>
-          <td>${fmt(r.origin)}</td>
-          <td>${fmt(r.strength)}</td>
-          <td class="nowrap">${fmt(r.box_l)}×${fmt(r.box_w)}×${fmt(r.box_h)}</td>
-          <td class="nowrap">${fmt(r.box_weight)}</td>
-          <td>${r.cigar_image ? `<img class="imgthumb" src="${r.cigar_image}" alt="">` : ""}</td>
-          <td>${r.band_image ? `<img class="imgthumb" src="${r.band_image}" alt="">` : ""}</td>
-        </tr>
-      `).join('');
-    }
+  // ---------- RECEIPT ----------
+  const dlg = document.getElementById('receipt');
+  const openBtn = document.getElementById('openReceipt');
+  const closeBtn = document.getElementById('closeReceipt');
+  const saveDraftBtn = document.getElementById('saveDraft');
+  const confirmBtn = document.getElementById('confirmSale');
+  const ptsPlus = document.getElementById('ptsPlus');
+  const ptsMinus = document.getElementById('ptsMinus');
+  const payMethod = document.getElementById('payMethod');
 
-    function filter(){
-      const q = document.getElementById('q').value.trim().toLowerCase();
-      if(!q){ render(allData); return; }
-      const keys = ["brand","item","vitola","wrapper","binder","filler","origin","strength"];
-      const out = allData.filter(r => keys.some(k => String(r[k]||"").toLowerCase().includes(q)));
-      render(out);
-    }
+  let pointsEarned = 0; // computed + manual adj
+  function computePoints(subtotal){
+    return Math.round(subtotal); // 1 point per pre-tax dollar, rounded to nearest int
+  }
+  function refreshReceipt(){
+    const s = renderCartSummary();
+    document.getElementById('rItems').textContent = s.items;
+    document.getElementById('rSubtotal').textContent = money(s.subtotal);
+    document.getElementById('rTax').textContent = money(s.tax);
+    document.getElementById('rTotal').textContent = money(s.total);
+    // base points
+    const base = computePoints(s.subtotal);
+    // keep manual delta as (pointsEarned - previousBase)? simplest: recompute delta
+    // We'll store delta separately.
+    const delta = (window._manualDelta ?? 0);
+    pointsEarned = base + delta;
+    document.getElementById('rPoints').textContent = pointsEarned;
+  }
 
-    async function loadHub(){
-      try{
-        const res = await fetch(HUB_FN);
-        const json = await res.json();
-        allData = Array.isArray(json) ? json : [];
-        render(allData);
-      }catch(e){
-        console.error(e);
-        document.getElementById('rows').innerHTML =
-          '<tr><td class="empty" colspan="16">Failed to load database.</td></tr>';
-      }
-    }
+  openBtn.addEventListener('click', ()=>{ window._manualDelta = 0; refreshReceipt(); dlg.showModal(); });
+  closeBtn.addEventListener('click', ()=> dlg.close());
+  ptsPlus.addEventListener('click', ()=>{ window._manualDelta = (window._manualDelta||0) + 1; refreshReceipt(); });
+  ptsMinus.addEventListener('click', ()=>{ window._manualDelta = (window._manualDelta||0) - 1; refreshReceipt(); });
 
-    document.getElementById('q').addEventListener('input', filter);
-
-    document.getElementById('exportCsv').addEventListener('click', () => {
-      const csv = toCSV(allData, HEADERS);
-      const blob = new Blob([csv], {type:"text/csv;charset=utf-8"});
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = 'cigar-hub.csv';
-      a.click();
-      URL.revokeObjectURL(a.href);
+  async function sendBill(status){ // status: 'pending' (draft) or 'confirmed'
+    const s = renderCartSummary();
+    const cust = {
+      id: hid.value || (selected && selected.id) || '',
+      name: inp.value || (selected && selected.name) || ''
+    };
+    const bill = {
+      items: cart,
+      itemsCount: s.items,
+      subtotal: +s.subtotal.toFixed(2),
+      tax: +s.tax.toFixed(2),
+      total: +s.total.toFixed(2),
+      method: payMethod.value,
+      loyalty: cust,                  // <-- link to loyalty
+      points: pointsEarned|0,          // <-- send what user sees (server will re-compute to enforce rules)
+      manualDelta: (window._manualDelta||0)|0
+    };
+    const res = await fetch('/.netlify/functions/save-data', {
+      method:'POST',
+      headers:{ 'content-type':'application/json' },
+      body: JSON.stringify({ action: status, bill })
     });
+    const json = await res.json();
+    if (!res.ok) { alert(json.error || 'Save failed'); return; }
+    if (status === 'confirmed') {
+      // Clear cart in your app
+      cart = [];
+      renderCartSummary();
+    }
+    dlg.close();
+    alert(status === 'confirmed' ? 'Sale recorded' : 'Draft saved');
+  }
 
-    // Admin upload flow (CSV -> JSON -> save-hub with ADMIN_TOKEN)
-    document.getElementById('uploadBtn').addEventListener('click', () => {
-      document.getElementById('csvFile').click();
-    });
-
-    document.getElementById('csvFile').addEventListener('change', async (ev) => {
-      const file = ev.target.files?.[0];
-      if(!file) return;
-      const token = prompt("Enter ADMIN_TOKEN to upload:");
-      if(!token){ alert("Upload cancelled."); return; }
-
-      const txt = await file.text();
-      const rows = parseCSV(txt);
-      if(rows.length===0){ alert("No rows found."); return; }
-
-      // header mapping
-      const head = rows[0].map(h => h.trim().toLowerCase());
-      const idx = k => head.indexOf(k);
-      const req = key => idx(key) >= 0 ? idx(key) : -1;
-
-      const mapRow = (r) => {
-        const get = (k)=>{ const i=req(k); return i>=0 ? r[i].trim() : ""; };
-        return {
-          brand: get("brand"),
-          item: get("item"),
-          vitola: get("vitola"),
-          ring: get("ring"),
-          length: get("length"),
-          price: get("price"),
-          in_production: get("current production") || get("in_production") || get("in production"),
-          wrapper: get("wrapper"),
-          binder: get("binder"),
-          filler: get("filler"),
-          origin: get("country of origin") || get("origin"),
-          strength: get("strength"),
-          box_l: get("box l") || get("box length") || get("box_l"),
-          box_w: get("box w") || get("box width")  || get("box_w"),
-          box_h: get("box h") || get("box height") || get("box_h"),
-          box_weight: get("box weight") || get("box_weight"),
-          cigar_image: get("cigar image") || get("cigar_image"),
-          band_image:  get("band image")  || get("band_image"),
-          inventory:   get("inventory") // optional
-        };
-      };
-
-      const data = rows.slice(1).map(mapRow).filter(r => r.brand || r.item);
-      if(!data.length){ alert("No valid data rows."); return; }
-
-      try{
-        const res = await fetch(SAVE_FN, {
-          method:"POST",
-          headers:{ "Content-Type":"application/json", "Authorization":"Bearer "+token },
-          body: JSON.stringify(data)
-        });
-        if(!res.ok){
-          const t = await res.text();
-          throw new Error(t || ("HTTP "+res.status));
-        }
-        alert("Cigar Hub updated.");
-        await loadHub();
-      }catch(e){
-        console.error(e);
-        alert("Upload failed: "+e.message);
-      }finally{
-        ev.target.value = "";
-      }
-    });
-
-    loadHub();
-  </script>
+  saveDraftBtn.addEventListener('click', ()=> sendBill('pending'));
+  confirmBtn.addEventListener('click', ()=> sendBill('confirmed'));
+</script>
 </body>
 </html>
