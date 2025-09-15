@@ -79,15 +79,14 @@
     </div>
 
     <div class="footerlink small">
-      Need to tweak columns from Numbers? Export CSV with headers like:
-      <span class="pill">id</span> <span class="pill">first_name</span> <span class="pill">last_name</span>
+      Headers supported: <span class="pill">id</span> <span class="pill">first_name</span> <span class="pill">last_name</span>
       <span class="pill">email</span> <span class="pill">phone</span> <span class="pill">points</span>
-      <span class="pill">preferences</span> <span class="pill">last_purchase_brand</span> <span class="pill">last_purchase_item</span>
+      <span class="pill">preferences</span> <span class="pill">last_purchase_brand</span> <span class="pill">last_purchase_item</span> <span class="pill">notes</span>
     </div>
   </div>
 
 <script>
-const ADMIN_TOKEN = localStorage.getItem('ADMIN_TOKEN') || ''; // set this once on the device if you want to import
+const ADMIN_TOKEN = localStorage.getItem('ADMIN_TOKEN') || '';
 
 let contacts = [];
 let inventory = [];
@@ -233,8 +232,8 @@ function suggestCigars(c){
 }
 
 // ---------- events ----------
-qEl.addEventListener('input', renderList);
-rowsEl.addEventListener('click', (e)=>{
+document.getElementById('q').addEventListener('input', renderList);
+document.getElementById('rows').addEventListener('click', (e)=>{
   const tr = e.target.closest('tr[data-id]');
   if(tr) renderDetail(tr.dataset.id);
 });
