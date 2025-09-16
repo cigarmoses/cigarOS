@@ -43,34 +43,45 @@
     /* Colored rows only when explicitly labeled */
     .row.locker{background:var(--blue);color:#fff;border-bottom-color:rgba(255,255,255,.28)}
     .row.regular{background:var(--orange);color:#fff;border-bottom-color:rgba(255,255,255,.28)}
-    .row.locker .name div,
-    .row.regular .name div,
-    .row.locker .last,
-    .row.regular .last,
+    .row.locker .name .last,
+    .row.regular .name .last,
+    .row.locker .lastCell,
+    .row.regular .lastCell,
     .row.locker .notes,
     .row.regular .notes { color:#fff; }
 
-    .name{display:flex;flex-direction:column;font-weight:800;font-size:22px;line-height:1.05;}
+    /* Name styling */
+    .name{display:flex;flex-direction:column;line-height:1.05;}
+    .name .last{font-weight:800;font-size:22px}
+    .name .first{font-weight:500;font-size:22px}
+
     .locker-tag{font-weight:700;font-size:16px;margin-bottom:4px}
     .pts{font-weight:800;font-size:20px}
-    .last{font-weight:700;font-size:20px;color:#6b7280}
+    .lastCell{font-weight:700;font-size:20px;color:#6b7280}
     .notes{font-weight:700;font-size:20px;color:#6b7280}
     .notes .edit{opacity:.9}
-    .pts-editor, .notes-editor{display:flex;gap:8px;align-items:flex-start}
-    input[type="number"], textarea{
+
+    .notes-editor{display:flex;gap:8px;align-items:flex-start}
+    textarea{
       width:100%;border-radius:10px;border:1px solid var(--line);padding:8px 10px;font-size:18px;background:#fff;
+      min-height:46px
     }
-    textarea{min-height:46px}
     .btn{appearance:none;border:1px solid var(--line);background:#111;color:#fff;padding:8px 12px;border-radius:10px;cursor:pointer}
     .btn.secondary{background:#fff;color:#111}
+    .btn.ghost{background:#f3f4f6;color:#374151;border-color:#e5e7eb} /* lighter look */
     .btn:disabled{opacity:.6;cursor:not-allowed}
-    @media (max-width:640px){ .thead{font-size:18px} .name{font-size:20px} .pts,.last,.notes{font-size:18px} .row{padding:12px}}
+
+    @media (max-width:640px){
+      .thead{font-size:18px}
+      .name .last,.name .first{font-size:20px}
+      .pts,.lastCell,.notes{font-size:18px}
+      .row{padding:12px}
+    }
   </style>
 </head>
 <body>
   <div class="wrap">
     <div class="searchbar">
-      <!-- placeholder now just "Search" -->
       <input id="q" class="search" type="search" placeholder="Search" />
       <div class="chips">
         <div id="chip-locker" class="chip active" role="button" tabindex="0">
@@ -94,8 +105,7 @@
   </div>
 
   <script>
-    // We now receive normalized keys from the server:
-    // { first, last, aka, points, lastPurchase, notes, locker, regular, email, phone, birthday }
+    // Normalized fields from /get-loyalty: { first, last, points, lastPurchase, notes, locker, regular, email, aka, phone }
     let ALL = [];
     let filters = { locker: true, regular: true };
     const $ = (s)=>document.querySelector(s);
@@ -119,28 +129,20 @@
     };
     const fmtDate = (v)=> (v && String(v).trim()) || '—';
 
-    const EDIT = {}; // id -> {notes:boolean, pts:boolean}
+    const EDIT = {}; // id -> {notes:boolean}
     const idFor = (r)=> encodeURIComponent((r.email||'').trim() || `${(r.last||'').trim()}|${(r.first||'').trim()}`);
 
-    function rowHTML(r, editingNotes=false, editingPts=false){
+    function rowHTML(r, editingNotes=false){
       const v = variant(r);
       const id = idFor(r);
       const lockerTag = isLocker(r) ? `#${r.locker}` : '';
       const nameTop = r.last || '';
       const nameBot = r.first || '';
+      const pts = fmtPts(r.points);
 
-      const ptsCell = editingPts ? `
-        <div class="pts-editor">
-          <input id="pts-input-${id}" type="number" min="0" step="1" value="${Number(r.points)||0}" />
-          <div style="display:flex;flex-direction:column;gap:8px">
-            <button class="btn" onclick='savePoints("${id}")'>Save</button>
-            <button class="btn secondary" onclick='cancelPts("${id}")'>Cancel</button>
-          </div>
-        </div>` : `
-        <div>
-          <div class="pts">${fmtPts(r.points)}</div>
-          <div style="margin-top:8px"><button class="btn secondary" onclick='startPts("${id}")'>Edit</button></div>
-        </div>`;
+      const hasNotes = !!(r.notes && String(r.notes).trim());
+      const notesBtnLabel = hasNotes ? 'Edit' : 'Add';
+      const notesBtnClass = hasNotes ? 'btn ghost' : 'btn secondary';
 
       const notesCell = editingNotes ? `
         <div class="notes-editor">
@@ -152,18 +154,18 @@
         </div>` : `
         <div>
           <div class="notes"><span class="edit">${r.notes || ''}</span></div>
-          <div style="margin-top:8px"><button class="btn secondary" onclick='startNotes("${id}")'>Edit</button></div>
+          <div style="margin-top:8px"><button class="${notesBtnClass}" onclick='startNotes("${id}")'>${notesBtnLabel}</button></div>
         </div>`;
 
       return `
         <div class="row ${v}" data-id="${id}">
           <div class="name">
             ${lockerTag ? `<div class="locker-tag">${lockerTag}</div>` : ``}
-            <div>${nameTop}</div>
-            <div>${nameBot}</div>
+            <div class="last">${nameTop}</div>
+            <div class="first">${nameBot}</div>
           </div>
-          ${ptsCell}
-          <div class="last">${fmtDate(r.lastPurchase)}</div>
+          <div><div class="pts">${pts}</div></div>
+          <div class="lastCell">${fmtDate(r.lastPurchase)}</div>
           ${notesCell}
         </div>`;
     }
@@ -197,8 +199,8 @@
 
       rowsEl.innerHTML = list.map(r => {
         const id = idFor(r);
-        const st = EDIT[id] || {notes:false, pts:false};
-        return rowHTML(r, st.notes, st.pts);
+        const st = EDIT[id] || {notes:false};
+        return rowHTML(r, st.notes);
       }).join('') || `<div style="padding:18px;color:#6b7280;">No results</div>`;
     }
 
@@ -224,30 +226,6 @@
         const json = await res.json(); if(!json.ok) throw new Error(json.error||'Save failed');
         ALL[idx].notes = notes; EDIT[id] = {...(EDIT[id]||{}), notes:false}; render();
       }catch(e){ alert('Error saving notes: '+e.message); }
-    };
-
-    // Points editing
-    window.startPts = (id)=>{ EDIT[id] = {...(EDIT[id]||{}), pts:true}; render(); setTimeout(()=>{ const t = document.getElementById(`pts-input-${id}`); if(t) t.focus(); }, 0); };
-    window.cancelPts = (id)=>{ EDIT[id] = {...(EDIT[id]||{}), pts:false}; render(); };
-    window.savePoints = async (id)=>{
-      const idx = findIndexById(id); if (idx<0) return;
-      const r = ALL[idx];
-      const points = Number(document.getElementById(`pts-input-${id}`)?.value || 0);
-      try{
-        const res = await fetch('/.netlify/functions/update-points', {
-          method: 'POST',
-          headers: {'content-type':'application/json'},
-          body: JSON.stringify({
-            email: r.email || undefined,
-            firstName: r.first || undefined,
-            lastName: r.last || undefined,
-            aka: r.aka || undefined,
-            points
-          })
-        });
-        const json = await res.json(); if(!json.ok) throw new Error(json.error||'Save failed');
-        ALL[idx].points = points; EDIT[id] = {...(EDIT[id]||{}), pts:false}; render();
-      }catch(e){ alert('Error saving points: '+e.message); }
     };
 
     async function boot(){
