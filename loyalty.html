@@ -70,7 +70,8 @@
 <body>
   <div class="wrap">
     <div class="searchbar">
-      <input id="q" class="search" type="search" placeholder="Search       Moses…" />
+      <!-- placeholder now just "Search" -->
+      <input id="q" class="search" type="search" placeholder="Search" />
       <div class="chips">
         <div id="chip-locker" class="chip active" role="button" tabindex="0">
           <span class="dot blue"></span> Locker members
@@ -93,20 +94,8 @@
   </div>
 
   <script>
-    // Field names from your dataset
-    const F = {
-      LOCKER: 'Locker #',
-      REGULAR: 'Regular',
-      LAST: 'Last Name',
-      FIRST: 'First Name',
-      AKA: 'Nickname “aka”',
-      POINTS: 'Points',
-      LAST_PURCHASE: 'Last Purchase',
-      NOTES: 'Notes',
-      EMAIL: 'Email',
-      PHONE: 'Phone'
-    };
-
+    // We now receive normalized keys from the server:
+    // { first, last, aka, points, lastPurchase, notes, locker, regular, email, phone, birthday }
     let ALL = [];
     let filters = { locker: true, regular: true };
     const $ = (s)=>document.querySelector(s);
@@ -118,152 +107,146 @@
     chipRegular.addEventListener('click', ()=>{ filters.regular=!filters.regular; chipRegular.classList.toggle('active',filters.regular); render(); });
     $('#q').addEventListener('input', render);
 
-    // Helpers
-    const nv = (v)=> (v===undefined||v===null||Number.isNaN(v)) ? '' : String(v);
-    const truthy = (v)=> !!nv(v).trim(); // "marked" = any non-empty content
-    const isLocker = (r)=> truthy(r[F.LOCKER]);
-    const isRegular = (r)=> truthy(r[F.REGULAR]);
+    const isLocker = (r)=> (r.locker || '').trim() !== '';
+    const isRegular = (r)=> (r.regular || '').trim() !== '';
     const variant = (r)=> isLocker(r) ? 'locker' : (isRegular(r) ? 'regular' : 'neutral');
 
-    const fmtPts = (v)=> {
-      const n = Number(v||0); if(!isFinite(n)) return '0';
-      if (Math.abs(n) >= 1000) return (n/1000).toFixed(n%1000===0?0:1)+'k';
-      return String(n);
+    const fmtPts = (n)=>{
+      const num = Number(n||0);
+      if (!isFinite(num)) return '0';
+      if (Math.abs(num) >= 1000) return (num/1000).toFixed(num%1000===0?0:1)+'k';
+      return String(num);
     };
-    const fmtDate = (v)=> nv(v) || '—'; // keep your human dates (e.g., "Fri 9/12")
+    const fmtDate = (v)=> (v && String(v).trim()) || '—';
 
-    // Rendering
-    function makeRowHTML(r, editingNotes=false, editingPts=false){
+    const EDIT = {}; // id -> {notes:boolean, pts:boolean}
+    const idFor = (r)=> encodeURIComponent((r.email||'').trim() || `${(r.last||'').trim()}|${(r.first||'').trim()}`);
+
+    function rowHTML(r, editingNotes=false, editingPts=false){
       const v = variant(r);
-      const lockerNo = isLocker(r) ? `#${nv(r[F.LOCKER]).trim()}` : '';
-      const nameTop = nv(r[F.LAST]);
-      const nameBot = nv(r[F.FIRST]);
-      const pts = fmtPts(r[F.POINTS]);
-      const last = fmtDate(r[F.LAST_PURCHASE]);
-      const notes = nv(r[F.NOTES]);
-      const id = encodeURIComponent(nv(r[F.EMAIL]) || (nameTop+'|'+nameBot));
+      const id = idFor(r);
+      const lockerTag = isLocker(r) ? `#${r.locker}` : '';
+      const nameTop = r.last || '';
+      const nameBot = r.first || '';
 
       const ptsCell = editingPts ? `
         <div class="pts-editor">
-          <input id="pts-input-${id}" type="number" min="0" step="1" value="${Number(nv(r[F.POINTS]))||0}" />
+          <input id="pts-input-${id}" type="number" min="0" step="1" value="${Number(r.points)||0}" />
           <div style="display:flex;flex-direction:column;gap:8px">
             <button class="btn" onclick='savePoints("${id}")'>Save</button>
             <button class="btn secondary" onclick='cancelPts("${id}")'>Cancel</button>
           </div>
         </div>` : `
         <div>
-          <div class="pts">${pts}</div>
+          <div class="pts">${fmtPts(r.points)}</div>
           <div style="margin-top:8px"><button class="btn secondary" onclick='startPts("${id}")'>Edit</button></div>
         </div>`;
 
       const notesCell = editingNotes ? `
         <div class="notes-editor">
-          <textarea id="notes-input-${id}">${notes.replace(/</g,'&lt;')}</textarea>
+          <textarea id="notes-input-${id}">${(r.notes||'').replace(/</g,'&lt;')}</textarea>
           <div style="display:flex;flex-direction:column;gap:8px">
             <button class="btn" onclick='saveNotes("${id}")'>Save</button>
             <button class="btn secondary" onclick='cancelNotes("${id}")'>Cancel</button>
           </div>
         </div>` : `
         <div>
-          <div class="notes"><span class="edit">${notes}</span></div>
+          <div class="notes"><span class="edit">${r.notes || ''}</span></div>
           <div style="margin-top:8px"><button class="btn secondary" onclick='startNotes("${id}")'>Edit</button></div>
         </div>`;
 
       return `
         <div class="row ${v}" data-id="${id}">
           <div class="name">
-            ${lockerNo ? `<div class="locker-tag">${lockerNo}</div>` : ``}
+            ${lockerTag ? `<div class="locker-tag">${lockerTag}</div>` : ``}
             <div>${nameTop}</div>
             <div>${nameBot}</div>
           </div>
           ${ptsCell}
-          <div class="last">${last}</div>
+          <div class="last">${fmtDate(r.lastPurchase)}</div>
           ${notesCell}
         </div>`;
     }
 
+    function findIndexById(id){
+      const dec = decodeURIComponent(id);
+      const pipe = dec.indexOf('|');
+      return ALL.findIndex(x => {
+        if ((x.email||'').trim().toLowerCase() === dec.toLowerCase()) return true;
+        if (pipe > -1) {
+          const last = dec.slice(0, pipe).trim().toLowerCase();
+          const first = dec.slice(pipe+1).trim().toLowerCase();
+          return (x.last||'').trim().toLowerCase() === last && (x.first||'').trim().toLowerCase() === first;
+        }
+        return false;
+      });
+    }
+
     function render(){
       const q = ($('#q').value||'').toLowerCase();
-
       const list = ALL.filter(r=>{
-        // filter chips
         if (isLocker(r) && !filters.locker) return false;
         if (isRegular(r) && !filters.regular) return false;
 
-        if(!q) return true;
-        const hay = [F.LAST,F.FIRST,F.AKA,F.EMAIL,F.PHONE,F.LOCKER,F.REGULAR,F.NOTES]
-          .map(k => nv(r[k]).toLowerCase());
+        if (!q) return true;
+        const hay = [
+          r.first, r.last, r.aka, r.email, r.phone, r.locker, r.regular, r.notes
+        ].map(v => (v||'').toLowerCase());
         return hay.some(s => s.includes(q));
       });
 
       rowsEl.innerHTML = list.map(r => {
-        const id = encodeURIComponent(nv(r[F.EMAIL]) || (nv(r[F.LAST])+'|'+nv(r[F.FIRST])));
-        const editing = EDIT_STATE[id] || { notes:false, pts:false };
-        return makeRowHTML(r, editing.notes, editing.pts);
+        const id = idFor(r);
+        const st = EDIT[id] || {notes:false, pts:false};
+        return rowHTML(r, st.notes, st.pts);
       }).join('') || `<div style="padding:18px;color:#6b7280;">No results</div>`;
     }
 
-    // State for which row is editing
-    const EDIT_STATE = {}; // id -> {notes:boolean, pts:boolean}
-
-    // Locate a row in ALL by id (email preferred, else Last|First)
-    function findIndexById(id){
-      const [last, first] = decodeURIComponent(id).split('|');
-      return ALL.findIndex(x => {
-        const e = nv(x[F.EMAIL]).toLowerCase();
-        if (e && e === decodeURIComponent(id).toLowerCase()) return true;
-        return nv(x[F.LAST]).toLowerCase() === (last||'').toLowerCase()
-            && nv(x[F.FIRST]).toLowerCase() === (first||'').toLowerCase();
-      });
-    }
-
-    // --- Notes edit/save/cancel ---
-    window.startNotes = (id)=>{ EDIT_STATE[id] = {...(EDIT_STATE[id]||{}), notes:true}; render(); setTimeout(()=>{ const t = document.getElementById(`notes-input-${id}`); if(t) t.focus(); }, 0); };
-    window.cancelNotes = (id)=>{ EDIT_STATE[id] = {...(EDIT_STATE[id]||{}), notes:false}; render(); };
+    // Notes editing
+    window.startNotes = (id)=>{ EDIT[id] = {...(EDIT[id]||{}), notes:true}; render(); setTimeout(()=>{ const t = document.getElementById(`notes-input-${id}`); if(t) t.focus(); }, 0); };
+    window.cancelNotes = (id)=>{ EDIT[id] = {...(EDIT[id]||{}), notes:false}; render(); };
     window.saveNotes = async (id)=>{
-      const idx = findIndexById(id); if(idx<0) return;
+      const idx = findIndexById(id); if (idx<0) return;
       const r = ALL[idx];
-      const val = (document.getElementById(`notes-input-${id}`)?.value||'').trim();
+      const notes = (document.getElementById(`notes-input-${id}`)?.value || '').trim();
       try{
-        const payload = {
-          email: nv(r[F.EMAIL]) || undefined,
-          firstName: nv(r[F.FIRST]) || undefined,
-          lastName: nv(r[F.LAST]) || undefined,
-          aka: nv(r[F.AKA]) || undefined,
-          notes: val
-        };
         const res = await fetch('/.netlify/functions/update-notes', {
-          method:'POST', headers:{'content-type':'application/json'}, body:JSON.stringify(payload)
+          method: 'POST',
+          headers: {'content-type':'application/json'},
+          body: JSON.stringify({
+            email: r.email || undefined,
+            firstName: r.first || undefined,
+            lastName: r.last || undefined,
+            aka: r.aka || undefined,
+            notes
+          })
         });
         const json = await res.json(); if(!json.ok) throw new Error(json.error||'Save failed');
-        ALL[idx][F.NOTES] = val;
-        EDIT_STATE[id] = {...(EDIT_STATE[id]||{}), notes:false};
-        render();
+        ALL[idx].notes = notes; EDIT[id] = {...(EDIT[id]||{}), notes:false}; render();
       }catch(e){ alert('Error saving notes: '+e.message); }
     };
 
-    // --- Points edit/save/cancel ---
-    window.startPts = (id)=>{ EDIT_STATE[id] = {...(EDIT_STATE[id]||{}), pts:true}; render(); setTimeout(()=>{ const t = document.getElementById(`pts-input-${id}`); if(t) t.focus(); }, 0); };
-    window.cancelPts = (id)=>{ EDIT_STATE[id] = {...(EDIT_STATE[id]||{}), pts:false}; render(); };
+    // Points editing
+    window.startPts = (id)=>{ EDIT[id] = {...(EDIT[id]||{}), pts:true}; render(); setTimeout(()=>{ const t = document.getElementById(`pts-input-${id}`); if(t) t.focus(); }, 0); };
+    window.cancelPts = (id)=>{ EDIT[id] = {...(EDIT[id]||{}), pts:false}; render(); };
     window.savePoints = async (id)=>{
-      const idx = findIndexById(id); if(idx<0) return;
+      const idx = findIndexById(id); if (idx<0) return;
       const r = ALL[idx];
-      const num = Number(document.getElementById(`pts-input-${id}`)?.value || 0);
+      const points = Number(document.getElementById(`pts-input-${id}`)?.value || 0);
       try{
-        const payload = {
-          email: nv(r[F.EMAIL]) || undefined,
-          firstName: nv(r[F.FIRST]) || undefined,
-          lastName: nv(r[F.LAST]) || undefined,
-          aka: nv(r[F.AKA]) || undefined,
-          points: num
-        };
         const res = await fetch('/.netlify/functions/update-points', {
-          method:'POST', headers:{'content-type':'application/json'}, body:JSON.stringify(payload)
+          method: 'POST',
+          headers: {'content-type':'application/json'},
+          body: JSON.stringify({
+            email: r.email || undefined,
+            firstName: r.first || undefined,
+            lastName: r.last || undefined,
+            aka: r.aka || undefined,
+            points
+          })
         });
         const json = await res.json(); if(!json.ok) throw new Error(json.error||'Save failed');
-        ALL[idx][F.POINTS] = num;
-        EDIT_STATE[id] = {...(EDIT_STATE[id]||{}), pts:false};
-        render();
+        ALL[idx].points = points; EDIT[id] = {...(EDIT[id]||{}), pts:false}; render();
       }catch(e){ alert('Error saving points: '+e.message); }
     };
 
@@ -272,10 +255,7 @@
         const res = await fetch('/.netlify/functions/get-loyalty', { cache:'no-store' });
         const json = await res.json();
         if(!json.ok) throw new Error(json.error || 'Load failed');
-        ALL = (json.data||[]).map(r=>{
-          const x={...r}; for(const k in x){ if(typeof x[k]==='number' && Number.isNaN(x[k])) x[k]=null; }
-          return x;
-        });
+        ALL = Array.isArray(json.data) ? json.data : [];
         render();
       }catch(e){
         rowsEl.innerHTML = `<div style="padding:18px;color:#b91c1c;">Error loading loyalty data: ${e.message}</div>`;
