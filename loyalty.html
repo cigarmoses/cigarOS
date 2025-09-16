@@ -1,24 +1,118 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Loyalty</title>
-<style>
-  :root{
-    --bg:#f4f6f9; --card:#ffffff; --text:#1a1a1a;
-    --line:#e5e7eb; --blue:#2b6cb0; --orange:#dd6b20; --chip-bg:#eef2f7;
-    --zebra:#f7f9fc; --muted:#6b7280; --shadow:0 1px 2px rgba(0,0,0,.03), 0 10px 30px rgba(0,0,0,.03);
-  }
-  *{box-sizing:border-box}
-  body{margin:0;background:var(--bg);color:var(--text);
-    font-family: system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;}
-  .wrap{max-width:980px;margin:0 auto;padding:18px 14px 28px;}
-  .searchbar{position:sticky;top:0;z-index:5;background:var(--bg);padding-bottom:10px;}
-  .search{width:100%;height:56px;border-radius:18px;border:1px solid var(--line);
-    background:#fff;padding:0 18px;font-size:20px;outline:none;box-shadow:0 1px 0 rgba(0,0,0,.02);}
-  .chips{display:flex;gap:16px;margin-top:14px;flex-wrap:wrap}
-  .chip{background:var(--chip-bg);border-radius:14px;padding:10px 14px;color:#6b7280;font-weight:600;
-    display:flex;align-items:center;gap:10px;user-select:none;cursor:pointer}
-  .chip.active{filter:saturate(1.1);background:#e9eef7;color:#1f2937}
-  .dot{width:18
+  <meta charset="UTF-8">
+  <title>Loyalty</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f5f6fa; }
+    .container { max-width: 800px; margin: auto; padding: 20px; }
+    .filters { display: flex; gap: 15px; margin-bottom: 15px; }
+    .filter-btn { padding: 6px 14px; border-radius: 8px; cursor: pointer; border: none; font-weight: bold; }
+    .locker { background: #007bff; color: white; }
+    .regular { background: #ff6600; color: white; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 10px; text-align: left; }
+    th { background: #f0f0f0; }
+    tr:nth-child(even) { background: #f9f9f9; }
+    tr.locker-row { background: #e0f0ff; }
+    .icon-cell img { width: 22px; height: 22px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <input type="text" id="search" placeholder="Search" style="width:100%;padding:10px;margin-bottom:15px;">
+    
+    <div class="filters">
+      <button class="filter-btn locker" onclick="filterContacts('locker')">Locker members</button>
+      <button class="filter-btn regular" onclick="filterContacts('regular')">Regulars</button>
+      <button class="filter-btn" onclick="filterContacts('all')">All</button>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th></th>
+          <th>Name</th>
+          <th>Pts</th>
+          <th>Last Visit</th>
+        </tr>
+      </thead>
+      <tbody id="contacts-body"></tbody>
+    </table>
+  </div>
+
+  <script>
+    let contactsData = [];
+    let activeFilter = "all";
+
+    async function fetchContacts() {
+      try {
+        const res = await fetch("/.netlify/functions/get-loyalty");
+        const json = await res.json();
+        contactsData = json.data;
+        renderContacts();
+      } catch (err) {
+        document.getElementById("contacts-body").innerHTML =
+          `<tr><td colspan="4" style="color:red">Error: ${err}</td></tr>`;
+      }
+    }
+
+    function renderContacts() {
+      const searchVal = document.getElementById("search").value.toLowerCase();
+      const tbody = document.getElementById("contacts-body");
+      tbody.innerHTML = "";
+
+      contactsData
+        .filter(c => {
+          const matchesSearch = `${c.last_name} ${c.first_name}`.toLowerCase().includes(searchVal);
+          if (activeFilter === "locker") return matchesSearch && c.locker;
+          if (activeFilter === "regular") return matchesSearch && c.regular;
+          return matchesSearch;
+        })
+        .forEach(c => {
+          // Decide which icon to show
+          let icon = "";
+          if (c.military) icon = "/img/military.svg";
+          else if (c.first_responder) icon = "/img/firstresponders.svg";
+          else if (c.locker) icon = "/img/lockerremember.svg";
+
+          // Format last visit
+          let last = "-";
+          if (c.last_purchase) {
+            const date = new Date(c.last_purchase);
+            const now = new Date();
+            const diffMonths = (now - date) / (1000 * 60 * 60 * 24 * 30);
+
+            if (diffMonths <= 6) {
+              last = `${date.getMonth() + 1}/${date.getDate()}`;
+            } else if (diffMonths <= 12) {
+              last = date.toLocaleString("default", { month: "long" });
+            } else if (diffMonths <= 24) {
+              last = "Year+";
+            } else {
+              last = date.getFullYear();
+            }
+          }
+
+          const row = `
+            <tr class="${c.locker ? "locker-row" : ""}">
+              <td class="icon-cell">${icon ? `<img src="${icon}">` : ""}</td>
+              <td><b>${c.last_name}</b> ${c.first_name}</td>
+              <td>${c.points || 0}</td>
+              <td>${last}</td>
+            </tr>`;
+          tbody.innerHTML += row;
+        });
+    }
+
+    function filterContacts(type) {
+      activeFilter = type;
+      renderContacts();
+    }
+
+    document.getElementById("search").addEventListener("input", renderContacts);
+
+    fetchContacts();
+  </script>
+</body>
+</html>
