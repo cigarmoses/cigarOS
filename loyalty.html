@@ -6,90 +6,69 @@
   <title>Loyalty</title>
   <style>
     :root{
-      --bg:#f4f6f9;
-      --card:#ffffff;
-      --text:#1a1a1a;
-      --muted:#6b7280;
-      --line:#e5e7eb;
-      --blue:#2b6cb0;
-      --orange:#dd6b20;
-      --chip-bg:#eef2f7;
+      --bg:#f4f6f9; --card:#ffffff; --text:#1a1a1a; --muted:#6b7280;
+      --line:#e5e7eb; --blue:#2b6cb0; --orange:#dd6b20; --chip-bg:#eef2f7;
+      --zebra:#f7f9fc; --shadow:0 1px 2px rgba(0,0,0,.03), 0 10px 30px rgba(0,0,0,.03);
     }
     *{box-sizing:border-box}
-    body{margin:0;background:var(--bg);color:var(--text);font-family: system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;}
+    body{margin:0;background:var(--bg);color:var(--text);
+      font-family: system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;}
 
-    /* Page shell */
     .wrap{max-width:980px;margin:0 auto;padding:18px 14px 28px;}
 
     /* Search + chips */
-    .searchbar{
-      position:sticky;top:0;z-index:5;background:var(--bg);
-      padding-bottom:10px;
-    }
-    .search{
-      width:100%;height:56px;border-radius:18px;border:1px solid var(--line);
-      background:#fff;padding:0 18px;font-size:20px;outline:none;
-      box-shadow:0 1px 0 rgba(0,0,0,.02);
-    }
+    .searchbar{position:sticky;top:0;z-index:5;background:var(--bg);padding-bottom:10px;}
+    .search{width:100%;height:56px;border-radius:18px;border:1px solid var(--line);
+      background:#fff;padding:0 18px;font-size:20px;outline:none;box-shadow:0 1px 0 rgba(0,0,0,.02);}
     .chips{display:flex;gap:16px;margin-top:14px;flex-wrap:wrap}
-    .chip{
-      background:var(--chip-bg);border-radius:14px;padding:10px 14px;
-      color:#6b7280;font-weight:600;display:flex;align-items:center;gap:10px;
-      user-select:none;
-    }
-    .dot{width:18px;height:18px;border-radius:6px}
-    .dot.blue{background:var(--blue)}
-    .dot.orange{background:var(--orange)}
+    .chip{background:var(--chip-bg);border-radius:14px;padding:10px 14px;color:#6b7280;font-weight:600;
+      display:flex;align-items:center;gap:10px;user-select:none;cursor:pointer}
     .chip.active{filter:saturate(1.1);background:#e9eef7;color:#1f2937}
+    .dot{width:18px;height:18px;border-radius:6px}
+    .dot.blue{background:var(--blue)} .dot.orange{background:var(--orange)}
 
-    /* Card / list */
-    .card{
-      margin-top:14px;background:var(--card);border-radius:18px;padding:12px;
-      box-shadow:0 1px 2px rgba(0,0,0,.03), 0 10px 30px rgba(0,0,0,.03);
-    }
-    .thead{
-      display:grid;grid-template-columns:1.2fr .5fr .6fr 1fr;gap:12px;
-      color:#374151;font-weight:800;font-size:22px;padding:8px 12px 14px 12px;
-    }
+    /* Card + grid */
+    .card{margin-top:14px;background:var(--card);border-radius:18px;padding:12px;box-shadow:var(--shadow);}
+    .thead{display:grid;grid-template-columns:1.2fr .5fr .6fr 1fr;gap:12px;color:#374151;
+      font-weight:800;font-size:22px;padding:8px 12px 14px 12px;}
     .rows{border-top:1px solid var(--line)}
-    .row{
-      display:grid;grid-template-columns:1.2fr .5fr .6fr 1fr;gap:12px;
-      padding:14px 12px;border-bottom:1px solid var(--line);
-      align-items:center;
-    }
+    .row{display:grid;grid-template-columns:1.2fr .5fr .6fr 1fr;gap:12px;padding:14px 12px;
+      border-bottom:1px solid var(--line);align-items:center}
     .row:last-child{border-bottom:0}
-    .name{
-      display:flex;flex-direction:column;font-weight:800;font-size:22px;line-height:1.05;
-    }
+
+    /* Neutral zebra (default) */
+    .row.neutral{background:#fff}
+    .row.neutral:nth-child(odd){background:var(--zebra)}
+
+    /* Colored rows only when explicitly labeled */
+    .row.locker{background:var(--blue);color:#fff;border-bottom-color:rgba(255,255,255,.28)}
+    .row.regular{background:var(--orange);color:#fff;border-bottom-color:rgba(255,255,255,.28)}
+    .row.locker .name div,
+    .row.regular .name div,
+    .row.locker .last,
+    .row.regular .last,
+    .row.locker .notes,
+    .row.regular .notes { color:#fff; }
+
+    .name{display:flex;flex-direction:column;font-weight:800;font-size:22px;line-height:1.05;}
     .locker-tag{font-weight:700;font-size:16px;margin-bottom:4px}
     .pts{font-weight:800;font-size:20px}
-    .last{font-weight:700;color:#6b7280;font-size:20px}
-    .notes{font-weight:700;color:#6b7280;font-size:20px;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
-
-    /* Colored variants */
-    .row.locker{
-      background:var(--blue);color:#fff;border-bottom-color:rgba(255,255,255,.25)
+    .last{font-weight:700;font-size:20px;color:#6b7280}
+    .notes{font-weight:700;font-size:20px;color:#6b7280}
+    .notes .edit{opacity:.9}
+    .pts-editor, .notes-editor{display:flex;gap:8px;align-items:flex-start}
+    input[type="number"], textarea{
+      width:100%;border-radius:10px;border:1px solid var(--line);padding:8px 10px;font-size:18px;background:#fff;
     }
-    .row.locker .last,.row.locker .notes{color:#e6effa}
-    .row.regular{
-      background:var(--orange);color:#fff;border-bottom-color:rgba(255,255,255,.25)
-    }
-    .row.regular .last,.row.regular .notes{color:#fff}
-    .row.regular .notes{opacity:.95}
-
-    /* Mobile tweaks */
-    @media (max-width:640px){
-      .thead{font-size:18px}
-      .name{font-size:20px}
-      .pts,.last,.notes{font-size:18px}
-      .row{padding:12px}
-    }
+    textarea{min-height:46px}
+    .btn{appearance:none;border:1px solid var(--line);background:#111;color:#fff;padding:8px 12px;border-radius:10px;cursor:pointer}
+    .btn.secondary{background:#fff;color:#111}
+    .btn:disabled{opacity:.6;cursor:not-allowed}
+    @media (max-width:640px){ .thead{font-size:18px} .name{font-size:20px} .pts,.last,.notes{font-size:18px} .row{padding:12px}}
   </style>
 </head>
 <body>
   <div class="wrap">
-
-    <!-- Search & filter chips -->
     <div class="searchbar">
       <input id="q" class="search" type="search" placeholder="Search       Moses…" />
       <div class="chips">
@@ -102,7 +81,6 @@
       </div>
     </div>
 
-    <!-- List card -->
     <div class="card">
       <div class="thead">
         <div>Name</div>
@@ -115,23 +93,22 @@
   </div>
 
   <script>
-    // Field map from your dataset
+    // Field names from your dataset
     const F = {
       LOCKER: 'Locker #',
+      REGULAR: 'Regular',
       LAST: 'Last Name',
       FIRST: 'First Name',
       AKA: 'Nickname “aka”',
       POINTS: 'Points',
       LAST_PURCHASE: 'Last Purchase',
       NOTES: 'Notes',
-      PHONE: 'Phone',
       EMAIL: 'Email',
-      BDAY: 'Birthday'
+      PHONE: 'Phone'
     };
 
     let ALL = [];
     let filters = { locker: true, regular: true };
-
     const $ = (s)=>document.querySelector(s);
     const rowsEl = $('#rows');
     const chipLocker = $('#chip-locker');
@@ -141,63 +118,160 @@
     chipRegular.addEventListener('click', ()=>{ filters.regular=!filters.regular; chipRegular.classList.toggle('active',filters.regular); render(); });
     $('#q').addEventListener('input', render);
 
-    function isLocker(r){ return !!(r[F.LOCKER] && String(r[F.LOCKER]).trim()); }
-    function fmtPts(v){
-      const n = Number(v||0);
-      if (!isFinite(n)) return '0';
+    // Helpers
+    const nv = (v)=> (v===undefined||v===null||Number.isNaN(v)) ? '' : String(v);
+    const truthy = (v)=> !!nv(v).trim(); // "marked" = any non-empty content
+    const isLocker = (r)=> truthy(r[F.LOCKER]);
+    const isRegular = (r)=> truthy(r[F.REGULAR]);
+    const variant = (r)=> isLocker(r) ? 'locker' : (isRegular(r) ? 'regular' : 'neutral');
+
+    const fmtPts = (v)=> {
+      const n = Number(v||0); if(!isFinite(n)) return '0';
       if (Math.abs(n) >= 1000) return (n/1000).toFixed(n%1000===0?0:1)+'k';
       return String(n);
-    }
-    function fmtDate(v){
-      if(!v) return '';
-      // Keep your existing formats (e.g., "Fri 9/12", "Nov 24", "6/12/23") — don’t reformat aggressively
-      return String(v);
-    }
-    function line(r){
-      const lockerNo = isLocker(r)? `#${String(r[F.LOCKER]).trim()}` : '';
-      const nameTop = `${r[F.LAST]||''}`;
-      const nameBot = `${r[F.FIRST]||''}`;
+    };
+    const fmtDate = (v)=> nv(v) || '—'; // keep your human dates (e.g., "Fri 9/12")
+
+    // Rendering
+    function makeRowHTML(r, editingNotes=false, editingPts=false){
+      const v = variant(r);
+      const lockerNo = isLocker(r) ? `#${nv(r[F.LOCKER]).trim()}` : '';
+      const nameTop = nv(r[F.LAST]);
+      const nameBot = nv(r[F.FIRST]);
       const pts = fmtPts(r[F.POINTS]);
-      const last = fmtDate(r[F.LAST_PURCHASE]) || '—';
-      const notes = r[F.NOTES] ? String(r[F.NOTES]) : '';
-      const variant = isLocker(r) ? 'locker' : 'regular';
+      const last = fmtDate(r[F.LAST_PURCHASE]);
+      const notes = nv(r[F.NOTES]);
+      const id = encodeURIComponent(nv(r[F.EMAIL]) || (nameTop+'|'+nameBot));
+
+      const ptsCell = editingPts ? `
+        <div class="pts-editor">
+          <input id="pts-input-${id}" type="number" min="0" step="1" value="${Number(nv(r[F.POINTS]))||0}" />
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <button class="btn" onclick='savePoints("${id}")'>Save</button>
+            <button class="btn secondary" onclick='cancelPts("${id}")'>Cancel</button>
+          </div>
+        </div>` : `
+        <div>
+          <div class="pts">${pts}</div>
+          <div style="margin-top:8px"><button class="btn secondary" onclick='startPts("${id}")'>Edit</button></div>
+        </div>`;
+
+      const notesCell = editingNotes ? `
+        <div class="notes-editor">
+          <textarea id="notes-input-${id}">${notes.replace(/</g,'&lt;')}</textarea>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <button class="btn" onclick='saveNotes("${id}")'>Save</button>
+            <button class="btn secondary" onclick='cancelNotes("${id}")'>Cancel</button>
+          </div>
+        </div>` : `
+        <div>
+          <div class="notes"><span class="edit">${notes}</span></div>
+          <div style="margin-top:8px"><button class="btn secondary" onclick='startNotes("${id}")'>Edit</button></div>
+        </div>`;
 
       return `
-        <div class="row ${variant}">
+        <div class="row ${v}" data-id="${id}">
           <div class="name">
             ${lockerNo ? `<div class="locker-tag">${lockerNo}</div>` : ``}
             <div>${nameTop}</div>
             <div>${nameBot}</div>
           </div>
-          <div class="pts">${pts}</div>
+          ${ptsCell}
           <div class="last">${last}</div>
-          <div class="notes">${notes}</div>
+          ${notesCell}
         </div>`;
     }
 
     function render(){
       const q = ($('#q').value||'').toLowerCase();
+
       const list = ALL.filter(r=>{
-        const l = isLocker(r);
-        if (l && !filters.locker) return false;
-        if (!l && !filters.regular) return false;
+        // filter chips
+        if (isLocker(r) && !filters.locker) return false;
+        if (isRegular(r) && !filters.regular) return false;
 
         if(!q) return true;
-        const parts = [
-          r[F.LAST], r[F.FIRST], r[F.AKA], r[F.PHONE], r[F.EMAIL],
-          r[F.LOCKER], r[F.BDAY], r[F.NOTES]
-        ].map(v => (v==null?'':String(v)).toLowerCase());
-        return parts.some(p => p.includes(q));
+        const hay = [F.LAST,F.FIRST,F.AKA,F.EMAIL,F.PHONE,F.LOCKER,F.REGULAR,F.NOTES]
+          .map(k => nv(r[k]).toLowerCase());
+        return hay.some(s => s.includes(q));
       });
-      rowsEl.innerHTML = list.map(line).join('') || `<div style="padding:18px;color:#6b7280;">No results</div>`;
+
+      rowsEl.innerHTML = list.map(r => {
+        const id = encodeURIComponent(nv(r[F.EMAIL]) || (nv(r[F.LAST])+'|'+nv(r[F.FIRST])));
+        const editing = EDIT_STATE[id] || { notes:false, pts:false };
+        return makeRowHTML(r, editing.notes, editing.pts);
+      }).join('') || `<div style="padding:18px;color:#6b7280;">No results</div>`;
     }
+
+    // State for which row is editing
+    const EDIT_STATE = {}; // id -> {notes:boolean, pts:boolean}
+
+    // Locate a row in ALL by id (email preferred, else Last|First)
+    function findIndexById(id){
+      const [last, first] = decodeURIComponent(id).split('|');
+      return ALL.findIndex(x => {
+        const e = nv(x[F.EMAIL]).toLowerCase();
+        if (e && e === decodeURIComponent(id).toLowerCase()) return true;
+        return nv(x[F.LAST]).toLowerCase() === (last||'').toLowerCase()
+            && nv(x[F.FIRST]).toLowerCase() === (first||'').toLowerCase();
+      });
+    }
+
+    // --- Notes edit/save/cancel ---
+    window.startNotes = (id)=>{ EDIT_STATE[id] = {...(EDIT_STATE[id]||{}), notes:true}; render(); setTimeout(()=>{ const t = document.getElementById(`notes-input-${id}`); if(t) t.focus(); }, 0); };
+    window.cancelNotes = (id)=>{ EDIT_STATE[id] = {...(EDIT_STATE[id]||{}), notes:false}; render(); };
+    window.saveNotes = async (id)=>{
+      const idx = findIndexById(id); if(idx<0) return;
+      const r = ALL[idx];
+      const val = (document.getElementById(`notes-input-${id}`)?.value||'').trim();
+      try{
+        const payload = {
+          email: nv(r[F.EMAIL]) || undefined,
+          firstName: nv(r[F.FIRST]) || undefined,
+          lastName: nv(r[F.LAST]) || undefined,
+          aka: nv(r[F.AKA]) || undefined,
+          notes: val
+        };
+        const res = await fetch('/.netlify/functions/update-notes', {
+          method:'POST', headers:{'content-type':'application/json'}, body:JSON.stringify(payload)
+        });
+        const json = await res.json(); if(!json.ok) throw new Error(json.error||'Save failed');
+        ALL[idx][F.NOTES] = val;
+        EDIT_STATE[id] = {...(EDIT_STATE[id]||{}), notes:false};
+        render();
+      }catch(e){ alert('Error saving notes: '+e.message); }
+    };
+
+    // --- Points edit/save/cancel ---
+    window.startPts = (id)=>{ EDIT_STATE[id] = {...(EDIT_STATE[id]||{}), pts:true}; render(); setTimeout(()=>{ const t = document.getElementById(`pts-input-${id}`); if(t) t.focus(); }, 0); };
+    window.cancelPts = (id)=>{ EDIT_STATE[id] = {...(EDIT_STATE[id]||{}), pts:false}; render(); };
+    window.savePoints = async (id)=>{
+      const idx = findIndexById(id); if(idx<0) return;
+      const r = ALL[idx];
+      const num = Number(document.getElementById(`pts-input-${id}`)?.value || 0);
+      try{
+        const payload = {
+          email: nv(r[F.EMAIL]) || undefined,
+          firstName: nv(r[F.FIRST]) || undefined,
+          lastName: nv(r[F.LAST]) || undefined,
+          aka: nv(r[F.AKA]) || undefined,
+          points: num
+        };
+        const res = await fetch('/.netlify/functions/update-points', {
+          method:'POST', headers:{'content-type':'application/json'}, body:JSON.stringify(payload)
+        });
+        const json = await res.json(); if(!json.ok) throw new Error(json.error||'Save failed');
+        ALL[idx][F.POINTS] = num;
+        EDIT_STATE[id] = {...(EDIT_STATE[id]||{}), pts:false};
+        render();
+      }catch(e){ alert('Error saving points: '+e.message); }
+    };
 
     async function boot(){
       try{
         const res = await fetch('/.netlify/functions/get-loyalty', { cache:'no-store' });
         const json = await res.json();
         if(!json.ok) throw new Error(json.error || 'Load failed');
-        // Clean any NaN from upstream (defensive)
         ALL = (json.data||[]).map(r=>{
           const x={...r}; for(const k in x){ if(typeof x[k]==='number' && Number.isNaN(x[k])) x[k]=null; }
           return x;
