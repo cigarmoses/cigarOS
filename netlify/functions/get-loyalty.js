@@ -1,11 +1,16 @@
 // netlify/functions/get-loyalty.js
-// Works on Netlify Functions with @netlify/blobs getStore() API.
-// Reads contacts.json OR contacts.csv from the "contacts" store,
-// normalizes headers (first_name/last_name/etc) to { first, last, ... }.
+// Reads contacts from Netlify Blobs "contacts" store (contacts.json or contacts.csv)
+// and normalizes fields for the Loyalty UI (icons, locker, regular, last visit, etc).
 
 import { getStore } from '@netlify/blobs';
 
 /* ---------- helpers ---------- */
+const truthy = v => {
+  if (v == null) return false;
+  const s = String(v).trim().toLowerCase();
+  return s === 'y' || s === 'yes' || s === 'true' || s === '1' || s === 'x' || s === '✓';
+};
+
 function sanitizeJsonText(text) {
   return text
     .replace(/:\s*NaN\b/g, ': null')
@@ -13,7 +18,7 @@ function sanitizeJsonText(text) {
     .replace(/:\s*-Infinity\b/g, ': null');
 }
 
-// CSV parser that handles quotes and commas inside quotes
+// CSV parser (quote-aware)
 function parseCSV(text) {
   const rows = [];
   let i = 0, field = '', row = [], inQuotes = false;
@@ -49,9 +54,9 @@ function parseCSV(text) {
   });
 }
 
-const pick = (obj, candidates) => {
-  for (const k of candidates) {
-    if (obj[k] != null && String(obj[k]).trim() !== '') return obj[k];
+const pick = (obj, keys) => {
+  for (const k of keys) {
+    if (k in obj && String(obj[k]).trim() !== '') return obj[k];
   }
   return '';
 };
@@ -78,9 +83,8 @@ function splitName(name) {
   return { first: '', last: s };
 }
 
-// Normalize one raw record into the shape the UI expects
+/* ---------- normalize one record ---------- */
 function normalizeRecord(raw) {
-  // handle many spellings, including first_name/last_name seen in your blob
   let last  = pick(raw, ['Last Name','last_name','Last','LName']);
   let first = pick(raw, ['First Name','first_name','First','FName']);
   const nameField = pick(raw, ['Name','Full Name','Customer','Client']);
@@ -95,50 +99,47 @@ function normalizeRecord(raw) {
   }
 
   const aka          = pick(raw, ['Nickname “aka”','Nickname "aka"','aka','AKA','Nick','Nickname']);
-  const pointsRaw    = pick(raw, ['Points','Rewards','Pts','points','rewards']);
-  const lastPurchase = pick(raw, ['Last Purchase','Last purchase','Last Visit','Last visit','Last','last_purchase']);
-  const notes        = pick(raw, ['Notes','Note','notes']);
-  const locker       = pick(raw, ['Locker #','Locker','Locker Number','Locker#','locker_#']);
+  const points       = Number(pick(raw, ['Points','Rewards','Pts','points','rewards'])) || 0;
+  const lastPurchase = pick(raw, ['Last Purchase','Last purchase','Last Visit','Last visit','Last','last_purchase','last visit']);
+  const locker       = pick(raw, ['Locker #','Locker','Locker Number','Locker#','locker_#']).toString().trim();
   const regular      = pick(raw, ['Regular','regular']);
+
+  // Icon flags (new CSV columns)
+  const military     = truthy(pick(raw, ['Military','military','Vet','Veteran']));
+  const responder    = truthy(pick(raw, ['First Responder','Responder','first_responder']));
+  const lockerFlag   = truthy(locker) || truthy(pick(raw, ['Locker Member','locker_member']));
+
   const email        = pick(raw, ['Email','email','E-mail']);
   const phone        = pick(raw, ['Phone','phone','Mobile','Cell']);
-  const birthday     = pick(raw, ['Birthday','DOB','Birthdate']);
-
-  // numeric points (supports "7.4k")
-  let points = Number(pointsRaw);
-  if (!Number.isFinite(points)) {
-    const m = String(pointsRaw).trim().match(/^(\d+(?:\.\d+)?)k$/i);
-    points = m ? Math.round(parseFloat(m[1]) * 1000) : 0;
-  }
 
   return {
     first: String(first || '').trim(),
     last: String(last || '').trim(),
     aka: String(aka || '').trim(),
     points,
-    lastPurchase: String(lastPurchase || '').trim(),
-    notes: String(notes || '').trim(),
-    locker: String(locker || '').trim(),
+    lastPurchase: String(lastPurchase || '').trim(), // raw string; UI formats it
+    notes: '', // removed from UI, kept for compatibility
+    locker,
     regular: String(regular || '').trim(),
     email: String(email || '').trim(),
     phone: String(phone || '').trim(),
-    birthday: String(birthday || '').trim(),
+    badges: { military, responder, locker: lockerFlag },
     _raw: raw
   };
 }
 
+/* ---------- load from blobs ---------- */
 async function loadFromBlobs() {
   const store = getStore('contacts');
-  if (!store) throw new Error('Netlify Blobs getStore() unavailable');
 
-  // Prefer JSON if present
+  // Prefer JSON
   const jsonText = await store.get('contacts.json', { type: 'text' });
   if (jsonText) {
     const arr = JSON.parse(sanitizeJsonText(jsonText));
     if (Array.isArray(arr)) return { source: 'blobs-json', data: arr.map(normalizeRecord) };
   }
 
-  // Else try CSV
+  // Else CSV
   const csvText = await store.get('contacts.csv', { type: 'text' });
   if (csvText) {
     const arr = parseCSV(csvText);
@@ -153,16 +154,14 @@ export default async () => {
     let { source, data } = await loadFromBlobs();
 
     if (!data.length) {
-      // Optional fallback to repo file
+      // Optional repo fallback
       try {
         const url = new URL('../../img/contacts.json', import.meta.url);
         const res = await fetch(url);
         const arr = await res.json();
         data = (Array.isArray(arr) ? arr : []).map(normalizeRecord);
         source = 'fallback';
-      } catch {
-        // ignore
-      }
+      } catch {}
     }
 
     if (!data.length) throw new Error('No contacts found (blobs or fallback)');
