@@ -72,6 +72,11 @@
       color: white;
     }
 
+    tr.regular {
+      background: #ff6600;
+      color: white;
+    }
+
     .name-last {
       font-weight: bold;
       display: block;
@@ -146,9 +151,8 @@
       data.forEach(contact => {
         const row = document.createElement("tr");
 
-        if (contact.locker && contact.locker !== "") {
-          row.classList.add("locker");
-        }
+        if (contact.badges?.locker) row.classList.add("locker");
+        else if (contact.regular) row.classList.add("regular");
 
         row.innerHTML = `
           <td>
@@ -177,10 +181,10 @@
         const searchVal = search.value.toLowerCase();
 
         if (filterLocker.classList.contains("active")) {
-          filtered = filtered.filter(c => c.locker && c.locker !== "");
+          filtered = filtered.filter(c => c.badges?.locker);
         }
         if (filterRegular.classList.contains("active")) {
-          filtered = filtered.filter(c => !c.locker || c.locker === "");
+          filtered = filtered.filter(c => c.regular && !c.badges?.locker);
         }
         if (searchVal) {
           filtered = filtered.filter(c =>
