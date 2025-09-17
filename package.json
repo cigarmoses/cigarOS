@@ -2,13 +2,14 @@
   "name": "cigaros",
   "version": "1.0.0",
   "private": true,
-  "description": "cigarOS: POS + Reports + Loyalty + Learn",
-  "type": "module",
+  "type": "commonjs",
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
-    "build": "echo \"No build step\"",
-    "start": "netlify dev"
+    "build": "echo \"Static site — no build step\""
   },
   "dependencies": {
-    "@netlify/blobs": "^6.5.0"
+    "csv-parser": "^3.0.0"
   }
 }
