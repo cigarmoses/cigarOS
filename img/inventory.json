@@ -1,20 +1,52 @@
-[
-  {
-    "id": "sku-001",
-    "brand": "Padrón",
-    "brand_slug": "padron",
-    "item": "1964 Anniversary Maduro",
-    "vitola": "Toro",
-    "price": 14.00,
-    "inventory": 24
-  },
-  {
-    "id": "sku-002",
-    "brand": "Oliva",
-    "brand_slug": "oliva",
-    "item": "Serie V",
-    "vitola": "Robusto",
-    "price": 11.50,
-    "inventory": 12
-  }
-]
+{
+  "brands": [
+    {
+      "name": "Arturo Fuente",
+      "icon": "/img/brands/arturofuente.svg"
+    },
+    {
+      "name": "Padron",
+      "icon": "/img/brands/padron.svg"
+    },
+    {
+      "name": "OpusX",
+      "icon": "/img/brands/opusx.svg"
+    },
+    {
+      "name": "Ashton",
+      "icon": "/img/brands/ashton.svg"
+    },
+    {
+      "name": "Gurkha",
+      "icon": "/img/brands/gurkha.svg"
+    },
+    {
+      "name": "Dissident",
+      "icon": "/img/brands/dissident.svg"
+    },
+    {
+      "name": "Foundation",
+      "icon": "/img/brands/foundation.svg"
+    },
+    {
+      "name": "Oscar Valladares",
+      "icon": "/img/brands/oscarvalladares.svg"
+    },
+    {
+      "name": "La Aroma de Cuba",
+      "icon": "/img/brands/laromadecuba.svg"
+    },
+    {
+      "name": "Sweet Jane",
+      "icon": "/img/brands/sweetjane.svg"
+    },
+    {
+      "name": "Island Jim",
+      "icon": "/img/brands/islandjim.svg"
+    },
+    {
+      "name": "Emilio",
+      "icon": "/img/brands/emilio.svg"
+    }
+  ]
+}
