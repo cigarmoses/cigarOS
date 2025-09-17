@@ -1,6 +1,39 @@
 [build]
   publish = "."
-  functions = "netlify/functions"
+  command = ""
 
-[functions]
-  node_bundler = "esbuild"
+# Redirects for pretty URLs
+[[redirects]]
+from = "/"
+to = "/index.html"
+status = 200
+
+[[redirects]]
+from = "/loyalty"
+to = "/loyalty.html"
+status = 200
+
+[[redirects]]
+from = "/pos"
+to = "/pos.html"
+status = 200
+
+[[redirects]]
+from = "/reports"
+to = "/reports.html"
+status = 200
+
+[[redirects]]
+from = "/learn"
+to = "/learn.html"
+status = 200
+
+[[redirects]]
+from = "/cigarhub"
+to = "/cigarhub.html"
+status = 200
+
+[[redirects]]
+from = "/admin"
+to = "/admin.html"
+status = 200
