@@ -1,15 +1,14 @@
 {
   "name": "cigaros",
   "version": "1.0.0",
-  "private": true,
-  "type": "commonjs",
-  "engines": {
-    "node": ">=18"
-  },
+  "main": "index.js",
   "scripts": {
-    "build": "echo \"Static site — no build step\""
+    "start": "netlify dev",
+    "build": "echo 'No build step required'"
   },
   "dependencies": {
+    "@netlify/functions": "^2.6.0",
+    "@netlify/blobs": "^6.5.0",
     "csv-parser": "^3.0.0"
   }
 }
