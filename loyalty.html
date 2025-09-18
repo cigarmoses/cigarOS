@@ -5,211 +5,100 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Loyalty</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f5f7fa;
-      margin: 0;
-      padding: 0;
-    }
-
-    .container {
-      width: 95%;
-      max-width: 1000px;
-      margin: 20px auto;
-    }
-
-    .search {
-      width: 100%;
-      padding: 10px;
-      margin-bottom: 15px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      font-size: 16px;
-    }
-
-    .filters {
-      display: flex;
-      gap: 12px;
-      margin-bottom: 20px;
-    }
-
-    .filter-btn {
-      padding: 8px 14px;
-      border-radius: 8px;
-      cursor: pointer;
-      border: none;
-      font-weight: bold;
-    }
-
-    .filter-btn.active {
-      opacity: 0.8;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      background: white;
-      border-radius: 10px;
-      overflow: hidden;
-    }
-
-    th, td {
-      padding: 12px;
-      text-align: left;
-    }
-
-    th {
-      background: #f0f2f5;
-      font-size: 14px;
-    }
-
-    tr:nth-child(even) {
-      background: #f9f9f9;
-    }
-
-    tr.locker {
-      background: #007bff;
-      color: white;
-    }
-
-    tr.regular {
-      background: #ff6600;
-      color: white;
-    }
-
-    .name-last {
-      font-weight: bold;
-      display: block;
-    }
-
-    .name-first {
-      font-weight: normal;
-      display: block;
-    }
-
-    .icon {
-      width: 20px;
-      height: 20px;
-      margin-right: 6px;
-      vertical-align: middle;
-    }
+    body { font-family: Arial, sans-serif; background:#f5f6fa; margin:0; padding:20px; }
+    .filters { margin-bottom:15px; }
+    .filter-btn { padding:8px 14px; margin-right:8px; border:none; border-radius:6px; cursor:pointer; }
+    .filter-btn.active { font-weight:bold; }
+    table { width:100%; border-collapse:collapse; }
+    th, td { padding:10px; text-align:left; }
+    th { background:#f1f1f1; }
+    tr:nth-child(even) { background:#fafafa; }
+    tr.locker { background:#0074D9; color:white; }
+    .badge-icon { width:20px; vertical-align:middle; margin-right:6px; }
+    .last-name { font-weight:bold; }
+    .first-name { font-weight:normal; }
   </style>
 </head>
 <body>
-  <div class="container">
-    <input type="text" id="search" class="search" placeholder="Search" />
+  <input type="text" id="search" placeholder="Search" style="width:100%;padding:10px;margin-bottom:15px;" />
 
-    <div class="filters">
-      <button class="filter-btn" id="filter-locker" style="background:#007bff; color:white;">Locker members</button>
-      <button class="filter-btn" id="filter-regular" style="background:#ff6600; color:white;">Regulars</button>
-    </div>
-
-    <table>
-      <thead>
-        <tr>
-          <th></th>
-          <th>Name</th>
-          <th>Pts</th>
-          <th>Last Visit</th>
-        </tr>
-      </thead>
-      <tbody id="loyalty-table"></tbody>
-    </table>
+  <div class="filters">
+    <button class="filter-btn" data-filter="locker">Locker members</button>
+    <button class="filter-btn" data-filter="regular">Regulars</button>
   </div>
 
+  <table>
+    <thead>
+      <tr>
+        <th></th>
+        <th>Name</th>
+        <th>Pts</th>
+        <th>Last Visit</th>
+      </tr>
+    </thead>
+    <tbody id="loyalty-list"></tbody>
+  </table>
+
   <script>
-    async function fetchLoyaltyData() {
-      const res = await fetch("/.netlify/functions/get-loyalty");
-      const data = await res.json();
-      return data.data || [];
-    }
-
-    function formatLastVisit(dateString) {
-      if (!dateString) return "—";
-      const visitDate = new Date(dateString);
-      if (isNaN(visitDate)) return dateString;
-
-      const now = new Date();
-      const diffMonths = (now.getFullYear() - visitDate.getFullYear()) * 12 +
-                         (now.getMonth() - visitDate.getMonth());
-
-      if (diffMonths < 6) {
-        return `${visitDate.getMonth() + 1}/${visitDate.getDate()}`;
-      } else if (diffMonths < 12) {
-        return visitDate.toLocaleString("default", { month: "long" });
-      } else if (diffMonths >= 24 && visitDate.getFullYear() < now.getFullYear() - 1) {
-        return visitDate.getFullYear();
-      } else {
-        return "Year+";
+    async function loadLoyalty() {
+      try {
+        const res = await fetch('/.netlify/functions/get-loyalty');
+        const data = await res.json();
+        if (!data.ok) throw new Error('Failed to load');
+        renderTable(data.data);
+      } catch (err) {
+        document.getElementById('loyalty-list').innerHTML =
+          `<tr><td colspan="4" style="color:red;">Error: ${err.message}</td></tr>`;
       }
     }
 
-    function renderTable(data) {
-      const table = document.getElementById("loyalty-table");
-      table.innerHTML = "";
+    function renderTable(records) {
+      const tbody = document.getElementById('loyalty-list');
+      tbody.innerHTML = '';
 
-      data.forEach(contact => {
-        const row = document.createElement("tr");
+      records.forEach((r) => {
+        const tr = document.createElement('tr');
+        if (r.badges.locker) tr.classList.add('locker');
 
-        if (contact.badges?.locker) row.classList.add("locker");
-        else if (contact.regular) row.classList.add("regular");
+        let icon = '';
+        if (r.badges.military) icon = '<img class="badge-icon" src="/img/military.svg" />';
+        else if (r.badges.responder) icon = '<img class="badge-icon" src="/img/firstresponders.svg" />';
+        else if (r.badges.locker) icon = '<img class="badge-icon" src="/img/lockermember.svg" />';
 
-        row.innerHTML = `
-          <td>
-            ${contact.badges?.locker ? `<img src="img/lockermember.svg" class="icon" alt="Locker">` : ""}
-            ${contact.badges?.military ? `<img src="img/military.svg" class="icon" alt="Military">` : ""}
-            ${contact.badges?.responder ? `<img src="img/firstresponders.svg" class="icon" alt="First Responder">` : ""}
-          </td>
-          <td>
-            <span class="name-last">${contact.last_name || ""}</span>
-            <span class="name-first">${contact.first_name || ""}</span>
-          </td>
-          <td>${contact.points || 0}</td>
-          <td>${formatLastVisit(contact.last_purchase)}</td>
+        tr.innerHTML = `
+          <td>${icon}</td>
+          <td><span class="last-name">${r.last}</span> <span class="first-name">${r.first}</span></td>
+          <td>${r.points}</td>
+          <td>${r.lastVisit}</td>
         `;
-        table.appendChild(row);
+        tbody.appendChild(tr);
+      });
+
+      // Search
+      document.getElementById('search').addEventListener('input', (e) => {
+        const q = e.target.value.toLowerCase();
+        Array.from(tbody.rows).forEach((row) => {
+          row.style.display = row.innerText.toLowerCase().includes(q) ? '' : 'none';
+        });
+      });
+
+      // Filters
+      document.querySelectorAll('.filter-btn').forEach((btn) => {
+        btn.onclick = () => {
+          document.querySelectorAll('.filter-btn').forEach((b) => b.classList.remove('active'));
+          btn.classList.add('active');
+
+          const filter = btn.dataset.filter;
+          Array.from(tbody.rows).forEach((row) => {
+            if (filter === 'locker' && !row.classList.contains('locker')) row.style.display = 'none';
+            else if (filter === 'regular' && row.classList.contains('locker')) row.style.display = 'none';
+            else row.style.display = '';
+          });
+        };
       });
     }
 
-    function addSearchAndFilters(data) {
-      const search = document.getElementById("search");
-      const filterLocker = document.getElementById("filter-locker");
-      const filterRegular = document.getElementById("filter-regular");
-
-      function filterData() {
-        let filtered = [...data];
-        const searchVal = search.value.toLowerCase();
-
-        if (filterLocker.classList.contains("active")) {
-          filtered = filtered.filter(c => c.badges?.locker);
-        }
-        if (filterRegular.classList.contains("active")) {
-          filtered = filtered.filter(c => c.regular && !c.badges?.locker);
-        }
-        if (searchVal) {
-          filtered = filtered.filter(c =>
-            `${c.first_name} ${c.last_name}`.toLowerCase().includes(searchVal)
-          );
-        }
-        renderTable(filtered);
-      }
-
-      search.addEventListener("input", filterData);
-      filterLocker.addEventListener("click", () => {
-        filterLocker.classList.toggle("active");
-        filterData();
-      });
-      filterRegular.addEventListener("click", () => {
-        filterRegular.classList.toggle("active");
-        filterData();
-      });
-
-      renderTable(data);
-    }
-
-    fetchLoyaltyData().then(data => {
-      addSearchAndFilters(data);
-    });
+    loadLoyalty();
   </script>
 </body>
 </html>
