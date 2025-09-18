@@ -6,43 +6,40 @@
 <title>Loyalty</title>
 <style>
   :root{
-    --bg:#f6f7fb; --card:#ffffff; --text:#111827; --muted:#6b7280;
-    --blue:#1769ff; --orange:#ef6c00; --row-alt:#f9fafb; --border:#eef2f7;
+    --bg:#f6f7fb; --card:#fff; --text:#111827; --muted:#6b7280;
+    --blue:#1769ff; --orange:#ef6c00; --row-alt:#f9fafb; --border:#eaeef4;
   }
   html,body{margin:0;padding:0;background:var(--bg);color:var(--text);
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
   .wrap{max-width:1040px;margin:22px auto;padding:0 16px}
 
-  /* Top controls */
-  .topbar{display:grid;grid-template-columns:1fr auto auto;gap:12px;align-items:center;margin-bottom:10px}
-  .search{width:100%;padding:12px 14px;border:1px solid #e5e7eb;border-radius:12px;font-size:16px;background:#fff}
-  .chip{display:inline-flex;align-items:center;gap:10px;padding:10px 14px;border-radius:12px;background:#eef2ff;cursor:pointer;border:1px solid #e6e9f5}
+  /* Controls */
+  .top{display:grid;grid-template-columns:1fr auto auto;gap:12px;align-items:center}
+  .search{width:100%;padding:12px 14px;border:1px solid #e5e7eb;border-radius:12px;background:#fff;font-size:16px}
+  .chip{display:inline-flex;align-items:center;gap:10px;padding:10px 14px;border-radius:12px;background:#eef2ff;border:1px solid #e6e9f5;cursor:pointer}
   .chip .dot{width:14px;height:14px;border-radius:4px}
-  .chip .dot.blue{background:var(--blue)} .chip .dot.orange{background:var(--orange)}
-  .chip.active{outline:2px solid #1113}
-  .jumprow{margin:8px 0 16px;display:flex;gap:8px;align-items:center}
-  .jumprow label{font-size:14px;color:var(--muted)}
+  .dot.blue{background:var(--blue)} .dot.orange{background:var(--orange)}
+  .chip.active{outline:2px solid #1112}
+  .jumpbox{margin:10px 0 16px;display:flex;gap:8px;align-items:center}
+  .jumpbox label{font-size:14px;color:var(--muted)}
   .jump{min-width:260px;padding:10px 12px;border:1px solid #e5e7eb;border-radius:10px;background:#fff}
 
-  /* TABLE: force never-stacked layout */
+  /* Table */
   .card{background:var(--card);border-radius:16px;box-shadow:0 6px 18px rgba(16,24,40,.04)}
-  .table-scroll{overflow-x:auto;border-radius:16px}
-  table{border-collapse:collapse;width:100%;table-layout:fixed;min-width:720px; /* keeps 4 cols on phones */ }
-  thead th{position:sticky;top:0;background:#f3f4f6;z-index:1}
-  thead th{font-size:14px;text-align:left;font-weight:700;color:#111;padding:12px 14px;border-bottom:1px solid var(--border)}
+  .table-scroll{overflow-x:auto;border-radius:16px;-webkit-overflow-scrolling:touch}
+  table{border-collapse:collapse;width:100%;table-layout:fixed;min-width:860px}
+  col.icon{width:40px} col.name{width:auto} col.pts{width:110px} col.last{width:160px}
+  thead th{font-size:14px;text-align:left;font-weight:700;color:#111;padding:12px 14px;border-bottom:1px solid var(--border);background:#f3f4f6}
   tbody td{padding:12px 14px;border-top:1px solid var(--border);vertical-align:middle}
-  /* make sure nothing flips to block on mobile (some resets do that) */
-  table, thead, tbody, tr, th, td { display: table !important; }
-  tr { width:auto !important; }
-
   tbody tr:nth-child(even):not(.locker):not(.regular){background:var(--row-alt)}
   tbody tr.locker{background:var(--blue);color:#fff}
   tbody tr.regular{background:var(--orange);color:#fff}
-
-  .name{display:flex;align-items:center;gap:10px}
-  .badge{width:22px;height:22px;display:inline-block;flex:0 0 22px}
+  .namecell{display:flex;align-items:center;gap:10px}
+  .badge{width:22px;height:22px;flex:0 0 22px}
   .last{display:block;font-weight:800}
   .first{display:block;font-weight:400;margin-top:2px;opacity:.95}
+  td.pts, th.pts{text-align:center}
+  td.last, th.last{white-space:nowrap;text-align:center}
   .highlight{outline:2px solid #1118;outline-offset:-2px}
 
   @media (max-width:640px){
@@ -51,179 +48,126 @@
 </style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="topbar">
-      <input id="q" class="search" placeholder="Search" autocomplete="off" />
-      <div id="chip-locker" class="chip" data-filter="locker" title="Show only locker members">
-        <span class="dot blue"></span><strong>Locker members</strong>
-      </div>
-      <div id="chip-regular" class="chip" data-filter="regular" title="Show only regulars">
-        <span class="dot orange"></span><strong>Regulars</strong>
-      </div>
-    </div>
-
-    <div class="jumprow" id="jumprow" style="display:none;">
-      <label for="jump">Quick jump:</label>
-      <select id="jump" class="jump"></select>
-    </div>
-
-    <div class="card table-scroll">
-      <table>
-        <thead>
-          <tr>
-            <th style="width:38px;"></th>
-            <th>Name</th>
-            <th style="width:90px;">Pts</th>
-            <th style="width:140px;">Last Visit</th>
-          </tr>
-        </thead>
-        <tbody id="rows"></tbody>
-      </table>
-    </div>
+<div class="wrap">
+  <div class="top">
+    <input id="q" class="search" placeholder="Search" autocomplete="off" />
+    <div id="chip-locker" class="chip" data-filter="locker"><span class="dot blue"></span><strong>Locker members</strong></div>
+    <div id="chip-regular" class="chip" data-filter="regular"><span class="dot orange"></span><strong>Regulars</strong></div>
   </div>
 
+  <div class="jumpbox" id="jumprow" style="display:none;">
+    <label for="jump">Quick jump:</label>
+    <select id="jump" class="jump"></select>
+  </div>
+
+  <div class="card table-scroll">
+    <table>
+      <colgroup>
+        <col class="icon"><col class="name"><col class="pts"><col class="last">
+      </colgroup>
+      <thead>
+        <tr>
+          <th></th>
+          <th>Name</th>
+          <th class="pts">Pts</th>
+          <th class="last">Last Visit</th>
+        </tr>
+      </thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </div>
+</div>
+
 <script>
-/* ---------- CSV parser (simple & fast) ---------- */
-function parseCSV(text){
-  const out=[]; let field='', row=[], q=false;
-  for(let i=0;i<text.length;i++){
-    const c=text[i];
-    if(q){
-      if(c=='"' && text[i+1]=='"'){ field+='"'; i++; }
-      else if(c=='"'){ q=false; }
-      else { field+=c; }
-      continue;
-    }
-    if(c=='"'){ q=true; continue; }
-    if(c==','){ row.push(field); field=''; continue; }
-    if(c=='\n'){ row.push(field); out.push(row); row=[]; field=''; continue; }
-    if(c=='\r'){ continue; }
-    field+=c;
-  }
-  if(field.length || row.length){ row.push(field); out.push(row); }
-  return out;
-}
-function idx(headers,label,alts=[]){
-  const lc=headers.map(h=>(h||'').toString().trim().toLowerCase());
-  const tries=[label,...alts].map(s=>s.toLowerCase());
-  for(const t of tries){ const i=lc.indexOf(t); if(i>-1) return i; }
-  return -1;
-}
-function truthy(v){ const s=String(v??'').trim().toLowerCase(); return ['y','yes','true','1','x'].includes(s); }
-function lastVisitFormat(raw){
-  const s=(raw||'').trim(); if(!s) return '—';
-  const d=new Date(s); if(isNaN(d)) return '—';
-  const now=new Date();
-  const diffMonths=(now.getFullYear()-d.getFullYear())*12+(now.getMonth()-d.getMonth());
-  if(diffMonths<6)  return `${d.getMonth()+1}/${d.getDate()}`;                 // M/D
-  if(diffMonths<12) return d.toLocaleString('default',{month:'long'});         // Month name
-  if(diffMonths<24) return 'Year+';
-  return String(d.getFullYear());                                              // Year
-}
-const iconPath=(b)=>{
-  if(b.military) return '/img/military.svg';
-  if(b.responder) return '/img/firstresponders.svg';
-  if(b.locker)    return '/img/lockermember.svg';
-  return '';
-};
+/* ---- tiny CSV parser ---- */
+function parseCSV(t){const o=[];let f='',r=[],q=false;for(let i=0;i<t.length;i++){const c=t[i];if(q){if(c=='"'&&t[i+1]=='"'){f+='"';i++;}else if(c=='"'){q=false;}else f+=c;continue;}if(c=='"'){q=true;continue;}if(c==','){r.push(f);f='';continue;}if(c=='\n'){r.push(f);o.push(r);r=[];f='';continue;}if(c=='\r'){continue;}f+=c;}if(f.length||r.length){r.push(f);o.push(r);}return o;}
+function idx(H,label,alts=[]){const lc=H.map(h=>(h||'').toString().trim().toLowerCase());const tries=[label,...alts].map(s=>s.toLowerCase());for(const t of tries){const i=lc.indexOf(t);if(i>-1) return i;}return -1;}
+function truthy(v){const s=String(v??'').trim().toLowerCase();return ['y','yes','true','1','x'].includes(s);}
+function lastVisitFormat(raw){const s=(raw||'').trim();if(!s) return '—';const d=new Date(s);if(isNaN(d)) return '—';const now=new Date();const diff=(now.getFullYear()-d.getFullYear())*12+(now.getMonth()-d.getMonth());if(diff<6) return `${d.getMonth()+1}/${d.getDate()}`;if(diff<12) return d.toLocaleString('default',{month:'long'});if(diff<24) return 'Year+';return String(d.getFullYear());}
+const iconPath=(b)=> b.military?'/img/military.svg': b.responder?'/img/firstresponders.svg': b.locker?'/img/lockermember.svg':'';
 
 async function load(){
   const res=await fetch('/img/contacts.csv?cb='+Date.now());
-  if(!res.ok) throw new Error('Could not load contacts.csv');
-  const csv=await res.text();
-  const rows=parseCSV(csv);
-  if(rows.length<2) throw new Error('CSV empty');
-
-  const H=rows[0];
+  if(!res.ok) throw new Error('contacts.csv not found');
+  const raw=await res.text();
+  const a=parseCSV(raw); if(a.length<2) throw new Error('CSV empty');
+  const H=a[0];
   const C={
-    locker:      idx(H,'Locker',['Locker #']),
-    regular:     idx(H,'Regular'),
-    military:    idx(H,'Military'),
-    responder:   idx(H,'First Responder'),
-    rewards:     idx(H,'Rewards'),
-    lastName:    idx(H,'Last Name'),
-    firstName:   idx(H,'First Name'),
+    locker:idx(H,'Locker',['Locker #']),
+    regular:idx(H,'Regular'),
+    military:idx(H,'Military'),
+    responder:idx(H,'First Responder'),
+    rewards:idx(H,'Rewards'),
+    lastName:idx(H,'Last Name'),
+    firstName:idx(H,'First Name'),
     lastPurchase:idx(H,'Last Purchase'),
-    email:       idx(H,'Email'),
-    phone:       idx(H,'Phone'),
   };
-
   const data=[];
-  for(let i=1;i<rows.length;i++){
-    const r=rows[i]; if(!r) continue;
+  for(let i=1;i<a.length;i++){
+    const r=a[i]; if(!r) continue;
     if(r.every(x => (x??'').toString().trim()==='')) continue;
-
-    const badges={
-      locker: truthy(C.locker>-1 ? r[C.locker] : ''),
-      military: truthy(C.military>-1 ? r[C.military] : ''),
-      responder: truthy(C.responder>-1 ? r[C.responder] : '')
-    };
-    const isRegular = truthy(C.regular>-1 ? r[C.regular] : '');
-
+    const badges={locker:truthy(C.locker>-1?r[C.locker]:''), military:truthy(C.military>-1?r[C.military]:''), responder:truthy(C.responder>-1?r[C.responder]:'')};
+    const isRegular=truthy(C.regular>-1?r[C.regular]:'') && !badges.locker;
     data.push({
       id:String(i),
-      first:(C.firstName>-1? r[C.firstName]:'').trim(),
-      last:(C.lastName>-1? r[C.lastName]:'').trim(),
-      points: C.rewards>-1? (Number(r[C.rewards]||0)||0) : 0,
-      lastVisit: lastVisitFormat(C.lastPurchase>-1? r[C.lastPurchase] : ''),
-      badges,
-      isRegular: isRegular && !badges.locker
+      first:(C.firstName>-1?r[C.firstName]:'').trim(),
+      last:(C.lastName>-1?r[C.lastName]:'').trim(),
+      points:C.rewards>-1?(Number(r[C.rewards]||0)||0):0,
+      lastVisit:lastVisitFormat(C.lastPurchase>-1?r[C.lastPurchase]:''),
+      badges,isRegular
     });
   }
-
   initUI(data);
 }
 
 function initUI(all){
-  const tbody=document.getElementById('rows');
+  const rows=document.getElementById('rows');
   const q=document.getElementById('q');
   const chips=[...document.querySelectorAll('.chip')];
   const jumprow=document.getElementById('jumprow');
   const jump=document.getElementById('jump');
 
-  const activeFilter=()=> (chips.find(c=>c.classList.contains('active'))?.dataset.filter)||'';
-  const filterMatch=(r,mode)=> !mode || (mode==='locker'?r.badges.locker : r.isRegular);
-  const searchMatch=(r,term)=>{
-    if(!term) return true; term=term.toLowerCase();
-    return r.first.toLowerCase().includes(term)||r.last.toLowerCase().includes(term);
-  };
+  const active=()=> (chips.find(c=>c.classList.contains('active'))?.dataset.filter)||'';
+  const fMatch=(r,f)=> !f || (f==='locker'?r.badges.locker : r.isRegular);
+  const sMatch=(r,t)=>{ if(!t) return true; t=t.toLowerCase(); return r.first.toLowerCase().includes(t)||r.last.toLowerCase().includes(t); };
 
-  function populateJump(list){
-    if(!list.length){ jumprow.style.display='none'; return; }
+  function buildJump(list){
+    if(!list.length){jumprow.style.display='none';return;}
     jumprow.style.display='flex';
-    jump.innerHTML = `<option value="">Select…</option>`+
+    jump.innerHTML='<option value="">Select…</option>'+
       list.map(r=>`<option value="${r.id}">${r.last}, ${r.first}</option>`).join('');
   }
 
   function render(){
-    const term=q.value.trim();
-    const mode=activeFilter();
-    const list=all.filter(r=>filterMatch(r,mode)&&searchMatch(r,term));
-
-    tbody.innerHTML='';
-    list.forEach(r=>{
+    const t=q.value.trim();
+    const fl=active();
+    const list=all.filter(r=>fMatch(r,fl)&&sMatch(r,t));
+    rows.innerHTML='';
+    for(const r of list){
       const tr=document.createElement('tr');
-      if(r.badges.locker) tr.classList.add('locker');
-      else if(r.isRegular) tr.classList.add('regular');
+      if(r.badges.locker) tr.classList.add('locker'); else if(r.isRegular) tr.classList.add('regular');
       tr.id='row-'+r.id;
-
       const ic=iconPath(r.badges);
       tr.innerHTML=`
         <td>${ic?`<img class="badge" src="${ic}" alt="">`:''}</td>
-        <td><div class="name"><div>
-            <span class="last">${r.last||'&nbsp;'}</span>
-            <span class="first">${r.first||''}</span>
-        </div></div></td>
-        <td>${r.points}</td>
-        <td>${r.lastVisit}</td>`;
-      tbody.appendChild(tr);
-    });
+        <td>
+          <div class="namecell">
+            <div>
+              <span class="last">${r.last||'&nbsp;'}</span>
+              <span class="first">${r.first||''}</span>
+            </div>
+          </div>
+        </td>
+        <td class="pts">${r.points}</td>
+        <td class="last">${r.lastVisit}</td>`;
+      rows.appendChild(tr);
+    }
     if(!list.length){
       const tr=document.createElement('tr');
-      tr.innerHTML=`<td colspan="4" style="color:#b91c1c;padding:14px;">No results</td>`;
-      tbody.appendChild(tr);
+      tr.innerHTML=`<td colspan="4" style="padding:14px;color:#b91c1c;">No results</td>`;
+      rows.appendChild(tr);
     }
-    populateJump(list);
+    buildJump(list);
   }
 
   q.addEventListener('input',render);
@@ -235,8 +179,7 @@ function initUI(all){
   jump.addEventListener('change',()=>{
     const id=jump.value; if(!id) return;
     const el=document.getElementById('row-'+id); if(!el) return;
-    el.classList.add('highlight'); el.scrollIntoView({behavior:'smooth',block:'center'});
-    setTimeout(()=>el.classList.remove('highlight'),1200);
+    el.classList.add('highlight'); el.scrollIntoView({behavior:'smooth',block:'center'}); setTimeout(()=>el.classList.remove('highlight'),1100);
   });
 
   render();
@@ -244,7 +187,7 @@ function initUI(all){
 
 load().catch(e=>{
   document.getElementById('rows').innerHTML =
-    `<tr><td colspan="4" style="color:#b91c1c;padding:14px;">Error loading contacts: ${e.message}</td></tr>`;
+    `<tr><td colspan="4" style="padding:14px;color:#b91c1c;">Error: ${e.message}</td></tr>`;
 });
 </script>
 </body>
