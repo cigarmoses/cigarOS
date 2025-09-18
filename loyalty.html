@@ -7,188 +7,239 @@
 <style>
   :root{
     --bg:#f6f7fb; --card:#fff; --text:#111827; --muted:#6b7280;
-    --blue:#1769ff; --orange:#ef6c00; --row-alt:#f9fafb; --border:#eaeef4;
+    --blue:#1769ff; --orange:#ef6c00; --row:#f9fafb; --border:#e5e7eb;
   }
-  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
-  .wrap{max-width:1040px;margin:22px auto;padding:0 16px}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);
+       font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+  .wrap{max-width:980px;margin:22px auto;padding:0 16px}
 
   /* Controls */
-  .top{display:grid;grid-template-columns:1fr auto auto;gap:12px;align-items:center}
-  .search{width:100%;padding:12px 14px;border:1px solid #e5e7eb;border-radius:12px;background:#fff;font-size:16px}
-  .chip{display:inline-flex;align-items:center;gap:10px;padding:10px 14px;border-radius:12px;background:#eef2ff;border:1px solid #e6e9f5;cursor:pointer}
+  .controls{display:grid;grid-template-columns:1fr auto auto;gap:12px;align-items:center}
+  .search{width:100%;padding:12px 14px;border:1px solid var(--border);border-radius:12px;background:#fff;font-size:16px}
+  .chip{display:inline-flex;align-items:center;gap:10px;padding:10px 14px;border-radius:12px;background:#eef2ff;border:1px solid #e6e9f5;cursor:pointer;user-select:none}
   .chip .dot{width:14px;height:14px;border-radius:4px}
   .dot.blue{background:var(--blue)} .dot.orange{background:var(--orange)}
   .chip.active{outline:2px solid #1112}
-  .jumpbox{margin:10px 0 16px;display:flex;gap:8px;align-items:center}
-  .jumpbox label{font-size:14px;color:var(--muted)}
-  .jump{min-width:260px;padding:10px 12px;border:1px solid #e5e7eb;border-radius:10px;background:#fff}
 
-  /* Table */
-  .card{background:var(--card);border-radius:16px;box-shadow:0 6px 18px rgba(16,24,40,.04)}
-  .table-scroll{overflow-x:auto;border-radius:16px;-webkit-overflow-scrolling:touch}
-  table{border-collapse:collapse;width:100%;table-layout:fixed;min-width:860px}
-  col.icon{width:40px} col.name{width:auto} col.pts{width:110px} col.last{width:160px}
-  thead th{font-size:14px;text-align:left;font-weight:700;color:#111;padding:12px 14px;border-bottom:1px solid var(--border);background:#f3f4f6}
-  tbody td{padding:12px 14px;border-top:1px solid var(--border);vertical-align:middle}
-  tbody tr:nth-child(even):not(.locker):not(.regular){background:var(--row-alt)}
-  tbody tr.locker{background:var(--blue);color:#fff}
-  tbody tr.regular{background:var(--orange);color:#fff}
-  .namecell{display:flex;align-items:center;gap:10px}
-  .badge{width:22px;height:22px;flex:0 0 22px}
-  .last{display:block;font-weight:800}
-  .first{display:block;font-weight:400;margin-top:2px;opacity:.95}
-  td.pts, th.pts{text-align:center}
-  td.last, th.last{white-space:nowrap;text-align:center}
-  .highlight{outline:2px solid #1118;outline-offset:-2px}
-
-  @media (max-width:640px){
-    thead th, tbody td{font-size:15px}
+  /* Table-like list */
+  .card{margin-top:10px;background:var(--card);border-radius:16px;box-shadow:0 6px 18px rgba(16,24,40,.04)}
+  .labels,.row{
+    display:grid;
+    grid-template-columns: 26px 1fr 56px 86px; /* icon | name | pts | last visit */
+    align-items:center;
+    gap:10px;
+    padding:12px 14px;
   }
+  .labels{position:sticky;top:0;z-index:1;background:#f3f4f6;border-bottom:1px solid var(--border);
+          border-top-left-radius:16px;border-top-right-radius:16px}
+  .labels div{font-size:14px;font-weight:700}
+  .rows{border-bottom-left-radius:16px;border-bottom-right-radius:16px;overflow:hidden}
+  .row{border-top:1px solid var(--border);background:#fff}
+  .row:nth-child(even):not(.locker):not(.regular){background:var(--row)}
+  .row.locker{background:var(--blue);color:#fff}
+  .row.regular{background:var(--orange);color:#fff}
+
+  .badge{width:22px;height:22px}
+  .nameblock{line-height:1.05}
+  .last-name{display:block;font-weight:800}
+  .first-name{display:block;font-weight:400;opacity:.95;margin-top:2px}
+  .pts,.last{justify-self:center;font-weight:700}
+  .last{white-space:nowrap}
+
+  @media (max-width:410px){
+    .labels,.row{grid-template-columns: 22px 1fr 50px 74px}
+  }
+
+  .toast{margin-top:14px;color:#b91c1c;background:#fee2e2;border:1px solid #fecaca;padding:10px 12px;border-radius:12px}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <div class="top">
-    <input id="q" class="search" placeholder="Search" autocomplete="off" />
-    <div id="chip-locker" class="chip" data-filter="locker"><span class="dot blue"></span><strong>Locker members</strong></div>
-    <div id="chip-regular" class="chip" data-filter="regular"><span class="dot orange"></span><strong>Regulars</strong></div>
-  </div>
+  <div class="wrap">
+    <div class="controls">
+      <input id="q" class="search" placeholder="Search" autocomplete="off" />
+      <div id="chip-locker" class="chip" data-filter="locker"><span class="dot blue"></span><strong>Locker members</strong></div>
+      <div id="chip-regular" class="chip" data-filter="regular"><span class="dot orange"></span><strong>Regulars</strong></div>
+    </div>
 
-  <div class="jumpbox" id="jumprow" style="display:none;">
-    <label for="jump">Quick jump:</label>
-    <select id="jump" class="jump"></select>
-  </div>
+    <div id="error" class="toast" style="display:none"></div>
 
-  <div class="card table-scroll">
-    <table>
-      <colgroup>
-        <col class="icon"><col class="name"><col class="pts"><col class="last">
-      </colgroup>
-      <thead>
-        <tr>
-          <th></th>
-          <th>Name</th>
-          <th class="pts">Pts</th>
-          <th class="last">Last Visit</th>
-        </tr>
-      </thead>
-      <tbody id="rows"></tbody>
-    </table>
+    <div class="card">
+      <div class="labels">
+        <div></div>
+        <div>Name</div>
+        <div class="pts">Pts</div>
+        <div class="last">Last Visit</div>
+      </div>
+      <div id="rows" class="rows"></div>
+    </div>
   </div>
-</div>
 
 <script>
-/* ---- tiny CSV parser ---- */
-function parseCSV(t){const o=[];let f='',r=[],q=false;for(let i=0;i<t.length;i++){const c=t[i];if(q){if(c=='"'&&t[i+1]=='"'){f+='"';i++;}else if(c=='"'){q=false;}else f+=c;continue;}if(c=='"'){q=true;continue;}if(c==','){r.push(f);f='';continue;}if(c=='\n'){r.push(f);o.push(r);r=[];f='';continue;}if(c=='\r'){continue;}f+=c;}if(f.length||r.length){r.push(f);o.push(r);}return o;}
-function idx(H,label,alts=[]){const lc=H.map(h=>(h||'').toString().trim().toLowerCase());const tries=[label,...alts].map(s=>s.toLowerCase());for(const t of tries){const i=lc.indexOf(t);if(i>-1) return i;}return -1;}
-function truthy(v){const s=String(v??'').trim().toLowerCase();return ['y','yes','true','1','x'].includes(s);}
-function lastVisitFormat(raw){const s=(raw||'').trim();if(!s) return '—';const d=new Date(s);if(isNaN(d)) return '—';const now=new Date();const diff=(now.getFullYear()-d.getFullYear())*12+(now.getMonth()-d.getMonth());if(diff<6) return `${d.getMonth()+1}/${d.getDate()}`;if(diff<12) return d.toLocaleString('default',{month:'long'});if(diff<24) return 'Year+';return String(d.getFullYear());}
-const iconPath=(b)=> b.military?'/img/military.svg': b.responder?'/img/firstresponders.svg': b.locker?'/img/lockermember.svg':'';
-
-async function load(){
-  const res=await fetch('/img/contacts.csv?cb='+Date.now());
-  if(!res.ok) throw new Error('contacts.csv not found');
-  const raw=await res.text();
-  const a=parseCSV(raw); if(a.length<2) throw new Error('CSV empty');
-  const H=a[0];
-  const C={
-    locker:idx(H,'Locker',['Locker #']),
-    regular:idx(H,'Regular'),
-    military:idx(H,'Military'),
-    responder:idx(H,'First Responder'),
-    rewards:idx(H,'Rewards'),
-    lastName:idx(H,'Last Name'),
-    firstName:idx(H,'First Name'),
-    lastPurchase:idx(H,'Last Purchase'),
-  };
-  const data=[];
-  for(let i=1;i<a.length;i++){
-    const r=a[i]; if(!r) continue;
-    if(r.every(x => (x??'').toString().trim()==='')) continue;
-    const badges={locker:truthy(C.locker>-1?r[C.locker]:''), military:truthy(C.military>-1?r[C.military]:''), responder:truthy(C.responder>-1?r[C.responder]:'')};
-    const isRegular=truthy(C.regular>-1?r[C.regular]:'') && !badges.locker;
-    data.push({
-      id:String(i),
-      first:(C.firstName>-1?r[C.firstName]:'').trim(),
-      last:(C.lastName>-1?r[C.lastName]:'').trim(),
-      points:C.rewards>-1?(Number(r[C.rewards]||0)||0):0,
-      lastVisit:lastVisitFormat(C.lastPurchase>-1?r[C.lastPurchase]:''),
-      badges,isRegular
-    });
-  }
-  initUI(data);
+/* ---------------- CSV parsing ---------------- */
+function parseCSV(text){
+  const lines = text.replace(/\r/g,'').split('\n').filter(Boolean);
+  if (!lines.length) return [];
+  const headers = lines.shift().split(',').map(h => h.trim());
+  return lines.map(line => {
+    const cells = []; let cur='', q=false;
+    for (let i=0;i<line.length;i++){
+      const ch=line[i];
+      if (ch === '"'){ q=!q; continue; }
+      if (ch === ',' && !q){ cells.push(cur); cur=''; continue; }
+      cur += ch;
+    }
+    cells.push(cur);
+    const obj = {};
+    headers.forEach((h,i)=> obj[h]= (cells[i]??'').trim());
+    return obj;
+  });
 }
 
-function initUI(all){
-  const rows=document.getElementById('rows');
-  const q=document.getElementById('q');
-  const chips=[...document.querySelectorAll('.chip')];
-  const jumprow=document.getElementById('jumprow');
-  const jump=document.getElementById('jump');
-
-  const active=()=> (chips.find(c=>c.classList.contains('active'))?.dataset.filter)||'';
-  const fMatch=(r,f)=> !f || (f==='locker'?r.badges.locker : r.isRegular);
-  const sMatch=(r,t)=>{ if(!t) return true; t=t.toLowerCase(); return r.first.toLowerCase().includes(t)||r.last.toLowerCase().includes(t); };
-
-  function buildJump(list){
-    if(!list.length){jumprow.style.display='none';return;}
-    jumprow.style.display='flex';
-    jump.innerHTML='<option value="">Select…</option>'+
-      list.map(r=>`<option value="${r.id}">${r.last}, ${r.first}</option>`).join('');
+/* ----------- helpers ----------- */
+function normalizeKey(k){ return String(k).toLowerCase().replace(/[^a-z0-9]+/g,''); }
+function makeKeyMap(row){
+  const m={};
+  for (const k in row) m[normalizeKey(k)] = row[k];
+  return m;
+}
+function getAny(map, keys){
+  for (const k of keys){
+    const v = map[normalizeKey(k)];
+    if (v != null && v !== '') return v;
   }
+  return '';
+}
+function truthyFlag(v){
+  const s = String(v||'').trim();
+  if (!s) return false;
+  return /^(y|yes|x|1|true)$/i.test(s);
+}
 
-  function render(){
-    const t=q.value.trim();
-    const fl=active();
-    const list=all.filter(r=>fMatch(r,fl)&&sMatch(r,t));
-    rows.innerHTML='';
-    for(const r of list){
-      const tr=document.createElement('tr');
-      if(r.badges.locker) tr.classList.add('locker'); else if(r.isRegular) tr.classList.add('regular');
-      tr.id='row-'+r.id;
-      const ic=iconPath(r.badges);
-      tr.innerHTML=`
-        <td>${ic?`<img class="badge" src="${ic}" alt="">`:''}</td>
-        <td>
-          <div class="namecell">
-            <div>
-              <span class="last">${r.last||'&nbsp;'}</span>
-              <span class="first">${r.first||''}</span>
-            </div>
-          </div>
-        </td>
-        <td class="pts">${r.points}</td>
-        <td class="last">${r.lastVisit}</td>`;
-      rows.appendChild(tr);
-    }
-    if(!list.length){
-      const tr=document.createElement('tr');
-      tr.innerHTML=`<td colspan="4" style="padding:14px;color:#b91c1c;">No results</td>`;
-      rows.appendChild(tr);
-    }
-    buildJump(list);
-  }
+/* ------------- Last visit formatting rules ------------- */
+function formatLastVisit(raw){
+  if (!raw) return '—';
+  const dt = new Date(raw.replace(/T/,' ').replace(/-/g,'/'));
+  if (isNaN(dt)) return '—';
+  const now = new Date();
+  const months = (now.getFullYear()-dt.getFullYear())*12 + (now.getMonth()-dt.getMonth());
+  if (months < 6)  return `${dt.getMonth()+1}/${dt.getDate()}`;
+  if (months < 12) return dt.toLocaleString('en-US',{month:'long'});
+  const years = now.getFullYear()-dt.getFullYear();
+  if (years > 2 && ![2024,2025].includes(dt.getFullYear())) return String(dt.getFullYear());
+  return 'Year+';
+}
 
-  q.addEventListener('input',render);
-  chips.forEach(c=>c.addEventListener('click',()=>{
-    if(c.classList.contains('active')) c.classList.remove('active');
-    else { chips.forEach(x=>x.classList.remove('active')); c.classList.add('active'); }
-    render();
-  }));
-  jump.addEventListener('change',()=>{
-    const id=jump.value; if(!id) return;
-    const el=document.getElementById('row-'+id); if(!el) return;
-    el.classList.add('highlight'); el.scrollIntoView({behavior:'smooth',block:'center'}); setTimeout(()=>el.classList.remove('highlight'),1100);
+/* ---------------- normalize one CSV row ---------------- */
+function normalizeRow(raw){
+  const map = makeKeyMap(raw);
+
+  const lastName   = getAny(map,['Last Name','Last']);
+  const firstName  = getAny(map,['First Name','First']);
+  const pointsRaw  = getAny(map,['Rewards','Points']) || '0';
+  const lastPurch  = getAny(map,['Last Purchase','LastPurchase','Last Purchase Date']);
+
+  // Locker logic: ANY digit in locker column
+  const lockerVal = getAny(map,['Locker #','Locker#','Locker','Locker Number','Locker No','Locker Id','LockerID']);
+  const isLocker  = /\d/.test(String(lockerVal));
+
+  const regVal    = getAny(map,['Regular']);
+  const isRegular = String(regVal).trim() !== '';
+
+  const isMilitary   = truthyFlag(getAny(map,['Military']));
+  const isResponder  = truthyFlag(getAny(map,['First Responder','First_Responder','Responder']));
+
+  return {
+    lastName, firstName,
+    points: Number(pointsRaw) || 0,
+    last: formatLastVisit(lastPurch),
+    flags: { locker: isLocker, regular: isRegular, military: isMilitary, responder: isResponder }
+  };
+}
+
+/* ---------------- render ---------------- */
+const state = { all:[], view:[], filter:null, q:'' };
+
+function render(){
+  const rowsEl = document.getElementById('rows');
+  rowsEl.innerHTML = '';
+  const q = state.q.trim().toLowerCase();
+  const filter = state.filter;
+
+  const list = state.view.filter(p=>{
+    const passSearch = !q || (`${p.lastName} ${p.firstName}`).toLowerCase().includes(q);
+    const passFilter = !filter || p.flags[filter];
+    return passSearch && passFilter;
   });
 
-  render();
+  for (const p of list){
+    const row = document.createElement('div');
+    row.className = 'row' + (p.flags.locker ? ' locker' : p.flags.regular ? ' regular' : '');
+
+    // badge priority: military > responder > locker
+    const badge = document.createElement('img');
+    badge.className = 'badge';
+    if (p.flags.military)        badge.src = '/img/military.svg';
+    else if (p.flags.responder)  badge.src = '/img/firstresponders.svg';
+    else if (p.flags.locker)     badge.src = '/img/locker.svg';  // corrected
+    else                         badge.style.opacity = 0;
+
+    const name = document.createElement('div');
+    name.className = 'nameblock';
+    name.innerHTML = `<span class="last-name">${p.lastName||''}</span><span class="first-name">${p.firstName||''}</span>`;
+
+    const pts = document.createElement('div');
+    pts.className = 'pts';
+    pts.textContent = p.points || 0;
+
+    const last = document.createElement('div');
+    last.className = 'last';
+    last.textContent = p.last || '—';
+
+    row.appendChild(badge);
+    row.appendChild(name);
+    row.appendChild(pts);
+    row.appendChild(last);
+    rowsEl.appendChild(row);
+  }
 }
 
-load().catch(e=>{
-  document.getElementById('rows').innerHTML =
-    `<tr><td colspan="4" style="padding:14px;color:#b91c1c;">Error: ${e.message}</td></tr>`;
+/* ---------------- events ---------------- */
+document.getElementById('q').addEventListener('input', e=>{
+  state.q = e.target.value;
+  render();
 });
+for (const id of ['chip-locker','chip-regular']){
+  const el = document.getElementById(id);
+  el.addEventListener('click', ()=>{
+    const key = el.dataset.filter;
+    if (state.filter === key){ state.filter = null; el.classList.remove('active'); }
+    else{
+      state.filter = key;
+      document.getElementById('chip-locker').classList.toggle('active', key==='locker');
+      document.getElementById('chip-regular').classList.toggle('active', key==='regular');
+    }
+    render();
+  });
+}
+
+/* ---------------- load CSV from repo ---------------- */
+(async function load(){
+  try{
+    const res = await fetch('/img/contacts.csv',{cache:'no-store'});
+    if (!res.ok) throw new Error('Could not load /img/contacts.csv');
+    const csv = await res.text();
+    const rows = parseCSV(csv);
+    const normalized = rows.map(normalizeRow);
+    normalized.sort((a,b)=> (a.lastName||'').localeCompare(b.lastName||'') || (a.firstName||'').localeCompare(b.firstName||''));
+    state.all = state.view = normalized;
+    render();
+  }catch(err){
+    const box = document.getElementById('error');
+    box.style.display='block';
+    box.textContent = `Error loading contacts: ${err.message}`;
+  }
+})();
 </script>
 </body>
 </html>
