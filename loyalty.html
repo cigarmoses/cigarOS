@@ -1,273 +1,298 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Loyalty</title>
-<style>
-  :root{
-    --bg:#f6f7fb; --card:#fff; --text:#111827; --muted:#6b7280;
-    --blue:#1769ff; --orange:#ef6c00; --row:#f9fafb; --border:#e5e7eb;
-  }
-  *{box-sizing:border-box}
-  body{margin:0;background:var(--bg);color:var(--text);
-       font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
-  .wrap{max-width:980px;margin:22px auto;padding:0 16px}
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>CigarOS — Loyalty</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
 
-  /* Top bar */
-  .topbar{display:flex;align-items:center;gap:12px;margin-bottom:12px}
-  .back{display:inline-flex;align-items:center;gap:8px;
-        background:#fff;border:1px solid var(--border);border-radius:12px;
-        padding:10px 12px;text-decoration:none;color:var(--text);
-        box-shadow:0 3px 10px rgba(16,24,40,.04)}
-  .back svg{width:16px;height:16px}
+  <style>
+    :root{
+      --bg:#f6f7fb;
+      --panel:#ffffff;
+      --ink:#0e1726;
+      --muted:#6b7280;
+      --line:#e5e7eb;
+      --blue:#2563eb;
+      --orange:#ea580c;
+      --rowEven:#f9fafb;
+      --ring: 0 0 0 3px rgba(37,99,235,.2);
+      --radius:14px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; background:var(--bg); color:var(--ink);
+      font:16px/1.4 Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+    .wrap{max-width:1100px; margin:24px auto; padding:0 16px;}
+    .toolbar{display:grid; gap:12px}
+    @media (min-width:700px){ .toolbar{grid-template-columns:1fr auto auto} }
 
-  /* Controls – stacked layout */
-  .controls{display:flex;flex-direction:column;gap:12px}
-  .search{width:100%;padding:12px 14px;border:1px solid var(--border);
-          border-radius:12px;background:#fff;font-size:16px}
-  .filters{display:flex;gap:12px;flex-wrap:wrap}
-  .chip{display:inline-flex;align-items:center;gap:10px;padding:10px 14px;border-radius:12px;
-        background:#eef2ff;border:1px solid #e6e9f5;cursor:pointer;user-select:none}
-  .chip .dot{width:14px;height:14px;border-radius:4px}
-  .dot.blue{background:var(--blue)} .dot.orange{background:var(--orange)}
-  .chip.active{outline:2px solid #1112}
+    .search{
+      display:flex; align-items:center; gap:10px; background:var(--panel);
+      border:1px solid var(--line); border-radius:14px; padding:12px 14px;
+      box-shadow:0 1px 0 rgba(0,0,0,.02);
+    }
+    .search input{
+      width:100%; border:0; outline:none; font-size:16px; background:transparent;
+    }
+    .chip{
+      display:inline-flex; align-items:center; gap:10px;
+      background:var(--panel); border:1px solid var(--line);
+      padding:10px 14px; border-radius:999px; cursor:pointer; user-select:none;
+    }
+    .dot{width:14px;height:14px;border-radius:50%}
+    .dot.blue{background:var(--blue)}
+    .dot.orange{background:var(--orange)}
+    .chip:focus-visible{outline:none; box-shadow:var(--ring)}
+    .table{
+      margin-top:16px; background:var(--panel); border:1px solid var(--line); border-radius:var(--radius);
+      overflow:hidden
+    }
+    .thead,.row{display:grid; grid-template-columns:1.1fr 0.3fr 0.4fr; align-items:center}
+    .thead{padding:14px 16px; font-weight:700; border-bottom:1px solid var(--line)}
+    .row{padding:14px 16px; border-bottom:1px solid var(--line)}
+    .row:nth-child(even){background:var(--rowEven)}
+    .cell-name{display:flex; flex-direction:column; gap:2px}
+    .last{font-weight:700}
+    .first{color:var(--muted)}
+    .pts,.last-visit{font-weight:700; text-align:center}
+    .name-link{all:unset; cursor:pointer}
+    .name-link:focus-visible{outline:none; box-shadow:var(--ring); border-radius:8px}
 
-  /* Table-like list */
-  .card{margin-top:10px;background:var(--card);border-radius:16px;box-shadow:0 6px 18px rgba(16,24,40,.04)}
-  .labels,.row{
-    display:grid;
-    grid-template-columns: 26px 1fr 56px 86px; /* icon | name | pts | last visit */
-    align-items:center;
-    gap:10px;
-    padding:12px 14px;
-  }
-  .labels{position:sticky;top:0;z-index:1;background:#f3f4f6;border-bottom:1px solid var(--border);
-          border-top-left-radius:16px;border-top-right-radius:16px}
-  .labels div{font-size:14px;font-weight:700}
-  .rows{border-bottom-left-radius:16px;border-bottom-right-radius:16px;overflow:hidden}
-  .row{border-top:1px solid var(--border);background:#fff}
-  .row:nth-child(even):not(.locker):not(.regular){background:var(--row)}
-  .row.locker{background:var(--blue);color:#fff}
-  .row.regular{background:var(--orange);color:#fff}
-
-  .badge{width:22px;height:22px}
-  .nameblock{line-height:1.05}
-  .last-name{display:block;font-weight:800}
-  .first-name{display:block;font-weight:400;opacity:.95;margin-top:2px}
-  .pts,.last{justify-self:center;font-weight:700}
-  .last{white-space:nowrap}
-
-  @media (max-width:410px){
-    .labels,.row{grid-template-columns: 22px 1fr 50px 74px}
-  }
-
-  .toast{margin-top:14px;color:#b91c1c;background:#fee2e2;border:1px solid #fecaca;padding:10px 12px;border-radius:12px}
-</style>
+    /* Modal */
+    .modal-backdrop{
+      position:fixed; inset:0; background:rgba(15,23,42,.36);
+      display:none; align-items:flex-end; justify-content:center; padding:16px;
+    }
+    .modal{
+      width:100%; max-width:560px; background:var(--panel); border-radius:16px;
+      box-shadow: 0 30px 80px rgba(0,0,0,.28);
+      border:1px solid var(--line); transform:translateY(8px);
+    }
+    .modal header{
+      padding:18px 18px 12px; border-bottom:1px solid var(--line); display:flex; justify-content:space-between; align-items:center;
+    }
+    .modal h3{margin:0; font-size:18px}
+    .modal .x{
+      appearance:none; border:0; background:transparent; font-size:22px; line-height:1;
+      cursor:pointer; padding:6px 8px; border-radius:8px;
+    }
+    .modal .x:focus-visible{outline:none; box-shadow:var(--ring)}
+    .modal .body{padding:16px 18px 18px; display:grid; gap:12px}
+    .field{display:flex; gap:10px}
+    .label{width:110px; color:var(--muted)}
+    .value{font-weight:600}
+    .modal-backdrop.show{display:flex}
+    @media (min-width:700px){
+      .thead,.row{grid-template-columns: 1fr 120px 160px}
+      .pts,.last-visit{text-align:left}
+    }
+  </style>
 </head>
 <body>
   <div class="wrap">
-
-    <!-- Back to Home -->
-    <div class="topbar">
-      <a class="back" href="/index.html" aria-label="Back to Home">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-             stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="15 18 9 12 15 6"></polyline>
-        </svg>
-        Home
-      </a>
-    </div>
-
-    <!-- Controls: search on its own row, chips beneath -->
-    <div class="controls">
-      <input id="q" class="search" placeholder="Search" autocomplete="off" />
-      <div class="filters">
-        <div id="chip-locker" class="chip" data-filter="locker"><span class="dot blue"></span><strong>Locker members</strong></div>
-        <div id="chip-regular" class="chip" data-filter="regular"><span class="dot orange"></span><strong>Regulars</strong></div>
+    <div class="toolbar">
+      <div class="search">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="m21 21-4.2-4.2M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke="#64748b" stroke-width="2" stroke-linecap="round"/></svg>
+        <input id="q" placeholder="Search" />
       </div>
+      <button class="chip" id="btn-lockers" type="button" aria-pressed="false">
+        <span class="dot blue"></span><span>Locker members</span>
+      </button>
+      <button class="chip" id="btn-regulars" type="button" aria-pressed="false">
+        <span class="dot orange"></span><span>Regulars</span>
+      </button>
     </div>
 
-    <div id="error" class="toast" style="display:none"></div>
-
-    <div class="card">
-      <div class="labels">
-        <div></div>
+    <div class="table" id="list">
+      <div class="thead">
         <div>Name</div>
         <div class="pts">Pts</div>
-        <div class="last">Last Visit</div>
+        <div class="last-visit">Last Visit</div>
       </div>
-      <div id="rows" class="rows"></div>
+      <!-- rows injected here -->
     </div>
   </div>
 
-<script>
-/* ---------------- CSV parsing ---------------- */
-function parseCSV(text){
-  const lines = text.replace(/\r/g,'').split('\n').filter(Boolean);
-  if (!lines.length) return [];
-  const headers = lines.shift().split(',').map(h => h.trim());
-  return lines.map(line => {
-    const cells = []; let cur='', q=false;
-    for (let i=0;i<line.length;i++){
-      const ch=line[i];
-      if (ch === '"'){ q=!q; continue; }
-      if (ch === ',' && !q){ cells.push(cur); cur=''; continue; }
-      cur += ch;
+  <!-- Simple profile modal -->
+  <div class="modal-backdrop" id="profileSheet" role="dialog" aria-modal="true" aria-labelledby="profileTitle">
+    <div class="modal">
+      <header>
+        <h3 id="profileTitle">Customer</h3>
+        <button class="x" id="closeSheet" aria-label="Close">×</button>
+      </header>
+      <div class="body">
+        <div class="field"><div class="label">Nickname</div><div class="value" id="p-aka">—</div></div>
+        <div class="field"><div class="label">Phone</div><div class="value" id="p-phone">—</div></div>
+        <div class="field"><div class="label">Email</div><div class="value" id="p-email">—</div></div>
+        <div class="field"><div class="label">Birthday</div><div class="value" id="p-bday">—</div></div>
+        <div class="field"><div class="label">Points</div><div class="value" id="p-points">0</div></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // --- utilities to read flexible field names safely ---
+    const pick = (obj,...keys) => keys.find(k => k in obj && obj[k] != null && obj[k] !== '') ?? keys[0];
+    const get = (obj, ...aliases) => obj[pick(obj, ...aliases)];
+    const fmtPhone = v => (v||'').toString().trim();
+    const fmtEmail = v => (v||'').toString().trim();
+    const fmtBday  = v => (v||'').toString().trim();
+    const fmtPoints= v => {
+      const n = Number(v ?? 0);
+      return Number.isFinite(n) ? n.toLocaleString() : '0';
+    };
+
+    // --- state ---
+    let DATA = [];
+    let FILTER = { lockers:false, regulars:false, query:'' };
+
+    // --- fetch loyalty data (using your existing function) ---
+    async function loadData(){
+      const res = await fetch('/.netlify/functions/get-loyalty');
+      const { data } = await res.json();
+      // keep normalized copy
+      DATA = (data || []).map((r, idx) => {
+        return {
+          id: r.id ?? idx + 1,
+          first: get(r,'first','first_name') || '',
+          last:  get(r,'last','last_name') || '',
+          aka:   get(r,'aka','nickname','Nickname “aka”') || '',
+          phone: get(r,'phone','Phone') || '',
+          email: get(r,'email','Email') || '',
+          birthday: get(r,'birthday','Birthday') || '',
+          points: get(r,'points','rewards','Rewards') || 0,
+          lastPurchase: get(r,'lastPurchase','last_purchase','Last Purchase') || '',
+          locker: get(r,'locker','#','Locker #','Locker') || ''
+        };
+      });
+      render();
     }
-    cells.push(cur);
-    const obj = {};
-    headers.forEach((h,i)=> obj[h]= (cells[i]??'').trim());
-    return obj;
-  });
-}
 
-/* ----------- helpers ----------- */
-function normalizeKey(k){ return String(k).toLowerCase().replace(/[^a-z0-9]+/g,''); }
-function makeKeyMap(row){
-  const m={};
-  for (const k in row) m[normalizeKey(k)] = row[k];
-  return m;
-}
-function getAny(map, keys){
-  for (const k of keys){
-    const v = map[normalizeKey(k)];
-    if (v != null && v !== '') return v;
-  }
-  return '';
-}
-function truthyFlag(v){
-  const s = String(v||'').trim();
-  if (!s) return false;
-  return /^(y|yes|x|1|true)$/i.test(s);
-}
+    // --- render list ---
+    function render(){
+      const list = document.getElementById('list');
+      [...list.querySelectorAll('.row')].forEach(n=>n.remove());
 
-/* ------------- Last visit formatting rules ------------- */
-function formatLastVisit(raw){
-  if (!raw) return '—';
-  const dt = new Date(raw.replace(/T/,' ').replace(/-/g,'/'));
-  if (isNaN(dt)) return '—';
-  const now = new Date();
-  const months = (now.getFullYear()-dt.getFullYear())*12 + (now.getMonth()-dt.getMonth());
-  if (months < 6)  return `${dt.getMonth()+1}/${dt.getDate()}`;
-  if (months < 12) return dt.toLocaleString('en-US',{month:'long'});
-  const years = now.getFullYear()-dt.getFullYear();
-  if (years > 2 && ![2024,2025].includes(dt.getFullYear())) return String(dt.getFullYear());
-  return 'Year+';
-}
+      const q = FILTER.query.trim().toLowerCase();
 
-/* ---------------- normalize one CSV row ---------------- */
-function normalizeRow(raw){
-  const map = makeKeyMap(raw);
+      const rows = DATA.filter(rec => {
+        // text filter
+        if(q){
+          const hay = [
+            rec.first, rec.last, rec.aka, rec.phone, rec.email, rec.birthday, String(rec.locker||'')
+          ].join(' ').toLowerCase();
+          if(!hay.includes(q)) return false;
+        }
+        // locker filter
+        if(FILTER.lockers && !(rec.locker && String(rec.locker).trim() !== '')) return false;
+        if(FILTER.regulars && (rec.locker && String(rec.locker).trim() !== '')) return false;
+        return true;
+      });
 
-  const lastName   = getAny(map,['Last Name','Last']);
-  const firstName  = getAny(map,['First Name','First']);
-  const pointsRaw  = getAny(map,['Rewards','Points']) || '0';
-  const lastPurch  = getAny(map,['Last Purchase','LastPurchase','Last Purchase Date']);
+      const frag = document.createDocumentFragment();
+      rows.forEach(rec => {
+        const row = document.createElement('div');
+        row.className = 'row';
+        row.dataset.id = rec.id;
 
-  // Locker logic: ANY digit in locker column
-  const lockerVal = getAny(map,[
-    'Locker #','Locker#','Locker','Locker Number','Locker No','Locker Id','LockerID'
-  ]);
-  const isLocker  = /\d/.test(String(lockerVal));
+        // name cell (clickable name only)
+        const cName = document.createElement('div');
+        cName.className = 'cell-name';
+        const nameBtn = document.createElement('button');
+        nameBtn.className = 'name-link';
+        nameBtn.type = 'button';
+        nameBtn.innerHTML = `<span class="last">${escapeHtml(rec.last || '')}</span>
+                              <span class="first">${escapeHtml(rec.first || '')}${rec.aka? ` — “${escapeHtml(rec.aka)}”` : ''}</span>`;
+        nameBtn.addEventListener('click', () => openProfile(rec));
+        cName.appendChild(nameBtn);
 
-  const regVal    = getAny(map,['Regular']);
-  const isRegular = String(regVal).trim() !== '';
+        const cPts = document.createElement('div');
+        cPts.className = 'pts';
+        cPts.textContent = fmtPoints(rec.points);
 
-  const isMilitary   = truthyFlag(getAny(map,['Military']));
-  const isResponder  = truthyFlag(getAny(map,['First Responder','First_Responder','Responder']));
+        const cLast = document.createElement('div');
+        cLast.className = 'last-visit';
+        cLast.textContent = rec.lastPurchase ? niceLastVisit(rec.lastPurchase) : '—';
 
-  return {
-    lastName, firstName,
-    points: Number(pointsRaw) || 0,
-    last: formatLastVisit(lastPurch),
-    flags: { locker: isLocker, regular: isRegular, military: isMilitary, responder: isResponder }
-  };
-}
+        row.append(cName, cPts, cLast);
+        frag.appendChild(row);
+      });
 
-/* ---------------- render ---------------- */
-const state = { all:[], view:[], filter:null, q:'' };
-
-function render(){
-  const rowsEl = document.getElementById('rows');
-  rowsEl.innerHTML = '';
-  const q = state.q.trim().toLowerCase();
-  const filter = state.filter;
-
-  const list = state.view.filter(p=>{
-    const passSearch = !q || (`${p.lastName} ${p.firstName}`).toLowerCase().includes(q);
-    const passFilter = !filter || p.flags[filter];
-    return passSearch && passFilter;
-  });
-
-  for (const p of list){
-    const row = document.createElement('div');
-    row.className = 'row' + (p.flags.locker ? ' locker' : p.flags.regular ? ' regular' : '');
-
-    // badge priority: military > responder > locker
-    const badge = document.createElement('img');
-    badge.className = 'badge';
-    if (p.flags.military)        badge.src = '/img/military.svg';
-    else if (p.flags.responder)  badge.src = '/img/firstresponders.svg';
-    else if (p.flags.locker)     badge.src = '/img/locker.svg';
-    else                         badge.style.opacity = 0;
-
-    const name = document.createElement('div');
-    name.className = 'nameblock';
-    name.innerHTML = `<span class="last-name">${p.lastName||''}</span><span class="first-name">${p.firstName||''}</span>`;
-
-    const pts = document.createElement('div');
-    pts.className = 'pts';
-    pts.textContent = p.points || 0;
-
-    const last = document.createElement('div');
-    last.className = 'last';
-    last.textContent = p.last || '—';
-
-    row.appendChild(badge);
-    row.appendChild(name);
-    row.appendChild(pts);
-    row.appendChild(last);
-    rowsEl.appendChild(row);
-  }
-}
-
-/* ---------------- events ---------------- */
-document.getElementById('q').addEventListener('input', e=>{
-  state.q = e.target.value;
-  render();
-});
-for (const id of ['chip-locker','chip-regular']){
-  const el = document.getElementById(id);
-  el.addEventListener('click', ()=>{
-    const key = el.dataset.filter;
-    if (state.filter === key){ state.filter = null; el.classList.remove('active'); }
-    else{
-      state.filter = key;
-      document.getElementById('chip-locker').classList.toggle('active', key==='locker');
-      document.getElementById('chip-regular').classList.toggle('active', key==='regular');
+      list.appendChild(frag);
     }
-    render();
-  });
-}
 
-/* ---------------- load CSV from repo ---------------- */
-(async function load(){
-  try{
-    const res = await fetch('/img/contacts.csv',{cache:'no-store'});
-    if (!res.ok) throw new Error('Could not load /img/contacts.csv');
-    const csv = await res.text();
-    const rows = parseCSV(csv);
-    const normalized = rows.map(normalizeRow);
-    normalized.sort((a,b)=> (a.lastName||'').localeCompare(b.lastName||'') || (a.firstName||'').localeCompare(b.firstName||''));
-    state.all = state.view = normalized;
-    render();
-  }catch(err){
-    const box = document.getElementById('error');
-    box.style.display='block';
-    box.textContent = `Error loading contacts: ${err.message}`;
-  }
-})();
-</script>
+    function niceLastVisit(raw){
+      // Keep simple; raw may be date or string. If parseable, show M/D; else show raw or "—"
+      const d = new Date(raw);
+      if(!isNaN(+d)) {
+        const now = new Date();
+        const diff = now - d;
+        const days = diff / 86400000;
+        if(days <= 183) { // < 6 months
+          return `${d.getMonth()+1}/${d.getDate()}`;
+        } else if(days <= 365) {
+          return d.toLocaleString(undefined,{ month:'short' });
+        } else if(d.getFullYear() <= (new Date().getFullYear()-2)) {
+          return String(d.getFullYear());
+        }
+        return 'Year +';
+      }
+      return raw || '—';
+    }
+
+    function escapeHtml(s){
+      return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    }
+
+    // --- modal logic ---
+    const sheet = document.getElementById('profileSheet');
+    const closeSheetBtn = document.getElementById('closeSheet');
+
+    function openProfile(rec){
+      document.getElementById('profileTitle').textContent =
+        [rec.first, rec.last].filter(Boolean).join(' ').trim() || 'Customer';
+      document.getElementById('p-aka').textContent    = rec.aka || '—';
+      document.getElementById('p-phone').textContent  = fmtPhone(rec.phone) || '—';
+      document.getElementById('p-email').textContent  = fmtEmail(rec.email) || '—';
+      document.getElementById('p-bday').textContent   = fmtBday(rec.birthday) || '—';
+      document.getElementById('p-points').textContent = fmtPoints(rec.points);
+      sheet.classList.add('show');
+      // trap focus
+      closeSheetBtn.focus();
+      document.addEventListener('keydown', escClose, { once:true });
+      sheet.addEventListener('click', clickAway);
+    }
+    function escClose(e){ if(e.key === 'Escape') closeProfile(); }
+    function clickAway(e){ if(e.target === sheet) closeProfile(); }
+    function closeProfile(){
+      sheet.classList.remove('show');
+      sheet.removeEventListener('click', clickAway);
+    }
+    closeSheetBtn.addEventListener('click', closeProfile);
+
+    // --- filters & search ---
+    document.getElementById('q').addEventListener('input', (e)=>{
+      FILTER.query = e.target.value || '';
+      render();
+    });
+    const btnLock = document.getElementById('btn-lockers');
+    const btnReg  = document.getElementById('btn-regulars');
+    btnLock.addEventListener('click', ()=>{
+      FILTER.lockers = !FILTER.lockers;
+      btnLock.setAttribute('aria-pressed', String(FILTER.lockers));
+      render();
+    });
+    btnReg.addEventListener('click', ()=>{
+      FILTER.regulars = !FILTER.regulars;
+      btnReg.setAttribute('aria-pressed', String(FILTER.regulars));
+      render();
+    });
+
+    loadData();
+  </script>
 </body>
 </html>
