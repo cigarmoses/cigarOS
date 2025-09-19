@@ -14,10 +14,21 @@
        font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
   .wrap{max-width:980px;margin:22px auto;padding:0 16px}
 
-  /* Controls */
-  .controls{display:grid;grid-template-columns:1fr auto auto;gap:12px;align-items:center}
-  .search{width:100%;padding:12px 14px;border:1px solid var(--border);border-radius:12px;background:#fff;font-size:16px}
-  .chip{display:inline-flex;align-items:center;gap:10px;padding:10px 14px;border-radius:12px;background:#eef2ff;border:1px solid #e6e9f5;cursor:pointer;user-select:none}
+  /* Top bar */
+  .topbar{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+  .back{display:inline-flex;align-items:center;gap:8px;
+        background:#fff;border:1px solid var(--border);border-radius:12px;
+        padding:10px 12px;text-decoration:none;color:var(--text);
+        box-shadow:0 3px 10px rgba(16,24,40,.04)}
+  .back svg{width:16px;height:16px}
+
+  /* Controls – stacked layout */
+  .controls{display:flex;flex-direction:column;gap:12px}
+  .search{width:100%;padding:12px 14px;border:1px solid var(--border);
+          border-radius:12px;background:#fff;font-size:16px}
+  .filters{display:flex;gap:12px;flex-wrap:wrap}
+  .chip{display:inline-flex;align-items:center;gap:10px;padding:10px 14px;border-radius:12px;
+        background:#eef2ff;border:1px solid #e6e9f5;cursor:pointer;user-select:none}
   .chip .dot{width:14px;height:14px;border-radius:4px}
   .dot.blue{background:var(--blue)} .dot.orange{background:var(--orange)}
   .chip.active{outline:2px solid #1112}
@@ -56,10 +67,25 @@
 </head>
 <body>
   <div class="wrap">
+
+    <!-- Back to Home -->
+    <div class="topbar">
+      <a class="back" href="/index.html" aria-label="Back to Home">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+        Home
+      </a>
+    </div>
+
+    <!-- Controls: search on its own row, chips beneath -->
     <div class="controls">
       <input id="q" class="search" placeholder="Search" autocomplete="off" />
-      <div id="chip-locker" class="chip" data-filter="locker"><span class="dot blue"></span><strong>Locker members</strong></div>
-      <div id="chip-regular" class="chip" data-filter="regular"><span class="dot orange"></span><strong>Regulars</strong></div>
+      <div class="filters">
+        <div id="chip-locker" class="chip" data-filter="locker"><span class="dot blue"></span><strong>Locker members</strong></div>
+        <div id="chip-regular" class="chip" data-filter="regular"><span class="dot orange"></span><strong>Regulars</strong></div>
+      </div>
     </div>
 
     <div id="error" class="toast" style="display:none"></div>
@@ -140,7 +166,9 @@ function normalizeRow(raw){
   const lastPurch  = getAny(map,['Last Purchase','LastPurchase','Last Purchase Date']);
 
   // Locker logic: ANY digit in locker column
-  const lockerVal = getAny(map,['Locker #','Locker#','Locker','Locker Number','Locker No','Locker Id','LockerID']);
+  const lockerVal = getAny(map,[
+    'Locker #','Locker#','Locker','Locker Number','Locker No','Locker Id','LockerID'
+  ]);
   const isLocker  = /\d/.test(String(lockerVal));
 
   const regVal    = getAny(map,['Regular']);
@@ -181,7 +209,7 @@ function render(){
     badge.className = 'badge';
     if (p.flags.military)        badge.src = '/img/military.svg';
     else if (p.flags.responder)  badge.src = '/img/firstresponders.svg';
-    else if (p.flags.locker)     badge.src = '/img/locker.svg';  // corrected
+    else if (p.flags.locker)     badge.src = '/img/locker.svg';
     else                         badge.style.opacity = 0;
 
     const name = document.createElement('div');
