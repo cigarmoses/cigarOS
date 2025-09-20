@@ -1,123 +1,68 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <title>CigarOS — Loyalty</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
-
-  <style>
-    :root{
-      --bg:#f6f7fb;
-      --panel:#ffffff;
-      --ink:#0e1726;
-      --muted:#6b7280;
-      --line:#e5e7eb;
-      --blue:#2563eb;
-      --orange:#ea580c;
-      --rowEven:#f9fafb;
-      --ring: 0 0 0 3px rgba(37,99,235,.2);
-      --radius:14px;
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0; background:var(--bg); color:var(--ink);
-      font:16px/1.4 Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    }
-    .wrap{max-width:1100px; margin:24px auto; padding:0 16px;}
-    .toolbar{display:grid; gap:12px}
-    @media (min-width:700px){ .toolbar{grid-template-columns:1fr auto auto} }
-
-    .search{
-      display:flex; align-items:center; gap:10px; background:var(--panel);
-      border:1px solid var(--line); border-radius:14px; padding:12px 14px;
-      box-shadow:0 1px 0 rgba(0,0,0,.02);
-    }
-    .search input{
-      width:100%; border:0; outline:none; font-size:16px; background:transparent;
-    }
-    .chip{
-      display:inline-flex; align-items:center; gap:10px;
-      background:var(--panel); border:1px solid var(--line);
-      padding:10px 14px; border-radius:999px; cursor:pointer; user-select:none;
-    }
-    .dot{width:14px;height:14px;border-radius:50%}
-    .dot.blue{background:var(--blue)}
-    .dot.orange{background:var(--orange)}
-    .chip:focus-visible{outline:none; box-shadow:var(--ring)}
-    .table{
-      margin-top:16px; background:var(--panel); border:1px solid var(--line); border-radius:var(--radius);
-      overflow:hidden
-    }
-    .thead,.row{display:grid; grid-template-columns:1.1fr 0.3fr 0.4fr; align-items:center}
-    .thead{padding:14px 16px; font-weight:700; border-bottom:1px solid var(--line)}
-    .row{padding:14px 16px; border-bottom:1px solid var(--line)}
-    .row:nth-child(even){background:var(--rowEven)}
-    .cell-name{display:flex; flex-direction:column; gap:2px}
-    .last{font-weight:700}
-    .first{color:var(--muted)}
-    .pts,.last-visit{font-weight:700; text-align:center}
-    .name-link{all:unset; cursor:pointer}
-    .name-link:focus-visible{outline:none; box-shadow:var(--ring); border-radius:8px}
-
-    /* Modal */
-    .modal-backdrop{
-      position:fixed; inset:0; background:rgba(15,23,42,.36);
-      display:none; align-items:flex-end; justify-content:center; padding:16px;
-    }
-    .modal{
-      width:100%; max-width:560px; background:var(--panel); border-radius:16px;
-      box-shadow: 0 30px 80px rgba(0,0,0,.28);
-      border:1px solid var(--line); transform:translateY(8px);
-    }
-    .modal header{
-      padding:18px 18px 12px; border-bottom:1px solid var(--line); display:flex; justify-content:space-between; align-items:center;
-    }
-    .modal h3{margin:0; font-size:18px}
-    .modal .x{
-      appearance:none; border:0; background:transparent; font-size:22px; line-height:1;
-      cursor:pointer; padding:6px 8px; border-radius:8px;
-    }
-    .modal .x:focus-visible{outline:none; box-shadow:var(--ring)}
-    .modal .body{padding:16px 18px 18px; display:grid; gap:12px}
-    .field{display:flex; gap:10px}
-    .label{width:110px; color:var(--muted)}
-    .value{font-weight:600}
-    .modal-backdrop.show{display:flex}
-    @media (min-width:700px){
-      .thead,.row{grid-template-columns: 1fr 120px 160px}
-      .pts,.last-visit{text-align:left}
-    }
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>CigarOS — Loyalty</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#f6f7fb; --panel:#fff; --ink:#0e1726; --muted:#6b7280; --line:#e5e7eb;
+    --blue:#2563eb; --orange:#ea580c; --rowEven:#f9fafb; --radius:14px; --ring:0 0 0 3px rgba(37,99,235,.18)
+  }
+  *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.4 Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+  .wrap{max-width:1100px;margin:24px auto;padding:0 16px}
+  .toolbar{display:grid;gap:12px}
+  .search{display:flex;align-items:center;gap:10px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px 14px;box-shadow:0 1px 0 rgba(0,0,0,.02)}
+  .search input{width:100%;border:0;outline:none;font-size:16px;background:transparent}
+  .chip{display:inline-flex;align-items:center;gap:10px;background:var(--panel);border:1px solid var(--line);padding:10px 14px;border-radius:999px;cursor:pointer}
+  .dot{width:14px;height:14px;border-radius:50%}.dot.blue{background:var(--blue)}.dot.orange{background:var(--orange)}
+  .chip[aria-pressed="true"]{box-shadow:var(--ring)}
+  .table{margin-top:16px;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+  .thead,.row{display:grid;grid-template-columns:1.1fr .35fr .45fr;align-items:center}
+  .thead{padding:14px 16px;font-weight:700;border-bottom:1px solid var(--line)}
+  .row{padding:14px 16px;border-bottom:1px solid var(--line)}
+  .row:nth-child(even){background:var(--rowEven)}
+  .cell-name{display:flex;flex-direction:column;gap:2px}
+  .last{font-weight:700}.first{color:var(--muted)}
+  .pts,.last-visit{font-weight:700;text-align:center}
+  .name-link{all:unset;cursor:pointer}.name-link:focus-visible{outline:none;box-shadow:var(--ring);border-radius:8px}
+  .empty{padding:18px;color:var(--muted)}
+  @media (min-width:700px){.thead,.row{grid-template-columns:1fr 120px 160px}.pts,.last-visit{text-align:left}}
+  /* modal */
+  .modal-backdrop{position:fixed;inset:0;background:rgba(15,23,42,.36);display:none;align-items:flex-end;justify-content:center;padding:16px}
+  .modal-backdrop.show{display:flex}
+  .modal{width:100%;max-width:560px;background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 30px 80px rgba(0,0,0,.28)}
+  .modal header{padding:18px 18px 12px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}
+  .modal h3{margin:0;font-size:18px}.modal .x{appearance:none;border:0;background:transparent;font-size:22px;line-height:1;cursor:pointer;padding:6px 8px;border-radius:8px}
+  .modal .body{padding:16px 18px 18px;display:grid;gap:12px}
+  .field{display:flex;gap:10px}.label{width:110px;color:var(--muted)}.value{font-weight:600}
+</style>
 </head>
 <body>
   <div class="wrap">
+    <!-- Search row -->
     <div class="toolbar">
       <div class="search">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="m21 21-4.2-4.2M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke="#64748b" stroke-width="2" stroke-linecap="round"/></svg>
         <input id="q" placeholder="Search" />
       </div>
-      <button class="chip" id="btn-lockers" type="button" aria-pressed="false">
-        <span class="dot blue"></span><span>Locker members</span>
-      </button>
-      <button class="chip" id="btn-regulars" type="button" aria-pressed="false">
-        <span class="dot orange"></span><span>Regulars</span>
-      </button>
+      <button class="chip" id="btn-lockers" type="button" aria-pressed="false"><span class="dot blue"></span><span>Locker members</span></button>
+      <button class="chip" id="btn-regulars" type="button" aria-pressed="false"><span class="dot orange"></span><span>Regulars</span></button>
     </div>
 
+    <!-- Table -->
     <div class="table" id="list">
-      <div class="thead">
-        <div>Name</div>
-        <div class="pts">Pts</div>
-        <div class="last-visit">Last Visit</div>
-      </div>
+      <div class="thead"><div>Name</div><div class="pts">Pts</div><div class="last-visit">Last Visit</div></div>
       <!-- rows injected here -->
     </div>
+    <div class="empty" id="empty" style="display:none">No contacts found. Make sure either
+      <code>/.netlify/functions/get-loyalty</code> works or <code>/img/contacts.csv</code> exists.</div>
   </div>
 
-  <!-- Simple profile modal -->
+  <!-- Simple modal -->
   <div class="modal-backdrop" id="profileSheet" role="dialog" aria-modal="true" aria-labelledby="profileTitle">
     <div class="modal">
       <header>
@@ -134,165 +79,165 @@
     </div>
   </div>
 
-  <script>
-    // --- utilities to read flexible field names safely ---
-    const pick = (obj,...keys) => keys.find(k => k in obj && obj[k] != null && obj[k] !== '') ?? keys[0];
-    const get = (obj, ...aliases) => obj[pick(obj, ...aliases)];
-    const fmtPhone = v => (v||'').toString().trim();
-    const fmtEmail = v => (v||'').toString().trim();
-    const fmtBday  = v => (v||'').toString().trim();
-    const fmtPoints= v => {
-      const n = Number(v ?? 0);
-      return Number.isFinite(n) ? n.toLocaleString() : '0';
-    };
+<script>
+/* -------------------- helpers -------------------- */
+const pick = (obj,...keys)=> keys.find(k=>k in obj && obj[k]!=null && obj[k]!=='') ?? keys[0];
+const get  = (obj,...aliases)=> obj[pick(obj,...aliases)];
+const escapeHtml = s => String(s??'').replace(/[&<>"']/g,c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
 
-    // --- state ---
-    let DATA = [];
-    let FILTER = { lockers:false, regulars:false, query:'' };
-
-    // --- fetch loyalty data (using your existing function) ---
-    async function loadData(){
-      const res = await fetch('/.netlify/functions/get-loyalty');
-      const { data } = await res.json();
-      // keep normalized copy
-      DATA = (data || []).map((r, idx) => {
-        return {
-          id: r.id ?? idx + 1,
-          first: get(r,'first','first_name') || '',
-          last:  get(r,'last','last_name') || '',
-          aka:   get(r,'aka','nickname','Nickname “aka”') || '',
-          phone: get(r,'phone','Phone') || '',
-          email: get(r,'email','Email') || '',
-          birthday: get(r,'birthday','Birthday') || '',
-          points: get(r,'points','rewards','Rewards') || 0,
-          lastPurchase: get(r,'lastPurchase','last_purchase','Last Purchase') || '',
-          locker: get(r,'locker','#','Locker #','Locker') || ''
-        };
-      });
-      render();
+/* very small CSV parser (handles commas, quotes, newlines) */
+function parseCSV(text){
+  const rows=[]; let i=0, cur=[], field='', inQ=false;
+  const push=()=>{cur.push(field);field=''};
+  const endRow=()=>{push();rows.push(cur);cur=[]};
+  while(i<text.length){
+    const ch=text[i++];
+    if(inQ){
+      if(ch==='"' && text[i]!=='"'){ inQ=false; }
+      else if(ch==='"' && text[i]==='"'){ field+='"'; i++; }
+      else field+=ch;
+    }else{
+      if(ch===','){ push(); }
+      else if(ch==='"'){ inQ=true; }
+      else if(ch==='\r'){ /* skip */ }
+      else if(ch==='\n'){ endRow(); }
+      else field+=ch;
     }
+  }
+  if(field!=='' || cur.length) endRow();
+  if(!rows.length) return [];
+  const headers=rows.shift().map(h=>h.trim());
+  return rows.filter(r=>r.some(x=>x && x.trim()!=='')).map(r=>{
+    const o={}; headers.forEach((h,idx)=>o[h]=r[idx]??''); return o;
+  });
+}
 
-    // --- render list ---
-    function render(){
-      const list = document.getElementById('list');
-      [...list.querySelectorAll('.row')].forEach(n=>n.remove());
+/* normalize one record to our shape */
+function normalize(r, idx){
+  return {
+    id: r.id ?? idx+1,
+    first: get(r,'First Name','first','first_name') || '',
+    last:  get(r,'Last Name','last','last_name') || '',
+    aka:   get(r,'Nickname “aka”','Nickname','aka','nickname') || '',
+    phone: get(r,'Phone','phone') || '',
+    email: get(r,'Email','email') || '',
+    birthday: get(r,'Birthday','birthday') || '',
+    points: Number(get(r,'Rewards','rewards','points') || 0),
+    lastPurchase: get(r,'Last Purchase','last_purchase','lastPurchase') || '',
+    locker: get(r,'Locker #','Locker','locker','#') || ''
+  };
+}
+function fmtPoints(n){ const x=Number(n||0); return Number.isFinite(x)?x.toLocaleString():'0'; }
+function niceLastVisit(raw){
+  if(!raw) return '—';
+  const d=new Date(raw); if(isNaN(+d)) return raw;
+  const now=new Date(); const days=(now-d)/86400000;
+  if(days<=183) return `${d.getMonth()+1}/${d.getDate()}`;
+  if(days<=365) return d.toLocaleString(undefined,{month:'long'});
+  if(d.getFullYear() <= (new Date().getFullYear()-2)) return String(d.getFullYear());
+  return 'Year +';
+}
 
-      const q = FILTER.query.trim().toLowerCase();
+/* -------------------- data load (function then CSV fallback) -------------------- */
+let DATA=[], FILTER={ lockers:false, regulars:false, query:'' };
 
-      const rows = DATA.filter(rec => {
-        // text filter
-        if(q){
-          const hay = [
-            rec.first, rec.last, rec.aka, rec.phone, rec.email, rec.birthday, String(rec.locker||'')
-          ].join(' ').toLowerCase();
-          if(!hay.includes(q)) return false;
-        }
-        // locker filter
-        if(FILTER.lockers && !(rec.locker && String(rec.locker).trim() !== '')) return false;
-        if(FILTER.regulars && (rec.locker && String(rec.locker).trim() !== '')) return false;
-        return true;
-      });
+async function loadData(){
+  let dataset=null;
 
-      const frag = document.createDocumentFragment();
-      rows.forEach(rec => {
-        const row = document.createElement('div');
-        row.className = 'row';
-        row.dataset.id = rec.id;
-
-        // name cell (clickable name only)
-        const cName = document.createElement('div');
-        cName.className = 'cell-name';
-        const nameBtn = document.createElement('button');
-        nameBtn.className = 'name-link';
-        nameBtn.type = 'button';
-        nameBtn.innerHTML = `<span class="last">${escapeHtml(rec.last || '')}</span>
-                              <span class="first">${escapeHtml(rec.first || '')}${rec.aka? ` — “${escapeHtml(rec.aka)}”` : ''}</span>`;
-        nameBtn.addEventListener('click', () => openProfile(rec));
-        cName.appendChild(nameBtn);
-
-        const cPts = document.createElement('div');
-        cPts.className = 'pts';
-        cPts.textContent = fmtPoints(rec.points);
-
-        const cLast = document.createElement('div');
-        cLast.className = 'last-visit';
-        cLast.textContent = rec.lastPurchase ? niceLastVisit(rec.lastPurchase) : '—';
-
-        row.append(cName, cPts, cLast);
-        frag.appendChild(row);
-      });
-
-      list.appendChild(frag);
+  // 1) Try Netlify function
+  try{
+    const r=await fetch('/.netlify/functions/get-loyalty',{cache:'no-store'});
+    if(r.ok){
+      const j=await r.json();
+      // accept either {data:[...]} or just [...]
+      const arr = Array.isArray(j)? j : (j.data||[]);
+      if(Array.isArray(arr) && arr.length){ dataset = arr.map(normalize); }
     }
+  }catch(e){ /* ignore and fall back */ }
 
-    function niceLastVisit(raw){
-      // Keep simple; raw may be date or string. If parseable, show M/D; else show raw or "—"
-      const d = new Date(raw);
-      if(!isNaN(+d)) {
-        const now = new Date();
-        const diff = now - d;
-        const days = diff / 86400000;
-        if(days <= 183) { // < 6 months
-          return `${d.getMonth()+1}/${d.getDate()}`;
-        } else if(days <= 365) {
-          return d.toLocaleString(undefined,{ month:'short' });
-        } else if(d.getFullYear() <= (new Date().getFullYear()-2)) {
-          return String(d.getFullYear());
-        }
-        return 'Year +';
+  // 2) Fallback to /img/contacts.csv
+  if(!dataset){
+    try{
+      const r=await fetch('/img/contacts.csv',{cache:'no-store'});
+      if(r.ok){
+        const txt=await r.text();
+        const csv=parseCSV(txt);
+        if(csv.length) dataset = csv.map(normalize);
       }
-      return raw || '—';
+    }catch(e){ /* nothing */ }
+  }
+
+  DATA = Array.isArray(dataset)? dataset : [];
+  render();
+}
+
+/* -------------------- render & interactions -------------------- */
+function render(){
+  const list=document.getElementById('list');
+  const empty=document.getElementById('empty');
+  [...list.querySelectorAll('.row')].forEach(n=>n.remove());
+
+  const q=(FILTER.query||'').toLowerCase().trim();
+
+  const rows = DATA.filter(rec=>{
+    if(q){
+      const hay=[rec.first,rec.last,rec.aka,rec.phone,rec.email,rec.birthday,String(rec.locker||'')].join(' ').toLowerCase();
+      if(!hay.includes(q)) return false;
     }
+    const isLocker = !!(rec.locker && String(rec.locker).trim()!=='');
+    if(FILTER.lockers && !isLocker) return false;
+    if(FILTER.regulars &&  isLocker) return false;
+    return true;
+  });
 
-    function escapeHtml(s){
-      return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-    }
+  if(!rows.length){
+    empty.style.display='block';
+    return;
+  }
+  empty.style.display='none';
 
-    // --- modal logic ---
-    const sheet = document.getElementById('profileSheet');
-    const closeSheetBtn = document.getElementById('closeSheet');
+  const frag=document.createDocumentFragment();
+  rows.forEach(rec=>{
+    const row=document.createElement('div'); row.className='row';
 
-    function openProfile(rec){
-      document.getElementById('profileTitle').textContent =
-        [rec.first, rec.last].filter(Boolean).join(' ').trim() || 'Customer';
-      document.getElementById('p-aka').textContent    = rec.aka || '—';
-      document.getElementById('p-phone').textContent  = fmtPhone(rec.phone) || '—';
-      document.getElementById('p-email').textContent  = fmtEmail(rec.email) || '—';
-      document.getElementById('p-bday').textContent   = fmtBday(rec.birthday) || '—';
-      document.getElementById('p-points').textContent = fmtPoints(rec.points);
-      sheet.classList.add('show');
-      // trap focus
-      closeSheetBtn.focus();
-      document.addEventListener('keydown', escClose, { once:true });
-      sheet.addEventListener('click', clickAway);
-    }
-    function escClose(e){ if(e.key === 'Escape') closeProfile(); }
-    function clickAway(e){ if(e.target === sheet) closeProfile(); }
-    function closeProfile(){
-      sheet.classList.remove('show');
-      sheet.removeEventListener('click', clickAway);
-    }
-    closeSheetBtn.addEventListener('click', closeProfile);
+    const cName=document.createElement('div'); cName.className='cell-name';
+    const nameBtn=document.createElement('button'); nameBtn.className='name-link'; nameBtn.type='button';
+    nameBtn.innerHTML = `<span class="last">${escapeHtml(rec.last)}</span>
+                         <span class="first">${escapeHtml(rec.first)}${rec.aka? ` — “${escapeHtml(rec.aka)}”` : ''}</span>`;
+    nameBtn.addEventListener('click', ()=>openProfile(rec));
+    cName.appendChild(nameBtn);
 
-    // --- filters & search ---
-    document.getElementById('q').addEventListener('input', (e)=>{
-      FILTER.query = e.target.value || '';
-      render();
-    });
-    const btnLock = document.getElementById('btn-lockers');
-    const btnReg  = document.getElementById('btn-regulars');
-    btnLock.addEventListener('click', ()=>{
-      FILTER.lockers = !FILTER.lockers;
-      btnLock.setAttribute('aria-pressed', String(FILTER.lockers));
-      render();
-    });
-    btnReg.addEventListener('click', ()=>{
-      FILTER.regulars = !FILTER.regulars;
-      btnReg.setAttribute('aria-pressed', String(FILTER.regulars));
-      render();
-    });
+    const cPts=document.createElement('div'); cPts.className='pts'; cPts.textContent=fmtPoints(rec.points);
+    const cLast=document.createElement('div'); cLast.className='last-visit'; cLast.textContent=niceLastVisit(rec.lastPurchase);
 
-    loadData();
-  </script>
+    row.append(cName,cPts,cLast); frag.appendChild(row);
+  });
+  list.appendChild(frag);
+}
+
+/* profile modal */
+const sheet=document.getElementById('profileSheet'), closeBtn=document.getElementById('closeSheet');
+function openProfile(rec){
+  document.getElementById('profileTitle').textContent=[rec.first,rec.last].filter(Boolean).join(' ')||'Customer';
+  document.getElementById('p-aka').textContent=rec.aka||'—';
+  document.getElementById('p-phone').textContent=rec.phone||'—';
+  document.getElementById('p-email').textContent=rec.email||'—';
+  document.getElementById('p-bday').textContent=rec.birthday||'—';
+  document.getElementById('p-points').textContent=fmtPoints(rec.points);
+  sheet.classList.add('show'); closeBtn.focus();
+  const esc=(e)=>{if(e.key==='Escape') close();}; document.addEventListener('keydown',esc,{once:true});
+  sheet.onclick=(e)=>{ if(e.target===sheet) close(); };
+  function close(){ sheet.classList.remove('show'); sheet.onclick=null; }
+  closeBtn.onclick=close;
+}
+
+/* UI bindings */
+document.getElementById('q').addEventListener('input',e=>{FILTER.query=e.target.value||'';render();});
+const btnL=document.getElementById('btn-lockers'), btnR=document.getElementById('btn-regulars');
+btnL.onclick=()=>{FILTER.lockers=!FILTER.lockers; btnL.setAttribute('aria-pressed',String(FILTER.lockers)); render();};
+btnR.onclick=()=>{FILTER.regulars=!FILTER.regulars; btnR.setAttribute('aria-pressed',String(FILTER.regulars)); render();};
+
+loadData();
+</script>
 </body>
 </html>
