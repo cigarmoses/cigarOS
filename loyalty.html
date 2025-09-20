@@ -1,243 +1,315 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-<title>CigarOS — Loyalty</title>
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
-<style>
-  :root{
-    --bg:#f6f7fb; --panel:#fff; --ink:#0e1726; --muted:#6b7280; --line:#e5e7eb;
-    --blue:#2563eb; --orange:#ea580c; --rowEven:#f9fafb; --radius:14px; --ring:0 0 0 3px rgba(37,99,235,.18)
-  }
-  *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.4 Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
-  .wrap{max-width:1100px;margin:24px auto;padding:0 16px}
-  .toolbar{display:grid;gap:12px}
-  .search{display:flex;align-items:center;gap:10px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px 14px;box-shadow:0 1px 0 rgba(0,0,0,.02)}
-  .search input{width:100%;border:0;outline:none;font-size:16px;background:transparent}
-  .chip{display:inline-flex;align-items:center;gap:10px;background:var(--panel);border:1px solid var(--line);padding:10px 14px;border-radius:999px;cursor:pointer}
-  .dot{width:14px;height:14px;border-radius:50%}.dot.blue{background:var(--blue)}.dot.orange{background:var(--orange)}
-  .chip[aria-pressed="true"]{box-shadow:var(--ring)}
-  .table{margin-top:16px;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
-  .thead,.row{display:grid;grid-template-columns:1.1fr .35fr .45fr;align-items:center}
-  .thead{padding:14px 16px;font-weight:700;border-bottom:1px solid var(--line)}
-  .row{padding:14px 16px;border-bottom:1px solid var(--line)}
-  .row:nth-child(even){background:var(--rowEven)}
-  .cell-name{display:flex;flex-direction:column;gap:2px}
-  .last{font-weight:700}.first{color:var(--muted)}
-  .pts,.last-visit{font-weight:700;text-align:center}
-  .name-link{all:unset;cursor:pointer}.name-link:focus-visible{outline:none;box-shadow:var(--ring);border-radius:8px}
-  .empty{padding:18px;color:var(--muted)}
-  @media (min-width:700px){.thead,.row{grid-template-columns:1fr 120px 160px}.pts,.last-visit{text-align:left}}
-  /* modal */
-  .modal-backdrop{position:fixed;inset:0;background:rgba(15,23,42,.36);display:none;align-items:flex-end;justify-content:center;padding:16px}
-  .modal-backdrop.show{display:flex}
-  .modal{width:100%;max-width:560px;background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 30px 80px rgba(0,0,0,.28)}
-  .modal header{padding:18px 18px 12px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}
-  .modal h3{margin:0;font-size:18px}.modal .x{appearance:none;border:0;background:transparent;font-size:22px;line-height:1;cursor:pointer;padding:6px 8px;border-radius:8px}
-  .modal .body{padding:16px 18px 18px;display:grid;gap:12px}
-  .field{display:flex;gap:10px}.label{width:110px;color:var(--muted)}.value{font-weight:600}
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Loyalty</title>
+  <link rel="preload" href="/img/locker.svg" as="image">
+  <link rel="preload" href="/img/military.svg" as="image">
+  <link rel="preload" href="/img/firstresponders.svg" as="image">
+  <style>
+    :root{
+      --bg:#f5f7fb; --card:#fff; --ink:#0f172a; --muted:#64748b;
+      --line:#e5e7eb; --blue:#2563eb; --blue-ink:#fff; --orange:#f97316;
+      --row-even:#f7fafc;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
+    .wrap{max-width:920px;margin-inline:auto;padding:16px 16px 120px}
+
+    /* top controls */
+    .controls{display:grid;gap:12px}
+    .search{
+      display:flex;align-items:center;gap:10px;background:var(--card);
+      border:1px solid var(--line); border-radius:14px; padding:12px 14px;
+      box-shadow:0 1px 0 rgba(15,23,42,.03)
+    }
+    .search input{
+      width:100%;border:0;outline:none;background:transparent;font-size:16px
+    }
+    .pills{display:flex;gap:12px}
+    .pill{
+      flex:1;display:flex;align-items:center;justify-content:space-between;
+      gap:10px;background:var(--card);border:1px solid var(--line);
+      border-radius:14px;padding:12px 14px;cursor:pointer;user-select:none
+    }
+    .dot{width:12px;height:12px;border-radius:50%}
+    .dot.blue{background:var(--blue)}
+    .dot.orange{background:var(--orange)}
+    .chev{opacity:.55}
+
+    /* dropdowns */
+    .dd{display:none; background:var(--card); border:1px solid var(--line);
+      border-radius:14px;margin-top:8px;overflow:hidden}
+    .dd.open{display:block}
+    .dd-item{
+      padding:12px 14px;border-top:1px solid var(--line);cursor:pointer
+    }
+    .dd-item:hover{background:#f8fafc}
+    .dd-name{font-weight:700}
+    .dd-nick{font-size:12px;color:var(--muted);margin-top:2px}
+
+    /* table */
+    .table{margin-top:12px;background:var(--card);border:1px solid var(--line);
+      border-radius:14px;overflow:hidden}
+    .thead,.row{display:grid;grid-template-columns:1fr 88px 110px;align-items:center}
+    .thead{padding:12px 16px;background:#eef2ff;font-weight:800}
+    .row{padding:14px 16px;border-top:1px solid var(--line)}
+    .row:nth-child(even){background:var(--row-even)}
+    .row.lock{background:#e8f0ff}
+    .row.reg{background:#fff7ed}
+    .name{display:flex;align-items:center;gap:10px}
+    .badge{width:20px;height:20px;display:inline-block;background-size:contain;background-repeat:no-repeat;background-position:center}
+    .val{font-weight:500; color:var(--ink)} /* numbers NOT bold */
+    .last{font-weight:500; color:var(--ink)}
+    .muted{color:var(--muted)}
+    .sub{display:block;color:var(--muted);font-size:13px;margin-top:2px}
+
+    /* modal (centered) */
+    .backdrop{
+      position:fixed;inset:0;background:rgba(2,6,23,.45);
+      display:none;align-items:center;justify-content:center;z-index:50
+    }
+    .backdrop.show{display:flex}
+    .sheet{
+      width:min(92vw,540px);max-height:80vh;overflow:auto;background:var(--card);
+      border-radius:16px;border:1px solid var(--line);padding:18px 18px 10px;
+      box-shadow:0 20px 60px rgba(2,6,23,.25)
+    }
+    .sheet h3{margin:0 28px 6px 0}
+    .close{
+      position:absolute;right:18px;top:14px;border:0;background:#eff4ff;color:#1f2937;
+      width:30px;height:30px;border-radius:8px;font-size:18px;cursor:pointer
+    }
+    .dl{display:grid;grid-template-columns:120px 1fr;gap:10px;padding:10px 0;border-top:1px solid var(--line)}
+    .dl b{color:var(--muted);font-weight:600}
+    @media (max-width:520px){
+      .thead,.row{grid-template-columns:1fr 64px 88px}
+    }
+  </style>
 </head>
 <body>
   <div class="wrap">
-    <!-- Search row -->
-    <div class="toolbar">
+    <div class="controls">
       <div class="search">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="m21 21-4.2-4.2M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke="#64748b" stroke-width="2" stroke-linecap="round"/></svg>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M21 21l-4.2-4.2M10.8 18a7.2 7.2 0 1 1 0-14.4 7.2 7.2 0 0 1 0 14.4Z" stroke="#64748b" stroke-width="2" stroke-linecap="round"/></svg>
         <input id="q" placeholder="Search" />
       </div>
-      <button class="chip" id="btn-lockers" type="button" aria-pressed="false"><span class="dot blue"></span><span>Locker members</span></button>
-      <button class="chip" id="btn-regulars" type="button" aria-pressed="false"><span class="dot orange"></span><span>Regulars</span></button>
+
+      <div class="pills">
+        <button id="pillLock" class="pill" type="button">
+          <span><span class="dot blue"></span> Locker members</span>
+          <span class="chev">▾</span>
+        </button>
+        <button id="pillReg" class="pill" type="button">
+          <span><span class="dot orange"></span> Regulars</span>
+          <span class="chev">▾</span>
+        </button>
+      </div>
+
+      <div id="ddLock" class="dd"></div>
+      <div id="ddReg" class="dd"></div>
     </div>
 
-    <!-- Table -->
-    <div class="table" id="list">
-      <div class="thead"><div>Name</div><div class="pts">Pts</div><div class="last-visit">Last Visit</div></div>
-      <!-- rows injected here -->
+    <div class="table" id="table">
+      <div class="thead">
+        <div>Name</div>
+        <div>Pts</div>
+        <div>Last Visit</div>
+      </div>
+      <div id="rows"></div>
     </div>
-    <div class="empty" id="empty" style="display:none">No contacts found. Make sure either
-      <code>/.netlify/functions/get-loyalty</code> works or <code>/img/contacts.csv</code> exists.</div>
   </div>
 
-  <!-- Simple modal -->
-  <div class="modal-backdrop" id="profileSheet" role="dialog" aria-modal="true" aria-labelledby="profileTitle">
-    <div class="modal">
-      <header>
-        <h3 id="profileTitle">Customer</h3>
-        <button class="x" id="closeSheet" aria-label="Close">×</button>
-      </header>
-      <div class="body">
-        <div class="field"><div class="label">Nickname</div><div class="value" id="p-aka">—</div></div>
-        <div class="field"><div class="label">Phone</div><div class="value" id="p-phone">—</div></div>
-        <div class="field"><div class="label">Email</div><div class="value" id="p-email">—</div></div>
-        <div class="field"><div class="label">Birthday</div><div class="value" id="p-bday">—</div></div>
-        <div class="field"><div class="label">Points</div><div class="value" id="p-points">0</div></div>
-      </div>
+  <!-- centered modal -->
+  <div id="backdrop" class="backdrop" role="dialog" aria-modal="true">
+    <div class="sheet">
+      <button class="close" id="close">×</button>
+      <h3 id="mName">Customer</h3>
+      <div class="dl"><b>Nickname</b><span id="mNick">—</span></div>
+      <div class="dl"><b>Phone</b><a id="mPhone" href="#" class="muted">—</a></div>
+      <div class="dl"><b>Email</b><a id="mEmail" href="#" class="muted">—</a></div>
+      <div class="dl"><b>Birthday</b><span id="mBday">—</span></div>
+      <div class="dl"><b>Points</b><span id="mPts">0</span></div>
     </div>
   </div>
 
 <script>
-/* -------------------- helpers -------------------- */
-const pick = (obj,...keys)=> keys.find(k=>k in obj && obj[k]!=null && obj[k]!=='') ?? keys[0];
-const get  = (obj,...aliases)=> obj[pick(obj,...aliases)];
-const escapeHtml = s => String(s??'').replace(/[&<>"']/g,c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+/* -------------------- data & helpers -------------------- */
+let PEOPLE = [];         // full list
+let FILTERED = [];       // current view
+const rowsEl   = document.getElementById('rows');
+const qEl      = document.getElementById('q');
+const ddLockEl = document.getElementById('ddLock');
+const ddRegEl  = document.getElementById('ddReg');
 
-/* very small CSV parser (handles commas, quotes, newlines) */
-function parseCSV(text){
-  const rows=[]; let i=0, cur=[], field='', inQ=false;
-  const push=()=>{cur.push(field);field=''};
-  const endRow=()=>{push();rows.push(cur);cur=[]};
-  while(i<text.length){
-    const ch=text[i++];
-    if(inQ){
-      if(ch==='"' && text[i]!=='"'){ inQ=false; }
-      else if(ch==='"' && text[i]==='"'){ field+='"'; i++; }
-      else field+=ch;
-    }else{
-      if(ch===','){ push(); }
-      else if(ch==='"'){ inQ=true; }
-      else if(ch==='\r'){ /* skip */ }
-      else if(ch==='\n'){ endRow(); }
-      else field+=ch;
-    }
-  }
-  if(field!=='' || cur.length) endRow();
-  if(!rows.length) return [];
-  const headers=rows.shift().map(h=>h.trim());
-  return rows.filter(r=>r.some(x=>x && x.trim()!=='')).map(r=>{
-    const o={}; headers.forEach((h,idx)=>o[h]=r[idx]??''); return o;
-  });
-}
+const badgeURL = {
+  locker: '/img/locker.svg',
+  military: '/img/military.svg',
+  responder: '/img/firstresponders.svg'
+};
 
-/* normalize one record to our shape */
-function normalize(r, idx){
-  return {
-    id: r.id ?? idx+1,
-    first: get(r,'First Name','first','first_name') || '',
-    last:  get(r,'Last Name','last','last_name') || '',
-    aka:   get(r,'Nickname “aka”','Nickname','aka','nickname') || '',
-    phone: get(r,'Phone','phone') || '',
-    email: get(r,'Email','email') || '',
-    birthday: get(r,'Birthday','birthday') || '',
-    points: Number(get(r,'Rewards','rewards','points') || 0),
-    lastPurchase: get(r,'Last Purchase','last_purchase','lastPurchase') || '',
-    locker: get(r,'Locker #','Locker','locker','#') || ''
-  };
-}
-function fmtPoints(n){ const x=Number(n||0); return Number.isFinite(x)?x.toLocaleString():'0'; }
-function niceLastVisit(raw){
-  if(!raw) return '—';
-  const d=new Date(raw); if(isNaN(+d)) return raw;
-  const now=new Date(); const days=(now-d)/86400000;
-  if(days<=183) return `${d.getMonth()+1}/${d.getDate()}`;
-  if(days<=365) return d.toLocaleString(undefined,{month:'long'});
-  if(d.getFullYear() <= (new Date().getFullYear()-2)) return String(d.getFullYear());
+function fmtLast(dt) {
+  if (!dt) return '—';
+  const d = new Date(dt);
+  if (isNaN(d)) return '—';
+  const now = new Date();
+  const diffDays = (now - d) / (1000*60*60*24);
+  const mo = d.toLocaleString('en-US',{month:'short'});
+  if (diffDays < 180) return `${d.getMonth()+1}/${d.getDate()}`;
+  if (diffDays < 365) return mo;
+  if (diffDays >= 730) return String(d.getFullYear());
   return 'Year +';
 }
 
-/* -------------------- data load (function then CSV fallback) -------------------- */
-let DATA=[], FILTER={ lockers:false, regulars:false, query:'' };
+function hasAny(val){
+  if (val == null) return false;
+  const s = String(val).trim().toLowerCase();
+  return s !== '' && s !== '0' && s !== 'false' && s !== 'no' && s !== 'n';
+}
 
-async function loadData(){
-  let dataset=null;
+/* -------------------- rendering -------------------- */
+function renderRows(list){
+  rowsEl.innerHTML = '';
+  const frag = document.createDocumentFragment();
 
-  // 1) Try Netlify function
-  try{
-    const r=await fetch('/.netlify/functions/get-loyalty',{cache:'no-store'});
-    if(r.ok){
-      const j=await r.json();
-      // accept either {data:[...]} or just [...]
-      const arr = Array.isArray(j)? j : (j.data||[]);
-      if(Array.isArray(arr) && arr.length){ dataset = arr.map(normalize); }
-    }
-  }catch(e){ /* ignore and fall back */ }
+  list.forEach(p=>{
+    const row = document.createElement('div');
+    row.className = 'row';
+    // row colors
+    if (hasAny(p.locker)) row.classList.add('lock');
+    else if (hasAny(p.regular)) row.classList.add('reg');
 
-  // 2) Fallback to /img/contacts.csv
-  if(!dataset){
-    try{
-      const r=await fetch('/img/contacts.csv',{cache:'no-store'});
-      if(r.ok){
-        const txt=await r.text();
-        const csv=parseCSV(txt);
-        if(csv.length) dataset = csv.map(normalize);
+    // name cell with badges
+    const name = document.createElement('div');
+    name.className = 'name';
+    const badge = document.createElement('span');
+    badge.className = 'badge';
+
+    if (hasAny(p.locker))      { badge.style.backgroundImage = `url(${badgeURL.locker})`; name.appendChild(badge); }
+    else if (hasAny(p.military)){ badge.style.backgroundImage = `url(${badgeURL.military})`; name.appendChild(badge); }
+    else if (hasAny(p.responder)){ badge.style.backgroundImage = `url(${badgeURL.responder})`; name.appendChild(badge); }
+
+    const nameBox = document.createElement('div');
+    nameBox.innerHTML = `<strong>${p.last_name || ''} ${p.first_name || ''}</strong>` +
+                        (p.aka ? `<span class="sub">“${p.aka}”</span>` : '');
+    name.appendChild(nameBox);
+    name.style.cursor='pointer';
+    name.onclick = ()=>openModal(p);
+
+    // points + last
+    const pts  = document.createElement('div'); pts.className='val'; pts.textContent = Number(p.points || 0);
+    const last = document.createElement('div'); last.className='last'; last.textContent = fmtLast(p.lastPurchase || p.last_purchase || p.last);
+
+    row.appendChild(name);
+    row.appendChild(pts);
+    row.appendChild(last);
+    frag.appendChild(row);
+  });
+
+  rowsEl.appendChild(frag);
+}
+
+function renderDropdowns(list){
+  // Locker
+  const locks = list.filter(p=>hasAny(p.locker));
+  ddLockEl.innerHTML = locks.map(p =>
+    `<div class="dd-item" data-id="${p.id}">
+       <div class="dd-name">${p.last_name || ''} ${p.first_name || ''}</div>
+       ${p.aka ? `<div class="dd-nick">“${p.aka}”</div>` : ``}
+     </div>`
+  ).join('') || `<div class="dd-item muted">No locker members</div>`;
+
+  // Regulars (explicit regular flag only)
+  const regs = list.filter(p=>!hasAny(p.locker) && hasAny(p.regular));
+  ddRegEl.innerHTML = regs.map(p =>
+    `<div class="dd-item" data-id="${p.id}">
+       <div class="dd-name">${p.last_name || ''} ${p.first_name || ''}</div>
+       ${p.aka ? `<div class="dd-nick">“${p.aka}”</div>` : ``}
+     </div>`
+  ).join('') || `<div class="dd-item muted">No regulars</div>`;
+
+  // click behavior -> scroll & flash the row
+  [...ddLockEl.querySelectorAll('.dd-item[data-id]'), ...ddRegEl.querySelectorAll('.dd-item[data-id]')].forEach(el=>{
+    el.addEventListener('click', ()=>{
+      const id = el.getAttribute('data-id');
+      const idx = FILTERED.findIndex(p=>String(p.id)===String(id));
+      if (idx>=0){
+        const target = rowsEl.children[idx];
+        target?.scrollIntoView({behavior:'smooth', block:'center'});
+        target?.animate([{background:'#fffbd1'},{background: target.classList.contains('lock') ? '#e8f0ff' : (target.classList.contains('reg') ? '#fff7ed' : 'transparent')}],{duration:900});
       }
-    }catch(e){ /* nothing */ }
-  }
-
-  DATA = Array.isArray(dataset)? dataset : [];
-  render();
-}
-
-/* -------------------- render & interactions -------------------- */
-function render(){
-  const list=document.getElementById('list');
-  const empty=document.getElementById('empty');
-  [...list.querySelectorAll('.row')].forEach(n=>n.remove());
-
-  const q=(FILTER.query||'').toLowerCase().trim();
-
-  const rows = DATA.filter(rec=>{
-    if(q){
-      const hay=[rec.first,rec.last,rec.aka,rec.phone,rec.email,rec.birthday,String(rec.locker||'')].join(' ').toLowerCase();
-      if(!hay.includes(q)) return false;
-    }
-    const isLocker = !!(rec.locker && String(rec.locker).trim()!=='');
-    if(FILTER.lockers && !isLocker) return false;
-    if(FILTER.regulars &&  isLocker) return false;
-    return true;
+    });
   });
+}
 
-  if(!rows.length){
-    empty.style.display='block';
-    return;
-  }
-  empty.style.display='none';
+/* -------------------- modal -------------------- */
+const backdrop = document.getElementById('backdrop');
+document.getElementById('close').onclick = ()=> backdrop.classList.remove('show');
+backdrop.addEventListener('click', e=>{ if(e.target===backdrop) backdrop.classList.remove('show') });
 
-  const frag=document.createDocumentFragment();
-  rows.forEach(rec=>{
-    const row=document.createElement('div'); row.className='row';
+function openModal(p){
+  document.getElementById('mName').textContent = `${p.first_name||''} ${p.last_name||''}`.trim();
+  document.getElementById('mNick').textContent = p.aka ? `“${p.aka}”` : '—';
+  const phoneText = (p.phone||'').toString().trim();
+  const emailText = (p.email||'').toString().trim();
+  const mPhone = document.getElementById('mPhone');
+  const mEmail = document.getElementById('mEmail');
+  if (phoneText){ mPhone.textContent = phoneText; mPhone.href = `tel:${phoneText.replace(/\D+/g,'')}` } else { mPhone.textContent='—'; mPhone.removeAttribute('href') }
+  if (emailText){ mEmail.textContent = emailText; mEmail.href = `mailto:${emailText}` } else { mEmail.textContent='—'; mEmail.removeAttribute('href') }
+  document.getElementById('mBday').textContent = p.birthday || p.Birthday || '—';
+  document.getElementById('mPts').textContent  = Number(p.points||0);
+  backdrop.classList.add('show');
+}
 
-    const cName=document.createElement('div'); cName.className='cell-name';
-    const nameBtn=document.createElement('button'); nameBtn.className='name-link'; nameBtn.type='button';
-    nameBtn.innerHTML = `<span class="last">${escapeHtml(rec.last)}</span>
-                         <span class="first">${escapeHtml(rec.first)}${rec.aka? ` — “${escapeHtml(rec.aka)}”` : ''}</span>`;
-    nameBtn.addEventListener('click', ()=>openProfile(rec));
-    cName.appendChild(nameBtn);
+/* -------------------- interactions -------------------- */
+document.getElementById('pillLock').addEventListener('click',()=> ddLockEl.classList.toggle('open'));
+document.getElementById('pillReg').addEventListener('click',()=> ddRegEl.classList.toggle('open'));
 
-    const cPts=document.createElement('div'); cPts.className='pts'; cPts.textContent=fmtPoints(rec.points);
-    const cLast=document.createElement('div'); cLast.className='last-visit'; cLast.textContent=niceLastVisit(rec.lastPurchase);
-
-    row.append(cName,cPts,cLast); frag.appendChild(row);
+qEl.addEventListener('input', ()=>{
+  const s = qEl.value.trim().toLowerCase();
+  FILTERED = !s ? PEOPLE : PEOPLE.filter(p=>{
+    const hay = [
+      p.first_name,p.last_name,p.aka,p.email,p.phone,
+      p.company,p.notes
+    ].map(v=>String(v||'').toLowerCase()).join('|');
+    return hay.includes(s);
   });
-  list.appendChild(frag);
-}
+  renderRows(FILTERED);
+});
 
-/* profile modal */
-const sheet=document.getElementById('profileSheet'), closeBtn=document.getElementById('closeSheet');
-function openProfile(rec){
-  document.getElementById('profileTitle').textContent=[rec.first,rec.last].filter(Boolean).join(' ')||'Customer';
-  document.getElementById('p-aka').textContent=rec.aka||'—';
-  document.getElementById('p-phone').textContent=rec.phone||'—';
-  document.getElementById('p-email').textContent=rec.email||'—';
-  document.getElementById('p-bday').textContent=rec.birthday||'—';
-  document.getElementById('p-points').textContent=fmtPoints(rec.points);
-  sheet.classList.add('show'); closeBtn.focus();
-  const esc=(e)=>{if(e.key==='Escape') close();}; document.addEventListener('keydown',esc,{once:true});
-  sheet.onclick=(e)=>{ if(e.target===sheet) close(); };
-  function close(){ sheet.classList.remove('show'); sheet.onclick=null; }
-  closeBtn.onclick=close;
-}
-
-/* UI bindings */
-document.getElementById('q').addEventListener('input',e=>{FILTER.query=e.target.value||'';render();});
-const btnL=document.getElementById('btn-lockers'), btnR=document.getElementById('btn-regulars');
-btnL.onclick=()=>{FILTER.lockers=!FILTER.lockers; btnL.setAttribute('aria-pressed',String(FILTER.lockers)); render();};
-btnR.onclick=()=>{FILTER.regulars=!FILTER.regulars; btnR.setAttribute('aria-pressed',String(FILTER.regulars)); render();};
-
-loadData();
+/* -------------------- bootstrap: fetch data -------------------- */
+/* The same function endpoint you already have: /netlify/functions/get-loyalty
+   It returns { ok:true, data:[...] } with normalized fields */
+(async function init(){
+  try{
+    const res = await fetch('/.netlify/functions/get-loyalty');
+    const json = await res.json();
+    const data = Array.isArray(json.data) ? json.data : [];
+    // Keep id + normalize key names we rely on
+    PEOPLE = data.map((r,i)=>({
+      id: r.id ?? i+1,
+      first_name: r.first_name ?? r.First?.trim?.() ?? '',
+      last_name:  r.last_name  ?? r.Last?.trim?.() ?? '',
+      aka:        r.aka ?? r.Nickname ?? r['Nickname “aka”'] ?? '',
+      email:      r.email ?? r.Email ?? '',
+      phone:      r.phone ?? r.Phone ?? '',
+      birthday:   r.birthday ?? r.Birthday ?? '',
+      lastPurchase: r.lastPurchase ?? r['Last Purchase'] ?? r.last ?? '',
+      points:     r.points ?? r.Rewards ?? 0,
+      locker:     r.locker ?? r['Locker #'] ?? '',
+      regular:    r.regular ?? r.Regular ?? '',
+      military:   r.military ?? r.Military ?? '',
+      responder:  r.responder ?? r['First Responder'] ?? ''
+    }));
+    FILTERED = PEOPLE.slice();
+    renderRows(FILTERED);
+    renderDropdowns(PEOPLE);
+  }catch(err){
+    console.error(err);
+    rowsEl.innerHTML = `<div style="padding:16px;color:#b91c1c">Error loading loyalty data.</div>`;
+  }
+})();
 </script>
 </body>
 </html>
