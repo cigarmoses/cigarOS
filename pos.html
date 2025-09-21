@@ -1,255 +1,120 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>CigarOS — POS</title>
-<style>
-  :root{--bg:#f7f8fb;--card:#fff;--ink:#0f172a;--muted:#64748b;--line:#e5e7eb;--accent:#1DA1F2}
-  *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
-  .wrap{max-width:1100px;margin:0 auto;padding:16px}
-  h1{margin:0 0 12px}
-  .grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr auto;gap:8px;align-items:center}
-  .head{font-weight:800;color:var(--muted)}
-  .row{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px;display:grid;grid-template-columns:2fr 1fr 1fr 1fr auto;gap:8px;align-items:center}
-  .row:nth-child(even){background:#fbfdff}
-  .btn{background:var(--accent);color:#fff;border:0;border-radius:10px;padding:8px 12px;cursor:pointer}
-  .pill{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--card);padding:8px 10px;border-radius:10px}
-  input,select{border:1px solid var(--line);border-radius:10px;padding:8px 10px;font:inherit}
-  .fab{position:fixed;right:18px;bottom:18px;background:var(--accent);color:#fff;border:0;width:56px;height:56px;border-radius:50%;font-size:24px;cursor:pointer;box-shadow:0 10px 30px rgba(0,0,0,.18)}
-  /* modal */
-  .backdrop{position:fixed;inset:0;background:rgba(2,6,23,.45);display:none;align-items:center;justify-content:center;z-index:50}
-  .backdrop.show{display:flex}
-  .sheet{width:min(92vw,560px);max-height:85vh;overflow:auto;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px 16px 12px}
-  .sheet h3{margin:0 0 10px}
-  .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-  .tot{display:flex;justify-content:space-between;padding:8px 0;border-top:1px solid var(--line)}
-  .actions{display:flex;gap:10px;justify-content:flex-end;margin-top:10px}
-  .muted{color:var(--muted)}
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Upload Inventory CSV</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root { --card:#fff; --muted:#6b7280; --line:#e5e7eb; --bg:#f6f7f9; --accent:#2563eb; }
+    *{box-sizing:border-box} body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);margin:0;padding:24px;color:#0f172a}
+    .wrap{max-width:920px;margin:0 auto;background:var(--card);border-radius:14px;padding:24px 24px 8px;box-shadow:0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.03)}
+    h1{font-size:28px;margin:0 0 8px} p.sub{margin:0 0 16px;color:var(--muted)}
+    .row{display:flex;gap:12px;align-items:center;margin:8px 0 16px}
+    input[type=file]{padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:#fff}
+    button.primary{background:#111827;color:#fff;border:0;border-radius:10px;padding:10px 14px;font-weight:600;cursor:pointer}
+    button.primary:disabled{opacity:.6;cursor:not-allowed}
+    .preview{margin-top:16px;border:1px solid var(--line);border-radius:10px;overflow:auto;background:#fff}
+    table{width:100%;border-collapse:collapse;font-size:14px}
+    th,td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+    th{background:#f9fafb;text-align:left;font-weight:700}
+    tfoot td{padding:12px;color:var(--muted)}
+    .links{display:flex;gap:16px;margin:12px 0 8px}
+    a{color:var(--accent);text-decoration:none} a:hover{text-decoration:underline}
+    .status{margin:8px 0 16px;font-weight:600}
+    .ok{color:#059669}.err{color:#dc2626}
+  </style>
+  <script src="https://unpkg.com/papaparse@5.4.1/papaparse.min.js"></script>
 </head>
 <body>
-<div class="wrap">
-  <h1>POS</h1>
+  <div class="wrap">
+    <h1>Upload Inventory CSV</h1>
+    <p class="sub">Pick your latest inventory CSV. We’ll save it so the POS always loads the newest version (no redeploy needed).</p>
 
-  <div class="pill" style="margin-bottom:10px">
-    <span>Link loyalty (search name/phone/email)</span>
-    <input id="loyalty" placeholder="Optional" style="min-width:260px" />
-  </div>
-
-  <div class="grid head" style="padding:6px 4px">
-    <div>Brand / Item</div><div>Vitola</div><div>Price</div><div>In Stock</div><div></div>
-  </div>
-  <div id="list" style="display:grid;gap:8px"></div>
-</div>
-
-<button id="fab" class="fab">+</button>
-
-<!-- Receipt modal -->
-<div id="backdrop" class="backdrop" role="dialog" aria-modal="true">
-  <div class="sheet">
-    <h3>Receipt</h3>
-    <div id="lines" class="muted" style="font-size:14px"></div>
-
-    <div class="tot"><div>Subtotal</div><div id="sub"></div></div>
-    <div class="tot"><div>Tax (7%)</div><div id="tax"></div></div>
-    <div class="tot" style="font-weight:800"><div>Total</div><div id="tot"></div></div>
-
-    <div class="row2" style="margin-top:8px">
-      <label>Payment
-        <select id="pay">
-          <option value="cash">Cash</option>
-          <option value="card">Card</option>
-        </select>
-      </label>
-      <label>Customer (optional)
-        <input id="cust" placeholder="loyalty name or id" />
-      </label>
+    <div class="row">
+      <input id="file" type="file" accept=".csv" />
+      <button id="save" class="primary" disabled>Save to Netlify</button>
     </div>
 
-    <div class="actions">
-      <button id="save" class="btn" style="background:#64748b">Save Draft</button>
-      <button id="confirm" class="btn">Confirm Sale</button>
+    <div class="status" id="status"></div>
+
+    <div class="links">
+      <a href="/.netlify/functions/get-inventory" target="_blank">View current saved CSV</a>
+      <a href="/pos.html" id="reload">Reload uploader</a>
     </div>
+
+    <div class="preview" id="preview" hidden>
+      <table id="tbl"></table>
+    </div>
+    <div style="height:8px"></div>
   </div>
-</div>
 
-<script>
-/* ---------- CSV parser ---------- */
-function parseCSV(text){
-  const rows=[]; let i=0, field='', row=[], inQ=false;
-  while(i<text.length){
-    const c=text[i];
-    if(inQ){
-      if(c==='"' && text[i+1]==='"'){ field+='"'; i+=2; continue; }
-      if(c==='"'){ inQ=false; i++; continue; }
-      field+=c; i++; continue;
-    }
-    if(c===','){ row.push(field); field=''; i++; continue; }
-    if(c==='"'){ inQ=true; i++; continue; }
-    if(c==='\r'){ i++; continue; }
-    if(c==='\n'){ row.push(field); rows.push(row); row=[]; field=''; i++; continue; }
-    field+=c; i++;
-  }
-  row.push(field); rows.push(row);
-  return rows;
-}
-function hmap(h){
-  const map={
-    'brand':'brand','manufacturer':'manufacturer','item':'item','cigar':'item','cigar name':'item',
-    'vitola':'vitola','size':'vitola','price':'price','msrp':'price',
-    'inventory':'inventory','qty':'inventory','quantity':'inventory','stock':'inventory',
-    'upc':'upc','sku':'sku'
-  };
-  return h.map(x=>map[x.trim().toLowerCase()]||x.trim());
-}
-function toObjs(rows){
-  if(!rows.length) return [];
-  const head = hmap(rows[0]);
-  return rows.slice(1).filter(r=>r.some(c=>String(c||'').trim()!=='')).map((r,i)=>{
-    const o={id:i+1};
-    head.forEach((k,idx)=> o[k]=(r[idx]??'').toString().trim());
-    // normalize numbers
-    o.price = parseFloat(String(o.price||'').replace(/[^0-9.]/g,'')) || 0;
-    o.inventory = parseInt(String(o.inventory||'').replace(/[^0-9-]/g,''),10); if (isNaN(o.inventory)) o.inventory = 0;
-    return o;
-  });
-}
-function money(n){ return '$' + (Math.round(n*100)/100).toFixed(2); }
+  <script>
+    const fileInput = document.getElementById('file');
+    const saveBtn = document.getElementById('save');
+    const statusEl = document.getElementById('status');
+    const previewBox = document.getElementById('preview');
+    const tbl = document.getElementById('tbl');
 
-/* ---------- state ---------- */
-let INVENTORY=[], CART=[];
+    let csvText = '';
 
-/* ---------- fetch inventory (blobs, then fallback) ---------- */
-async function fetchInventoryCSV(){
-  // try blobs function first
-  try{
-    const r = await fetch('/.netlify/functions/get-inventory',{cache:'no-store'});
-    if(r.ok) return await r.text();
-  }catch(_){}
-  // fallback to static file
-  const r2 = await fetch('/img/inventory.csv',{cache:'no-store'});
-  if(!r2.ok) throw new Error('No inventory found (neither blobs nor /img/inventory.csv)');
-  return await r2.text();
-}
+    fileInput.addEventListener('change', async () => {
+      statusEl.textContent = '';
+      previewBox.hidden = true;
+      tbl.innerHTML = '';
+      csvText = '';
 
-function renderList(){
-  const list = document.getElementById('list');
-  list.innerHTML = '';
-  const frag = document.createDocumentFragment();
-  INVENTORY.forEach(item=>{
-    const row = document.createElement('div');
-    row.className = 'row';
+      const file = fileInput.files?.[0];
+      if (!file) { saveBtn.disabled = true; return; }
 
-    const brand = document.createElement('div');
-    brand.textContent = item.brand ? `${item.brand} — ${item.item||''}` : (item.item||'');
-    const vitola = document.createElement('div'); vitola.textContent = item.vitola || '';
-    const price  = document.createElement('div'); price.textContent  = money(item.price||0);
-    const stock  = document.createElement('div'); stock.textContent  = item.inventory;
+      // Read file as text
+      csvText = await file.text();
 
-    const add = document.createElement('div');
-    const btn  = document.createElement('button');
-    btn.className='btn';
-    btn.textContent='Add';
-    btn.onclick = ()=> addToCart(item);
-    add.appendChild(btn);
+      // Preview first ~200 rows
+      const parsed = Papa.parse(csvText, { header: true, preview: 200 });
+      const { data, meta } = parsed;
 
-    row.appendChild(brand); row.appendChild(vitola); row.appendChild(price); row.appendChild(stock); row.appendChild(add);
-    frag.appendChild(row);
-  });
-  list.appendChild(frag);
-}
+      // Build preview table
+      const headers = meta.fields || Object.keys(data[0] || {});
+      const head = `<thead><tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr></thead>`;
+      const rows = data.map(r => `<tr>${headers.map(h => `<td>${(r[h] ?? '')}</td>`).join('')}</tr>`).join('');
+      const body = `<tbody>${rows}</tbody>`;
+      const foot = `<tfoot><tr><td colspan="${headers.length}">Showing ${data.length} rows (preview)</td></tr></tfoot>`;
+      tbl.innerHTML = head + body + foot;
 
-function addToCart(item){
-  const found = CART.find(x=>x.id===item.id);
-  if(found){ found.qty += 1; } else { CART.push({ ...item, qty:1 }); }
-  flashFab();
-}
-function flashFab(){
-  const fab=document.getElementById('fab');
-  fab.animate([{transform:'scale(1)'},{transform:'scale(1.08)'},{transform:'scale(1)'}],{duration:300});
-}
-
-/* ---------- modal / receipt ---------- */
-const backdrop=document.getElementById('backdrop');
-document.getElementById('fab').onclick = ()=> openReceipt();
-document.getElementById('save').onclick = ()=> finalize('draft');
-document.getElementById('confirm').onclick = ()=> finalize('confirm');
-
-function openReceipt(){
-  const lines = document.getElementById('lines');
-  if(!CART.length){ lines.innerHTML = '<div>No items.</div>'; }
-  else{
-    lines.innerHTML = CART.map(x=>`<div>${x.qty} × ${x.brand?x.brand+' — ':''}${x.item||''} — ${money(x.price)} = <b>${money(x.qty*x.price)}</b></div>`).join('');
-  }
-  const sub = CART.reduce((s,x)=> s + x.qty * (x.price||0), 0);
-  const tax = sub * 0.07;
-  const tot = sub + tax;
-  document.getElementById('sub').textContent = money(sub);
-  document.getElementById('tax').textContent = money(tax);
-  document.getElementById('tot').textContent = money(tot);
-  backdrop.classList.add('show');
-}
-backdrop.addEventListener('click', e=>{ if(e.target===backdrop) backdrop.classList.remove('show'); });
-
-async function finalize(kind){
-  const sub = CART.reduce((s,x)=> s + x.qty * (x.price||0), 0);
-  const tax = sub * 0.07;
-  const tot = sub + tax;
-  const payment = document.getElementById('pay').value;
-  const customer = (document.getElementById('cust').value||'').trim();
-  const loyalty = (document.getElementById('loyalty').value||'').trim();
-
-  const bill = {
-    time: new Date().toISOString(),
-    items: CART.map(({id,brand,item,vitola,price,qty})=>({id,brand,item,vitola,price,qty})),
-    subtotal: Number(sub.toFixed(2)),
-    tax: Number(tax.toFixed(2)),
-    total: Number(tot.toFixed(2)),
-    payment,
-    customer,
-    loyalty
-  };
-
-  // Try calling your existing save function
-  try{
-    const r = await fetch('/.netlify/functions/save-data', {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ type: kind==='confirm' ? 'sale' : 'draft', bill })
+      previewBox.hidden = false;
+      saveBtn.disabled = false;
     });
-    // ignore response
-  }catch(_){}
 
-  // Award loyalty points on confirmed sale (rounded subtotal)
-  if (kind==='confirm' && loyalty){
-    try{
-      const pts = Math.round(sub);
-      await fetch('/.netlify/functions/add-loyalty-points', {
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({ loyalty, points: pts })
-      });
-    }catch(_){}
-  }
+    saveBtn.addEventListener('click', async () => {
+      if (!csvText) return;
+      saveBtn.disabled = true;
+      statusEl.textContent = 'Saving…';
+      statusEl.className = 'status';
 
-  if (kind==='confirm') CART = []; // clear cart after confirm
-  backdrop.classList.remove('show');
-}
+      try {
+        const res = await fetch('/.netlify/functions/set-inventory', {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/csv; charset=utf-8' },
+          body: csvText
+        });
 
-/* ---------- bootstrap ---------- */
-(async function init(){
-  try{
-    const csv = await fetchInventoryCSV();
-    const rows = parseCSV(csv);
-    INVENTORY = toObjs(rows);
-    // Optional: sort alphabetically by brand then item
-    INVENTORY.sort((a,b)=> (a.brand||'').localeCompare(b.brand||'') || (a.item||'').localeCompare(b.item||''));
-    renderList();
-  }catch(err){
-    document.getElementById('list').innerHTML = `<div style="color:#991b1b">Error loading inventory: ${err.message||err}</div>`;
-  }
-})();
-</script>
+        const text = await res.text();
+        let msg = text;
+        try { msg = JSON.parse(text); } catch {}
+        if (!res.ok || msg.ok !== true) throw new Error(typeof msg === 'string' ? msg : (msg.error || 'Upload failed'));
+
+        statusEl.textContent = 'Saved! Open "View current saved CSV" to confirm.';
+        statusEl.className = 'status ok';
+      } catch (err) {
+        statusEl.textContent = 'Error: ' + err.message;
+        statusEl.className = 'status err';
+      } finally {
+        saveBtn.disabled = false;
+      }
+    });
+  </script>
 </body>
 </html>
