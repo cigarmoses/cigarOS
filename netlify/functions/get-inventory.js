@@ -1,10 +1,9 @@
-// /netlify/functions/get-inventory.js
-const { blobs } = require('@netlify/blobs');
+const { getStore } = require('@netlify/blobs');
 
 exports.handler = async () => {
   try {
-    const store = blobs({ name: 'inventory' });
-    const csv = await store.get('inventory.csv');
+    const store = getStore('inventory');
+    const csv = await store.get('inventory.csv', { type: 'text' });
     if (!csv) {
       return {
         statusCode: 404,
@@ -21,7 +20,7 @@ exports.handler = async () => {
     return {
       statusCode: 500,
       headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
-      body: JSON.stringify({ ok: false, error: String(err && err.message || err) }),
+      body: JSON.stringify({ ok: false, error: String(err.message || err) }),
     };
   }
 };
