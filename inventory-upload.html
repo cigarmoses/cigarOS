@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Upload Inventory CSV</title>
+<style>
+  :root{--ink:#0f172a;--muted:#6b7280;--line:#e5e7eb;--bg:#f5f7fb;--card:#fff;--blue:#1DA1F2}
+  *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+  .wrap{max-width:760px;margin:32px auto;padding:16px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px}
+  h1{margin:0 0 8px}
+  .row{display:flex;gap:12px;align-items:center;margin:12px 0}
+  .btn{background:var(--blue);color:#fff;border:0;border-radius:10px;padding:10px 14px;cursor:pointer}
+  .muted{color:var(--muted)}
+  table{width:100%;border-collapse:collapse;margin-top:12px}
+  th,td{border:1px solid var(--line);padding:8px 10px;font-size:14px}
+  th{background:#eef2ff;text-align:left}
+  .ok{color:#065f46;margin-top:10px}
+  .err{color:#991b1b;margin-top:10px}
+  .actions{display:flex;gap:10px;align-items:center}
+  .link{color:var(--blue);text-decoration:none}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>Upload Inventory CSV</h1>
+      <p class="muted">Pick your latest inventory CSV. We’ll store it so the POS always loads the newest version (no redeploy needed).</p>
+
+      <div class="row">
+        <input id="file" type="file" accept=".csv,text/csv" />
+        <button id="save" class="btn" disabled>Save to Netlify</button>
+      </div>
+
+      <div id="meta" class="muted">No file selected.</div>
+
+      <div id="previewWrap" style="display:none">
+        <h3>Preview (first 15 rows)</h3>
+        <div style="overflow:auto">
+          <table id="preview"></table>
+        </div>
+      </div>
+
+      <div class="actions" style="margin-top:12px">
+        <a class="link" href="/.netlify/functions/get-inventory" target="_blank">View current saved CSV</a>
+        <a class="link" href="/pos.html">Open POS</a>
+      </div>
+
+      <div id="msg"></div>
+    </div>
+  </div>
+
+<script>
+let csvText = '';
+
+function parseCSV(text){
+  const rows=[]; let i=0, field='', row=[], inQ=false;
+  while(i<text.length){
+    const c=text[i];
+    if(inQ){
+      if(c==='"' && text[i+1]==='"'){ field+='"'; i+=2; continue; }
+      if(c==='"'){ inQ=false; i++; continue; }
+      field+=c; i++; continue;
+    }
+    if(c===','){ row.push(field); field=''; i++; continue; }
+    if(c==='"'){ inQ=true; i++; continue; }
+    if(c==='\r'){ i++; continue; }
+    if(c==='\n'){ row.push(field); rows.push(row); row=[]; field=''; i++; continue; }
+    field+=c; i++;
+  }
+  row.push(field); rows.push(row);
+  return rows;
+}
+
+function preview(table, text){
+  const rows = parseCSV(text).slice(0, 15);
+  if(!rows.length){ table.innerHTML = '<tr><td>No rows</td></tr>'; return; }
+  const thead = '<tr>' + rows[0].map(h=>`<th>${h}</th>`).join('') + '</tr>';
+  const tbody = rows.slice(1).map(r=>'<tr>'+r.map(c=>`<td>${c}</td>`).join('')+'</tr>').join('');
+  table.innerHTML = thead + tbody;
+}
+
+document.getElementById('file').addEventListener('change', async (e)=>{
+  const f = e.target.files[0];
+  const meta = document.getElementById('meta');
+  const previewWrap = document.getElementById('previewWrap');
+  const table = document.getElementById('preview');
+  const btn = document.getElementById('save');
+  const msg = document.getElementById('msg');
+  msg.textContent = '';
+
+  if(!f){ csvText=''; btn.disabled = true; meta.textContent='No file selected.'; previewWrap.style.display='none'; return; }
+
+  const text = await f.text();
+  csvText = text;
+  meta.textContent = `Selected: ${f.name} • ${(f.size/1024).toFixed(1)} KB`;
+  preview(table, text);
+  previewWrap.style.display='block';
+  btn.disabled = false;
+});
+
+document.getElementById('save').addEventListener('click', async ()=>{
+  const btn = document.getElementById('save');
+  const msg = document.getElementById('msg');
+  if(!csvText.trim()){ msg.innerHTML = '<div class="err">No CSV content.</div>'; return; }
+  btn.disabled = true; msg.textContent = 'Saving...';
+
+  try{
+    const r = await fetch('/.netlify/functions/set-inventory', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ csv: csvText })
+    });
+    const j = await r.json().catch(()=>({}));
+    if(!r.ok || !j.ok){
+      throw new Error(j && j.error || `HTTP ${r.status}`);
+    }
+    msg.innerHTML = `<div class="ok">Saved ✓ (${(j.bytes/1024).toFixed(1)} KB). The POS now reads this file.</div>`;
+  }catch(err){
+    msg.innerHTML = `<div class="err">Error: ${err.message||err}</div>`;
+  }finally{
+    btn.disabled = false;
+  }
+});
+</script>
+</body>
+</html>
