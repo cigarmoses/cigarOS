@@ -35,11 +35,12 @@
   /* Dropdowns */
   .dd{display:none;background:var(--card);border:1px solid var(--line);border-radius:14px;margin-top:6px;overflow:hidden}
   .dd.open{display:block}
-  .dd-item{padding:12px 14px;border-top:1px solid var(--line);cursor:pointer}
+  .dd-item{display:grid;grid-template-columns:64px 1fr;gap:10px;align-items:center;padding:12px 14px;border-top:1px solid var(--line);cursor:pointer}
   .dd-item:hover{background:#f1f5f9}
+  .dd .muted{color:var(--muted);cursor:default}
+  .locker-num{justify-self:start;min-width:48px;text-align:center;border:1px solid var(--blue-200);background:var(--blue-100);color:var(--blue);padding:4px 8px;border-radius:10px;font-weight:700}
   .dd-name{font-weight:700}
   .dd-nick{font-size:12px;color:var(--muted);margin-top:2px}
-  .dd .muted{color:var(--muted);cursor:default}
 
   /* Table */
   .table{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden}
@@ -81,7 +82,7 @@
       <!-- colored buttons -->
       <div class="pills">
         <button id="pillLock" class="pill lock" type="button">
-          <span><span class="dot blue"></span> Locker members</span><span class="chev">▾</span>
+          <span><span class="dot blue"></span> Lockers</span><span class="chev">▾</span>
         </button>
         <button id="pillReg"  class="pill reg"  type="button">
           <span><span class="dot orange"></span> Regulars</span><span class="chev">▾</span>
@@ -135,6 +136,7 @@ function parseCSV(text){
 const badgeURL={locker:'/img/locker.svg',military:'/img/military.svg',responder:'/img/firstresponders.svg'};
 const truthy=v=>v!=null && String(v).trim().toLowerCase()!=='' && !['0','false','no','n'].includes(String(v).trim().toLowerCase());
 const hasDigits=v=>/\d/.test(String(v||''));
+const getLockerNum=v=>{ const m=String(v||'').match(/\d+/); return m?parseInt(m[0],10):NaN; };
 
 function normalizeHeaders(h){
   const map={
@@ -178,7 +180,7 @@ function render(list){
   rowsEl.innerHTML='';
   const frag=document.createDocumentFragment();
   list.forEach(p=>{
-    const isLocker = hasDigits(p.locker);        // locker row if any number present
+    const isLocker = hasDigits(p.locker);
     const isRegular = !isLocker && truthy(p.regular);
 
     const row=document.createElement('div');
@@ -203,15 +205,53 @@ function render(list){
   });
   rowsEl.appendChild(frag);
 }
+
 function renderDropdowns(list){
-  const locks=list.filter(p=>hasDigits(p.locker));
-  ddLock.innerHTML=locks.map(p=>`<div class="dd-item" data-id="${p.id}"><div class="dd-name">${p.last_name||''} ${p.first_name||''}</div>${p.aka?`<div class="dd-nick">“${p.aka}”</div>`:''}</div>`).join('')||`<div class="dd-item muted">No locker members</div>`;
-  const regs=list.filter(p=>!hasDigits(p.locker)&&truthy(p.regular));
-  ddReg.innerHTML=regs.map(p=>`<div class="dd-item" data-id="${p.id}"><div class="dd-name">${p.last_name||''} ${p.first_name||''}</div>${p.aka?`<div class="dd-nick">“${p.aka}”</div>`:''}</div>`).join('')||`<div class="dd-item muted">No regulars</div>`;
+  // Lockers: sort ascending by locker number
+  const locks=list
+    .filter(p=>hasDigits(p.locker))
+    .map(p=>({...p, _lockerNum:getLockerNum(p.locker)}))
+    .sort((a,b)=>{
+      const A=isNaN(a._lockerNum)?Number.POSITIVE_INFINITY:a._lockerNum;
+      const B=isNaN(b._lockerNum)?Number.POSITIVE_INFINITY:b._lockerNum;
+      return A-B || (a.last_name||'').localeCompare(b.last_name||'') || (a.first_name||'').localeCompare(b.first_name||'');
+    });
+
+  ddLock.innerHTML = locks.length
+    ? locks.map(p=>`
+        <div class="dd-item" data-id="${p.id}">
+          <div class="locker-num">${isNaN(p._lockerNum)?'—':p._lockerNum}</div>
+          <div>
+            <div class="dd-name">${p.last_name||''} ${p.first_name||''}</div>
+            ${p.aka?`<div class="dd-nick">“${p.aka}”</div>`:''}
+          </div>
+        </div>`).join('')
+    : `<div class="dd-item muted">No lockers</div>`;
+
+  // Regulars list (unchanged)
+  const regs=list.filter(p=>!hasDigits(p.locker)&&truthy(p.regular))
+    .sort((a,b)=> (a.last_name||'').localeCompare(b.last_name||'') || (a.first_name||'').localeCompare(b.first_name||''));
+  ddReg.innerHTML=regs.length
+    ? regs.map(p=>`
+        <div class="dd-item" data-id="${p.id}">
+          <div class="locker-num" style="visibility:hidden">—</div>
+          <div>
+            <div class="dd-name">${p.last_name||''} ${p.first_name||''}</div>
+            ${p.aka?`<div class="dd-nick">“${p.aka}”</div>`:''}
+          </div>
+        </div>`).join('')
+    : `<div class="dd-item muted">No regulars</div>`;
+
+  // click-to-jump behavior
   [...ddLock.querySelectorAll('.dd-item[data-id]'),...ddReg.querySelectorAll('.dd-item[data-id]')].forEach(el=>{
     el.addEventListener('click',()=>{
-      const id=el.getAttribute('data-id'); const idx=FILTERED.findIndex(p=>String(p.id)===String(id));
-      if(idx>=0){ const t=rowsEl.children[idx]; t?.scrollIntoView({behavior:'smooth',block:'center'}); t?.animate([{background:'#fffbd1'},{background:'transparent'}],{duration:900}); }
+      const id=el.getAttribute('data-id');
+      const idx=FILTERED.findIndex(p=>String(p.id)===String(id));
+      if(idx>=0){
+        const t=rowsEl.children[idx];
+        t?.scrollIntoView({behavior:'smooth',block:'center'});
+        t?.animate([{background:'#fffbd1'},{background:'transparent'}],{duration:900});
+      }
     });
   });
 }
