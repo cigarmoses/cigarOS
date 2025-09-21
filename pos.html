@@ -1,328 +1,255 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>POS — CigarOS</title>
-<link rel="icon" href="/img/iconPOS.svg" />
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CigarOS — POS</title>
 <style>
-  :root {
-    --bg:#0f1115; --panel:#141821; --card:#1a2030; --text:#e8eefc; --muted:#9fb0d0;
-    --accent:#60a5fa; --green:#22c55e; --red:#ef4444; --shadow:0 12px 30px rgba(0,0,0,.4);
-    --radius:16px; --line:rgba(255,255,255,.06);
-  }
-  *{box-sizing:border-box}
-  body { margin:0; background:var(--bg); color:var(--text); font:15px/1.5 system-ui,-apple-system,Segoe UI,Inter,Roboto,Arial,sans-serif; }
-  header { display:flex; gap:12px; align-items:center; padding:12px 14px; position:sticky; top:0; background:rgba(15,17,21,.7); backdrop-filter: blur(8px); z-index:10; }
-  header a { color:var(--muted); text-decoration:none }
-  h1 { font-size:18px; margin:0 }
-  .container { padding: 14px; }
-
-  .table { width:100%; background:var(--panel); border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow); }
-  .thead, .trow { display:grid; grid-template-columns: 1.6fr .8fr .7fr .6fr .5fr; gap:8px; padding:10px 12px; }
-  .thead { background:#0b0e14; color:#aab9d9; font-size:12px; text-transform:uppercase; letter-spacing:.04em; }
-  .trow { border-top:1px solid var(--line); align-items:center; }
-  .right { text-align:right }
-  .muted { color:var(--muted) }
-  .btnAdd { border:0; background:#0d172b; color:#cfe1ff; border:1px solid #273555; padding:6px 9px; border-radius:10px; cursor:pointer; }
-  .pill { display:inline-block; background:#0d1220; color:#a8c1ff; padding:6px 9px; border-radius:999px; font-size:13px; }
-
-  .fab { position:fixed; right:16px; bottom:16px; width:56px; height:56px; border-radius:50%; background:var(--accent); color:#051123; display:grid; place-items:center; font-size:26px; box-shadow:var(--shadow); cursor:pointer; }
-
-  dialog { border:0; padding:0; background:transparent; }
-  .sheet { width:min(820px, 92vw); background:var(--card); border-radius:20px; margin:auto; box-shadow:var(--shadow); overflow:hidden; }
-  .sheet header { background:#101625; padding:12px 14px; }
-  .sheet .body { padding:14px; }
-  .line { display:flex; align-items:center; gap:8px; }
-  .grid2 { display:grid; grid-template-columns: 1fr 1fr; gap:10px; }
-  input, select, button { appearance:none; border:1px solid #26304a; background:#111728; color:var(--text); border-radius:12px; padding:10px 12px; font-size:14px; }
-  input::placeholder { color:#6c7ba3 }
-  .row { display:flex; align-items:center; justify-content:space-between; gap:8px; padding:8px 0; border-bottom:1px dashed var(--line); }
-  .row:last-child { border-bottom:0 }
-  .actions { display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end; padding:12px 14px 16px; }
-  .btn { border:0; padding:10px 14px; border-radius:12px; cursor:pointer; }
-  .btn.secondary { background:#0f1629; color:#cfe1ff; border:1px solid #273555;}
-  .btn.green { background:var(--green); color:#03210f; }
-  .btn.blue { background:var(--accent); color:#031326; }
-  .btn.red { background:var(--red); color:#2b0303; }
-
-  /* Loyalty dropdown */
-  .dropdown { position:relative }
-  .dd-panel {
-    position:absolute; top:100%; left:0; right:0; z-index:20;
-    background:#0d1220; border:1px solid #273555; border-radius:12px; margin-top:6px; max-height:240px; overflow:auto;
-    box-shadow:var(--shadow); display:none;
-  }
-  .dd-item { padding:9px 10px; border-bottom:1px solid #172038; cursor:pointer; }
-  .dd-item:last-child { border-bottom:0 }
-  .dd-item:hover { background:#131a2d }
-
-  @media (max-width: 820px){
-    .thead, .trow { grid-template-columns: 1.8fr .9fr .8fr .7fr .6fr; }
-  }
-  @media (max-width: 640px){
-    .thead, .trow { grid-template-columns: 1.8fr .9fr .8fr .7fr .5fr; }
-  }
+  :root{--bg:#f7f8fb;--card:#fff;--ink:#0f172a;--muted:#64748b;--line:#e5e7eb;--accent:#1DA1F2}
+  *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+  .wrap{max-width:1100px;margin:0 auto;padding:16px}
+  h1{margin:0 0 12px}
+  .grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr auto;gap:8px;align-items:center}
+  .head{font-weight:800;color:var(--muted)}
+  .row{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px;display:grid;grid-template-columns:2fr 1fr 1fr 1fr auto;gap:8px;align-items:center}
+  .row:nth-child(even){background:#fbfdff}
+  .btn{background:var(--accent);color:#fff;border:0;border-radius:10px;padding:8px 12px;cursor:pointer}
+  .pill{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--card);padding:8px 10px;border-radius:10px}
+  input,select{border:1px solid var(--line);border-radius:10px;padding:8px 10px;font:inherit}
+  .fab{position:fixed;right:18px;bottom:18px;background:var(--accent);color:#fff;border:0;width:56px;height:56px;border-radius:50%;font-size:24px;cursor:pointer;box-shadow:0 10px 30px rgba(0,0,0,.18)}
+  /* modal */
+  .backdrop{position:fixed;inset:0;background:rgba(2,6,23,.45);display:none;align-items:center;justify-content:center;z-index:50}
+  .backdrop.show{display:flex}
+  .sheet{width:min(92vw,560px);max-height:85vh;overflow:auto;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px 16px 12px}
+  .sheet h3{margin:0 0 10px}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .tot{display:flex;justify-content:space-between;padding:8px 0;border-top:1px solid var(--line)}
+  .actions{display:flex;gap:10px;justify-content:flex-end;margin-top:10px}
+  .muted{color:var(--muted)}
 </style>
 </head>
 <body>
-  <header>
-    <a href="/" class="muted">← Home</a>
-    <h1>POS</h1>
-    <span class="pill" id="cartCount">0 items</span>
-    <span class="pill" id="cartTotal">$0.00</span>
-  </header>
+<div class="wrap">
+  <h1>POS</h1>
 
-  <div class="container">
-    <div class="table" id="invTable">
-      <div class="thead">
-        <div>Brand / Item</div>
-        <div class="right">Vitola</div>
-        <div class="right">Price</div>
-        <div class="right">Inventory</div>
-        <div class="right">Add</div>
-      </div>
-      <div id="invRows"></div>
-    </div>
+  <div class="pill" style="margin-bottom:10px">
+    <span>Link loyalty (search name/phone/email)</span>
+    <input id="loyalty" placeholder="Optional" style="min-width:260px" />
   </div>
 
-  <!-- Floating action to open Receipt -->
-  <button class="fab" id="openReceipt" title="Open receipt">＋</button>
+  <div class="grid head" style="padding:6px 4px">
+    <div>Brand / Item</div><div>Vitola</div><div>Price</div><div>In Stock</div><div></div>
+  </div>
+  <div id="list" style="display:grid;gap:8px"></div>
+</div>
 
-  <!-- RECEIPT SHEET -->
-  <dialog id="receipt">
-    <div class="sheet">
-      <header>
-        <h1 style="margin:0;font-size:18px">Receipt</h1>
-      </header>
-      <div class="body">
+<button id="fab" class="fab">+</button>
 
-        <!-- Loyalty: search + select -->
-        <div class="grid2" style="margin-bottom:8px">
-          <div class="dropdown">
-            <label class="muted" style="font-size:12px;display:block;margin-bottom:6px">Link Loyalty Customer</label>
-            <input id="loyaltySearch" placeholder="Search name, email, phone…" autocomplete="off" />
-            <div class="dd-panel" id="loyaltyList"></div>
-            <input type="hidden" id="billCustomer" />
-          </div>
-          <div>
-            <label class="muted" style="font-size:12px;display:block;margin-bottom:6px">Method</label>
-            <select id="payMethod">
-              <option value="cash">Cash</option>
-              <option value="card">Credit / Debit</option>
-            </select>
-          </div>
-        </div>
+<!-- Receipt modal -->
+<div id="backdrop" class="backdrop" role="dialog" aria-modal="true">
+  <div class="sheet">
+    <h3>Receipt</h3>
+    <div id="lines" class="muted" style="font-size:14px"></div>
 
-        <div class="row"><div class="muted">Items</div><div id="rItems" class="right">0</div></div>
-        <div class="row"><div class="muted">Subtotal</div><div id="rSubtotal" class="right">$0.00</div></div>
-        <input id="receipt-subtotal" type="hidden" value="0">
-        <div class="row"><div class="muted">Tax (7%)</div><div id="rTax" class="right">$0.00</div></div>
-        <div class="row"><div class="muted">Total</div><div id="rTotal" class="right">$0.00</div></div>
+    <div class="tot"><div>Subtotal</div><div id="sub"></div></div>
+    <div class="tot"><div>Tax (7%)</div><div id="tax"></div></div>
+    <div class="tot" style="font-weight:800"><div>Total</div><div id="tot"></div></div>
 
-      </div>
-      <div class="actions">
-        <button class="btn secondary" id="saveDraft">Save draft</button>
-        <button class="btn green" id="confirmSale">Confirm sale</button>
-        <button class="btn red" id="closeReceipt">Close</button>
-      </div>
+    <div class="row2" style="margin-top:8px">
+      <label>Payment
+        <select id="pay">
+          <option value="cash">Cash</option>
+          <option value="card">Card</option>
+        </select>
+      </label>
+      <label>Customer (optional)
+        <input id="cust" placeholder="loyalty name or id" />
+      </label>
     </div>
-  </dialog>
+
+    <div class="actions">
+      <button id="save" class="btn" style="background:#64748b">Save Draft</button>
+      <button id="confirm" class="btn">Confirm Sale</button>
+    </div>
+  </div>
+</div>
 
 <script>
-  // -------- Inventory + Cart (you can replace with your real inventory feed) --------
-  const inventory = [
-    // Example seed rows (delete or replace with your data loader)
-    { id:'AF-HEM-ROB', brand:'Arturo Fuente', item:'Hemingway Short Story', vitola:'Perfecto', price:9.99, stock:14 },
-    { id:'PAD-64-EXC', brand:'Padron', item:'1964 Anniversary Exclusivo', vitola:'Robusto', price:15.5, stock:8 },
-    { id:'OLI-SERV-MAD', brand:'Oliva', item:'Serie V', vitola:'Toro', price:10.25, stock:22 }
-  ];
-  let cart = []; // [{id,brand,item,vitola,price,qty}...]
-
-  function money(n){ return `$${(Math.round(n*100)/100).toFixed(2)}`; }
-
-  function renderInventory(){
-    const container = document.getElementById('invRows');
-    container.innerHTML = inventory.map(row => {
-      return `
-        <div class="trow" data-id="${row.id}">
-          <div>
-            <div>${row.brand}</div>
-            <div class="muted" style="font-size:12px">${row.item}</div>
-          </div>
-          <div class="right">${row.vitola}</div>
-          <div class="right">${money(row.price)}</div>
-          <div class="right">${row.stock}</div>
-          <div class="right"><button class="btnAdd" data-add="${row.id}">Add</button></div>
-        </div>
-      `;
-    }).join('');
-  }
-  renderInventory();
-
-  // Add to cart handler
-  document.getElementById('invRows').addEventListener('click', (e)=>{
-    const id = e.target?.dataset?.add;
-    if(!id) return;
-    const row = inventory.find(r=>r.id===id);
-    if(!row) return;
-    const existing = cart.find(c=>c.id===id);
-    if(existing){ existing.qty += 1; }
-    else { cart.push({ id: row.id, brand:row.brand, item:row.item, vitola:row.vitola, price:row.price, qty:1 }); }
-    renderCartSummary();
-  });
-
-  function renderCartSummary(){
-    const items = cart.reduce((s, r) => s + (r.qty||0), 0);
-    const subtotal = cart.reduce((s, r) => s + (r.price * (r.qty||0)), 0);
-    const tax = subtotal * 0.07;
-    const total = subtotal + tax;
-    document.getElementById('cartCount').textContent = `${items} item${items===1?'':'s'}`;
-    document.getElementById('cartTotal').textContent = money(total);
-    return { items, subtotal, tax, total };
-  }
-  renderCartSummary();
-
-  // -------- Loyalty Search Dropdown --------
-  let loyalty = []; // {id,name,email,phone,raw}
-
-  async function loadLoyalty(){
-    try{
-      const res = await fetch('/.netlify/functions/get-loyalty', { cache:'no-store' });
-      const json = await res.json();
-      if (!res.ok || !json.ok) throw new Error(json.error || 'load loyalty failed');
-      loyalty = (json.data||[]).map(r => {
-        const id = (r.id ?? r.email ?? r.phone ?? '').toString().trim();
-        const name = [r.first_name||r.first||'', r.last_name||r.last||''].filter(Boolean).join(' ').trim() || '(no name)';
-        return { id, name, email: r.email||'', phone: r.phone||'', raw:r };
-      }).filter(x=>x.id);
-    }catch(e){
-      console.error(e); loyalty = [];
+/* ---------- CSV parser ---------- */
+function parseCSV(text){
+  const rows=[]; let i=0, field='', row=[], inQ=false;
+  while(i<text.length){
+    const c=text[i];
+    if(inQ){
+      if(c==='"' && text[i+1]==='"'){ field+='"'; i+=2; continue; }
+      if(c==='"'){ inQ=false; i++; continue; }
+      field+=c; i++; continue;
     }
+    if(c===','){ row.push(field); field=''; i++; continue; }
+    if(c==='"'){ inQ=true; i++; continue; }
+    if(c==='\r'){ i++; continue; }
+    if(c==='\n'){ row.push(field); rows.push(row); row=[]; field=''; i++; continue; }
+    field+=c; i++;
   }
-  loadLoyalty();
-
-  const dd = document.getElementById('loyaltyList');
-  const inp = document.getElementById('loyaltySearch');
-  const hid = document.getElementById('billCustomer');
-
-  function openList(){ dd.style.display = 'block'; }
-  function closeList(){ dd.style.display = 'none'; }
-  function filterList(q){
-    const s = q.trim().toLowerCase();
-    const rows = !s ? loyalty.slice(0,50) : loyalty.filter(x =>
-      x.name.toLowerCase().includes(s) ||
-      x.email.toLowerCase().includes(s) ||
-      x.phone.toLowerCase().includes(s)
-    ).slice(0,50);
-    dd.innerHTML = rows.map(x =>
-      `<div class="dd-item" data-id="${x.id}">
-         <div>${x.name}</div>
-         <div class="muted" style="font-size:12px">${x.email || x.phone || ''}</div>
-       </div>`
-    ).join('') || `<div class="dd-item muted">No matches</div>`;
-  }
-  dd.addEventListener('click', (e)=>{
-    const el = e.target.closest('.dd-item');
-    if (!el || !el.dataset.id) return;
-    const sel = loyalty.find(x => x.id === el.dataset.id) || null;
-    inp.value = sel ? `${sel.name} (${sel.email || sel.phone || sel.id})` : '';
-    hid.value = sel ? sel.id : '';
-    closeList();
+  row.push(field); rows.push(row);
+  return rows;
+}
+function hmap(h){
+  const map={
+    'brand':'brand','manufacturer':'manufacturer','item':'item','cigar':'item','cigar name':'item',
+    'vitola':'vitola','size':'vitola','price':'price','msrp':'price',
+    'inventory':'inventory','qty':'inventory','quantity':'inventory','stock':'inventory',
+    'upc':'upc','sku':'sku'
+  };
+  return h.map(x=>map[x.trim().toLowerCase()]||x.trim());
+}
+function toObjs(rows){
+  if(!rows.length) return [];
+  const head = hmap(rows[0]);
+  return rows.slice(1).filter(r=>r.some(c=>String(c||'').trim()!=='')).map((r,i)=>{
+    const o={id:i+1};
+    head.forEach((k,idx)=> o[k]=(r[idx]??'').toString().trim());
+    // normalize numbers
+    o.price = parseFloat(String(o.price||'').replace(/[^0-9.]/g,'')) || 0;
+    o.inventory = parseInt(String(o.inventory||'').replace(/[^0-9-]/g,''),10); if (isNaN(o.inventory)) o.inventory = 0;
+    return o;
   });
-  inp.addEventListener('focus', ()=>{ openList(); filterList(inp.value); });
-  inp.addEventListener('input', ()=>{ openList(); filterList(inp.value); });
-  document.addEventListener('click', (e)=>{
-    if (!dd.contains(e.target) && e.target !== inp) closeList();
+}
+function money(n){ return '$' + (Math.round(n*100)/100).toFixed(2); }
+
+/* ---------- state ---------- */
+let INVENTORY=[], CART=[];
+
+/* ---------- fetch inventory (blobs, then fallback) ---------- */
+async function fetchInventoryCSV(){
+  // try blobs function first
+  try{
+    const r = await fetch('/.netlify/functions/get-inventory',{cache:'no-store'});
+    if(r.ok) return await r.text();
+  }catch(_){}
+  // fallback to static file
+  const r2 = await fetch('/img/inventory.csv',{cache:'no-store'});
+  if(!r2.ok) throw new Error('No inventory found (neither blobs nor /img/inventory.csv)');
+  return await r2.text();
+}
+
+function renderList(){
+  const list = document.getElementById('list');
+  list.innerHTML = '';
+  const frag = document.createDocumentFragment();
+  INVENTORY.forEach(item=>{
+    const row = document.createElement('div');
+    row.className = 'row';
+
+    const brand = document.createElement('div');
+    brand.textContent = item.brand ? `${item.brand} — ${item.item||''}` : (item.item||'');
+    const vitola = document.createElement('div'); vitola.textContent = item.vitola || '';
+    const price  = document.createElement('div'); price.textContent  = money(item.price||0);
+    const stock  = document.createElement('div'); stock.textContent  = item.inventory;
+
+    const add = document.createElement('div');
+    const btn  = document.createElement('button');
+    btn.className='btn';
+    btn.textContent='Add';
+    btn.onclick = ()=> addToCart(item);
+    add.appendChild(btn);
+
+    row.appendChild(brand); row.appendChild(vitola); row.appendChild(price); row.appendChild(stock); row.appendChild(add);
+    frag.appendChild(row);
   });
+  list.appendChild(frag);
+}
 
-  // -------- Receipt Modal & Save/Confirm --------
-  const dlg = document.getElementById('receipt');
-  const openBtn = document.getElementById('openReceipt');
-  const closeBtn = document.getElementById('closeReceipt');
-  const saveDraftBtn = document.getElementById('saveDraft');
-  const confirmBtn = document.getElementById('confirmSale');
-  const payMethod = document.getElementById('payMethod');
-  const subtotalInput = document.getElementById('receipt-subtotal');
+function addToCart(item){
+  const found = CART.find(x=>x.id===item.id);
+  if(found){ found.qty += 1; } else { CART.push({ ...item, qty:1 }); }
+  flashFab();
+}
+function flashFab(){
+  const fab=document.getElementById('fab');
+  fab.animate([{transform:'scale(1)'},{transform:'scale(1.08)'},{transform:'scale(1)'}],{duration:300});
+}
 
-  function refreshReceipt(){
-    const s = renderCartSummary();
-    document.getElementById('rItems').textContent = s.items;
-    document.getElementById('rSubtotal').textContent = money(s.subtotal);
-    subtotalInput.value = String(+s.subtotal.toFixed(2)); // numeric text
-    document.getElementById('rTax').textContent = money(s.tax);
-    document.getElementById('rTotal').textContent = money(s.total);
+/* ---------- modal / receipt ---------- */
+const backdrop=document.getElementById('backdrop');
+document.getElementById('fab').onclick = ()=> openReceipt();
+document.getElementById('save').onclick = ()=> finalize('draft');
+document.getElementById('confirm').onclick = ()=> finalize('confirm');
+
+function openReceipt(){
+  const lines = document.getElementById('lines');
+  if(!CART.length){ lines.innerHTML = '<div>No items.</div>'; }
+  else{
+    lines.innerHTML = CART.map(x=>`<div>${x.qty} × ${x.brand?x.brand+' — ':''}${x.item||''} — ${money(x.price)} = <b>${money(x.qty*x.price)}</b></div>`).join('');
   }
+  const sub = CART.reduce((s,x)=> s + x.qty * (x.price||0), 0);
+  const tax = sub * 0.07;
+  const tot = sub + tax;
+  document.getElementById('sub').textContent = money(sub);
+  document.getElementById('tax').textContent = money(tax);
+  document.getElementById('tot').textContent = money(tot);
+  backdrop.classList.add('show');
+}
+backdrop.addEventListener('click', e=>{ if(e.target===backdrop) backdrop.classList.remove('show'); });
 
-  openBtn.addEventListener('click', ()=>{ refreshReceipt(); dlg.showModal(); });
-  closeBtn.addEventListener('click', ()=> dlg.close());
+async function finalize(kind){
+  const sub = CART.reduce((s,x)=> s + x.qty * (x.price||0), 0);
+  const tax = sub * 0.07;
+  const tot = sub + tax;
+  const payment = document.getElementById('pay').value;
+  const customer = (document.getElementById('cust').value||'').trim();
+  const loyalty = (document.getElementById('loyalty').value||'').trim();
 
-  async function sendBill(status){ // 'pending' | 'confirmed'
-    const s = renderCartSummary();
-    const custId = document.getElementById('billCustomer').value || '';
-    const custName = document.getElementById('loyaltySearch').value || '';
+  const bill = {
+    time: new Date().toISOString(),
+    items: CART.map(({id,brand,item,vitola,price,qty})=>({id,brand,item,vitola,price,qty})),
+    subtotal: Number(sub.toFixed(2)),
+    tax: Number(tax.toFixed(2)),
+    total: Number(tot.toFixed(2)),
+    payment,
+    customer,
+    loyalty
+  };
 
-    const bill = {
-      items: cart,
-      itemsCount: s.items,
-      subtotal: +s.subtotal.toFixed(2),
-      tax: +s.tax.toFixed(2),
-      total: +s.total.toFixed(2),
-      method: payMethod.value,
-      loyalty: { id: custId, name: custName }
-    };
-
-    // 1) Save bill (Netlify function)
-    const res = await fetch('/.netlify/functions/save-data', {
+  // Try calling your existing save function
+  try{
+    const r = await fetch('/.netlify/functions/save-data', {
       method:'POST',
-      headers:{ 'content-type':'application/json' },
-      body: JSON.stringify({ action: status, bill })
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ type: kind==='confirm' ? 'sale' : 'draft', bill })
     });
-    const json = await res.json();
-    if (!res.ok) { alert(json.error || 'Save failed'); return; }
+    // ignore response
+  }catch(_){}
 
-    // 2) If confirmed and a customer is linked, award points = rounded subtotal
-    if (status === 'confirmed' && custId) {
-      await awardPointsAfterSale(bill.subtotal, custId);
-    }
-
-    if (status === 'confirmed') {
-      // Clear cart
-      cart = [];
-      renderCartSummary();
-    }
-
-    dlg.close();
-    alert(status === 'confirmed' ? 'Sale recorded' : 'Draft saved');
-  }
-
-  saveDraftBtn.addEventListener('click', ()=> sendBill('pending'));
-  confirmBtn.addEventListener('click', ()=> sendBill('confirmed'));
-
-  // -------- Award Points helper (calls add-loyalty-points.js) --------
-  async function awardPointsAfterSale(subtotal, customerId) {
-    try {
-      const hasCustomer = customerId !== null && customerId !== undefined && String(customerId).trim() !== '';
-      if (!hasCustomer) return;
-      const delta = Math.round(Number(subtotal || 0));
-      if (!delta) return;
-
-      const res = await fetch('/.netlify/functions/add-loyalty-points', {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ id: String(customerId), delta })
+  // Award loyalty points on confirmed sale (rounded subtotal)
+  if (kind==='confirm' && loyalty){
+    try{
+      const pts = Math.round(sub);
+      await fetch('/.netlify/functions/add-loyalty-points', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ loyalty, points: pts })
       });
-
-      if (!res.ok) {
-        console.warn('add-loyalty-points failed:', res.status);
-        return;
-      }
-      const out = await res.json();
-      console.log(`Awarded ${out.added} pts to #${out.id}. New total: ${out.total}`);
-    } catch (err) {
-      console.warn('add-loyalty-points error:', err);
-    }
+    }catch(_){}
   }
+
+  if (kind==='confirm') CART = []; // clear cart after confirm
+  backdrop.classList.remove('show');
+}
+
+/* ---------- bootstrap ---------- */
+(async function init(){
+  try{
+    const csv = await fetchInventoryCSV();
+    const rows = parseCSV(csv);
+    INVENTORY = toObjs(rows);
+    // Optional: sort alphabetically by brand then item
+    INVENTORY.sort((a,b)=> (a.brand||'').localeCompare(b.brand||'') || (a.item||'').localeCompare(b.item||''));
+    renderList();
+  }catch(err){
+    document.getElementById('list').innerHTML = `<div style="color:#991b1b">Error loading inventory: ${err.message||err}</div>`;
+  }
+})();
 </script>
 </body>
 </html>
