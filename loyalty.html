@@ -10,8 +10,8 @@
 <style>
   :root{
     --bg:#f5f7fb; --card:#fff; --ink:#0f172a; --muted:#64748b; --line:#e5e7eb;
-    --blue:#2563eb; --blue-100:#dbeafe; --blue-200:#bfdbfe;
-    --orange:#f97316; --orange-100:#ffedd5; --orange-200:#fdba74;
+    --blue:#1DA1F2; --blue-100:#e1f4fe; --blue-200:#b8e5fc;
+    --orange:#FF6E4A; --orange-100:#ffe6e0; --orange-200:#ffb8a3;
     --row-even:#f8fafc;
   }
   *{box-sizing:border-box}
@@ -114,7 +114,7 @@
   </div>
 
 <script>
-/* --- tiny CSV parser --- */
+/* --- CSV parsing + helpers --- */
 function parseCSV(text){
   const rows=[]; let i=0, field='', row=[], inQ=false;
   while(i<text.length){
@@ -207,16 +207,10 @@ function render(list){
 }
 
 function renderDropdowns(list){
-  // Lockers: sort ascending by locker number
   const locks=list
     .filter(p=>hasDigits(p.locker))
     .map(p=>({...p, _lockerNum:getLockerNum(p.locker)}))
-    .sort((a,b)=>{
-      const A=isNaN(a._lockerNum)?Number.POSITIVE_INFINITY:a._lockerNum;
-      const B=isNaN(b._lockerNum)?Number.POSITIVE_INFINITY:b._lockerNum;
-      return A-B || (a.last_name||'').localeCompare(b.last_name||'') || (a.first_name||'').localeCompare(b.first_name||'');
-    });
-
+    .sort((a,b)=> (a._lockerNum||Infinity)-(b._lockerNum||Infinity));
   ddLock.innerHTML = locks.length
     ? locks.map(p=>`
         <div class="dd-item" data-id="${p.id}">
@@ -228,7 +222,6 @@ function renderDropdowns(list){
         </div>`).join('')
     : `<div class="dd-item muted">No lockers</div>`;
 
-  // Regulars list (unchanged)
   const regs=list.filter(p=>!hasDigits(p.locker)&&truthy(p.regular))
     .sort((a,b)=> (a.last_name||'').localeCompare(b.last_name||'') || (a.first_name||'').localeCompare(b.first_name||''));
   ddReg.innerHTML=regs.length
@@ -242,7 +235,6 @@ function renderDropdowns(list){
         </div>`).join('')
     : `<div class="dd-item muted">No regulars</div>`;
 
-  // click-to-jump behavior
   [...ddLock.querySelectorAll('.dd-item[data-id]'),...ddReg.querySelectorAll('.dd-item[data-id]')].forEach(el=>{
     el.addEventListener('click',()=>{
       const id=el.getAttribute('data-id');
@@ -272,7 +264,7 @@ function openModal(p){
   backdrop.classList.add('show');
 }
 
-/* Load CSV directly from /img/contacts.csv */
+/* Load CSV */
 (async function init(){
   try{
     const res = await fetch('/img/contacts.csv',{cache:'no-store'});
@@ -288,7 +280,7 @@ function openModal(p){
   }catch(e){
     console.error(e);
     errEl.style.display='block';
-    errEl.textContent = `Error loading contacts.csv: ${e.message}. Make sure the file exists at /img/contacts.csv in the repo.`;
+    errEl.textContent = `Error loading contacts.csv: ${e.message}`;
   }
 })();
 
@@ -296,13 +288,4 @@ function openModal(p){
 document.getElementById('pillLock').onclick=()=>ddLock.classList.toggle('open');
 document.getElementById('pillReg').onclick =()=>ddReg.classList.toggle('open');
 document.getElementById('q').addEventListener('input',e=>{
-  const s=e.target.value.trim().toLowerCase();
-  FILTERED=!s?PEOPLE:PEOPLE.filter(p=>{
-    const hay=[p.first_name,p.last_name,p.aka,p.email,p.phone].map(v=>String(v||'').toLowerCase()).join('|');
-    return hay.includes(s);
-  });
-  render(FILTERED);
-});
-</script>
-</body>
-</html>
+  const s=e.target.value.trim().toLower
