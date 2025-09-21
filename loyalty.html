@@ -1,8 +1,8 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Loyalty</title>
 <link rel="preload" href="/img/locker.svg" as="image">
 <link rel="preload" href="/img/military.svg" as="image">
@@ -15,17 +15,20 @@
     --row-even:#f8fafc;
   }
   *{box-sizing:border-box}
-  body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
+  body{margin:0;background:var(--bg);color:var(--ink);
+       font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
   .wrap{max-width:960px;margin:auto;padding:16px 16px 120px}
   .controls{display:grid;gap:12px;margin-bottom:8px}
 
   /* Search */
-  .search{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+  .search{display:flex;align-items:center;gap:10px;background:var(--card);
+          border:1px solid var(--line);border-radius:14px;padding:12px 14px}
   .search input{width:100%;border:0;outline:0;background:transparent;font-size:16px}
 
   /* Pills */
   .pills{display:flex;gap:12px}
-  .pill{flex:1;display:flex;align-items:center;justify-content:space-between;gap:10px;border-radius:14px;padding:12px 14px;cursor:pointer;border:1px solid var(--line)}
+  .pill{flex:1;display:flex;align-items:center;justify-content:space-between;gap:10px;
+        border-radius:14px;padding:12px 14px;cursor:pointer;border:1px solid var(--line)}
   .pill.lock{background:var(--blue-100); border-color:var(--blue-200)}
   .pill.reg {background:var(--orange-100); border-color:var(--orange-200)}
   .chev{opacity:.65}
@@ -33,12 +36,16 @@
   .blue{background:var(--blue)} .orange{background:var(--orange)}
 
   /* Dropdowns */
-  .dd{display:none;background:var(--card);border:1px solid var(--line);border-radius:14px;margin-top:6px;overflow:hidden}
+  .dd{display:none;background:var(--card);border:1px solid var(--line);border-radius:14px;
+      margin-top:6px;overflow:hidden}
   .dd.open{display:block}
-  .dd-item{display:grid;grid-template-columns:64px 1fr;gap:10px;align-items:center;padding:12px 14px;border-top:1px solid var(--line);cursor:pointer}
+  .dd-item{display:grid;grid-template-columns:64px 1fr;gap:10px;align-items:center;
+           padding:12px 14px;border-top:1px solid var(--line);cursor:pointer}
   .dd-item:hover{background:#f1f5f9}
   .dd .muted{color:var(--muted);cursor:default}
-  .locker-num{justify-self:start;min-width:48px;text-align:center;border:1px solid var(--blue-200);background:var(--blue-100);color:var(--blue);padding:4px 8px;border-radius:10px;font-weight:700}
+  .locker-num{justify-self:start;min-width:48px;text-align:center;
+              border:1px solid var(--blue-200);background:var(--blue-100);color:var(--blue);
+              padding:4px 8px;border-radius:10px;font-weight:700}
   .dd-name{font-weight:700}
   .dd-nick{font-size:12px;color:var(--muted);margin-top:2px}
 
@@ -52,19 +59,25 @@
   .row.reg {background:var(--orange-100)}
 
   .name{display:flex;align-items:center;gap:10px;cursor:pointer}
-  .badge{width:20px;height:20px;flex:0 0 20px;background-size:contain;background-repeat:no-repeat;background-position:center}
+  .badge{width:20px;height:20px;flex:0 0 20px;background-size:contain;
+         background-repeat:no-repeat;background-position:center}
   .sub{display:block;color:var(--muted);font-size:13px;margin-top:2px}
   .val,.last{font-weight:500}
 
   /* Error */
-  .err{margin-top:12px;padding:12px 14px;border:1px solid #fecaca;background:#fff1f2;color:#991b1b;border-radius:12px}
+  .err{margin-top:12px;padding:12px 14px;border:1px solid #fecaca;background:#fff1f2;
+       color:#991b1b;border-radius:12px}
 
   /* Modal */
-  .backdrop{position:fixed;inset:0;background:rgba(2,6,23,.45);display:none;align-items:center;justify-content:center;z-index:50}
+  .backdrop{position:fixed;inset:0;background:rgba(2,6,23,.45);display:none;
+            align-items:center;justify-content:center;z-index:50}
   .backdrop.show{display:flex}
-  .sheet{width:min(92vw,540px);max-height:80vh;overflow:auto;background:var(--card);border-radius:16px;border:1px solid var(--line);padding:18px 18px 10px;box-shadow:0 20px 60px rgba(2,6,23,.25);position:relative}
+  .sheet{width:min(92vw,540px);max-height:80vh;overflow:auto;background:var(--card);
+         border-radius:16px;border:1px solid var(--line);padding:18px 18px 10px;
+         box-shadow:0 20px 60px rgba(2,6,23,.25);position:relative}
   .sheet h3{margin:0 28px 6px 0}
-  .close{position:absolute;right:18px;top:14px;border:0;background:#eff4ff;color:#1f2937;width:30px;height:30px;border-radius:8px;font-size:18px;cursor:pointer}
+  .close{position:absolute;right:18px;top:14px;border:0;background:#eff4ff;color:#1f2937;
+         width:30px;height:30px;border-radius:8px;font-size:18px;cursor:pointer}
   .dl{display:grid;grid-template-columns:120px 1fr;gap:10px;padding:10px 0;border-top:1px solid var(--line)}
   .dl b{color:var(--muted);font-weight:600}
 
@@ -114,7 +127,7 @@
   </div>
 
 <script>
-/* --- CSV parsing + helpers --- */
+/* -------- CSV parser (handles quotes/commas) -------- */
 function parseCSV(text){
   const rows=[]; let i=0, field='', row=[], inQ=false;
   while(i<text.length){
@@ -133,6 +146,8 @@ function parseCSV(text){
   row.push(field); rows.push(row);
   return rows;
 }
+
+/* -------- helpers -------- */
 const badgeURL={locker:'/img/locker.svg',military:'/img/military.svg',responder:'/img/firstresponders.svg'};
 const truthy=v=>v!=null && String(v).trim().toLowerCase()!=='' && !['0','false','no','n'].includes(String(v).trim().toLowerCase());
 const hasDigits=v=>/\d/.test(String(v||''));
@@ -154,11 +169,13 @@ function normalizeHeaders(h){
 function rowsToObjects(matrix){
   if(matrix.length<2) return [];
   const head=normalizeHeaders(matrix[0]);
-  return matrix.slice(1).filter(r=>r.some(c=>String(c||'').trim()!=='')).map((r,i)=>{
-    const obj={id:i+1};
-    head.forEach((k,idx)=>{ obj[k]=(r[idx]??'').toString().trim(); });
-    return obj;
-  });
+  return matrix.slice(1)
+    .filter(r=>r.some(c=>String(c||'').trim()!==''))
+    .map((r,i)=>{
+      const obj={id:i+1};
+      head.forEach((k,idx)=>{ obj[k]=(r[idx]??'').toString().trim(); });
+      return obj;
+    });
 }
 function fmtLast(dt){
   if(!dt) return '—';
@@ -171,11 +188,13 @@ function fmtLast(dt){
   return 'Year +';
 }
 
+/* -------- state -------- */
 let PEOPLE=[], FILTERED=[];
 const rowsEl=document.getElementById('rows'), qEl=document.getElementById('q');
 const ddLock=document.getElementById('ddLock'), ddReg=document.getElementById('ddReg');
 const errEl=document.getElementById('err');
 
+/* -------- renderers -------- */
 function render(list){
   rowsEl.innerHTML='';
   const frag=document.createDocumentFragment();
@@ -207,10 +226,13 @@ function render(list){
 }
 
 function renderDropdowns(list){
+  // Lockers sorted by locker number
   const locks=list
     .filter(p=>hasDigits(p.locker))
     .map(p=>({...p, _lockerNum:getLockerNum(p.locker)}))
-    .sort((a,b)=> (a._lockerNum||Infinity)-(b._lockerNum||Infinity));
+    .sort((a,b)=> (a._lockerNum||Infinity)-(b._lockerNum||Infinity)
+                  || (a.last_name||'').localeCompare(b.last_name||'')
+                  || (a.first_name||'').localeCompare(b.first_name||''));
   ddLock.innerHTML = locks.length
     ? locks.map(p=>`
         <div class="dd-item" data-id="${p.id}">
@@ -222,9 +244,11 @@ function renderDropdowns(list){
         </div>`).join('')
     : `<div class="dd-item muted">No lockers</div>`;
 
+  // Regulars alpha
   const regs=list.filter(p=>!hasDigits(p.locker)&&truthy(p.regular))
-    .sort((a,b)=> (a.last_name||'').localeCompare(b.last_name||'') || (a.first_name||'').localeCompare(b.first_name||''));
-  ddReg.innerHTML=regs.length
+                 .sort((a,b)=> (a.last_name||'').localeCompare(b.last_name||'')
+                               || (a.first_name||'').localeCompare(b.first_name||''));
+  ddReg.innerHTML = regs.length
     ? regs.map(p=>`
         <div class="dd-item" data-id="${p.id}">
           <div class="locker-num" style="visibility:hidden">—</div>
@@ -235,6 +259,7 @@ function renderDropdowns(list){
         </div>`).join('')
     : `<div class="dd-item muted">No regulars</div>`;
 
+  // click-to-jump
   [...ddLock.querySelectorAll('.dd-item[data-id]'),...ddReg.querySelectorAll('.dd-item[data-id]')].forEach(el=>{
     el.addEventListener('click',()=>{
       const id=el.getAttribute('data-id');
@@ -248,10 +273,10 @@ function renderDropdowns(list){
   });
 }
 
-/* Modal */
+/* -------- modal -------- */
 const backdrop=document.getElementById('backdrop');
 document.getElementById('close').onclick=()=>backdrop.classList.remove('show');
-backdrop.addEventListener('click',e=>{if(e.target===backdrop)backdrop.classList.remove('show');});
+backdrop.addEventListener('click',e=>{ if(e.target===backdrop) backdrop.classList.remove('show'); });
 function openModal(p){
   document.getElementById('mName').textContent=`${p.first_name||''} ${p.last_name||''}`.trim();
   document.getElementById('mNick').textContent=p.aka?`“${p.aka}”`:'—';
@@ -264,15 +289,17 @@ function openModal(p){
   backdrop.classList.add('show');
 }
 
-/* Load CSV */
+/* -------- bootstrap: load CSV -------- */
 (async function init(){
   try{
     const res = await fetch('/img/contacts.csv',{cache:'no-store'});
     if(!res.ok) throw new Error(`GET /img/contacts.csv → ${res.status}`);
     const txt = await res.text();
     const rows = parseCSV(txt);
-    PEOPLE = rowsToObjects(rows);
-    PEOPLE.sort((a,b)=> (a.last_name||'').localeCompare(b.last_name||'') || (a.first_name||'').localeCompare(b.first_name||''));
+    const objs = rowsToObjects(rows);
+    // sort by last then first
+    PEOPLE = objs.sort((a,b)=> (a.last_name||'').localeCompare(b.last_name||'')
+                              || (a.first_name||'').localeCompare(b.first_name||''));
     FILTERED = PEOPLE.slice();
     render(FILTERED);
     renderDropdowns(PEOPLE);
@@ -284,8 +311,18 @@ function openModal(p){
   }
 })();
 
-/* UI events */
+/* -------- UI events -------- */
 document.getElementById('pillLock').onclick=()=>ddLock.classList.toggle('open');
 document.getElementById('pillReg').onclick =()=>ddReg.classList.toggle('open');
-document.getElementById('q').addEventListener('input',e=>{
-  const s=e.target.value.trim().toLower
+qEl.addEventListener('input', e=>{
+  const s=e.target.value.trim().toLowerCase();
+  FILTERED = !s ? PEOPLE : PEOPLE.filter(p=>{
+    const hay=[p.first_name,p.last_name,p.aka,p.email,p.phone]
+      .map(v=>String(v||'').toLowerCase()).join('|');
+    return hay.includes(s);
+  });
+  render(FILTERED);
+});
+</script>
+</body>
+</html>
