@@ -1,124 +1,66 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Loyalty</title>
-  <link rel="preload" href="/img/locker.svg" as="image">
-  <link rel="preload" href="/img/military.svg" as="image">
-  <link rel="preload" href="/img/firstresponders.svg" as="image">
-  <style>
-    :root{
-      --bg:#f5f7fb; --card:#fff; --ink:#0f172a; --muted:#64748b;
-      --line:#e5e7eb; --blue:#2563eb; --blue-ink:#fff; --orange:#f97316;
-      --row-even:#f7fafc;
-    }
-    *{box-sizing:border-box}
-    body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
-    .wrap{max-width:920px;margin-inline:auto;padding:16px 16px 120px}
-
-    /* top controls */
-    .controls{display:grid;gap:12px}
-    .search{
-      display:flex;align-items:center;gap:10px;background:var(--card);
-      border:1px solid var(--line); border-radius:14px; padding:12px 14px;
-      box-shadow:0 1px 0 rgba(15,23,42,.03)
-    }
-    .search input{
-      width:100%;border:0;outline:none;background:transparent;font-size:16px
-    }
-    .pills{display:flex;gap:12px}
-    .pill{
-      flex:1;display:flex;align-items:center;justify-content:space-between;
-      gap:10px;background:var(--card);border:1px solid var(--line);
-      border-radius:14px;padding:12px 14px;cursor:pointer;user-select:none
-    }
-    .dot{width:12px;height:12px;border-radius:50%}
-    .dot.blue{background:var(--blue)}
-    .dot.orange{background:var(--orange)}
-    .chev{opacity:.55}
-
-    /* dropdowns */
-    .dd{display:none; background:var(--card); border:1px solid var(--line);
-      border-radius:14px;margin-top:8px;overflow:hidden}
-    .dd.open{display:block}
-    .dd-item{
-      padding:12px 14px;border-top:1px solid var(--line);cursor:pointer
-    }
-    .dd-item:hover{background:#f8fafc}
-    .dd-name{font-weight:700}
-    .dd-nick{font-size:12px;color:var(--muted);margin-top:2px}
-
-    /* table */
-    .table{margin-top:12px;background:var(--card);border:1px solid var(--line);
-      border-radius:14px;overflow:hidden}
-    .thead,.row{display:grid;grid-template-columns:1fr 88px 110px;align-items:center}
-    .thead{padding:12px 16px;background:#eef2ff;font-weight:800}
-    .row{padding:14px 16px;border-top:1px solid var(--line)}
-    .row:nth-child(even){background:var(--row-even)}
-    .row.lock{background:#e8f0ff}
-    .row.reg{background:#fff7ed}
-    .name{display:flex;align-items:center;gap:10px}
-    .badge{width:20px;height:20px;display:inline-block;background-size:contain;background-repeat:no-repeat;background-position:center}
-    .val{font-weight:500; color:var(--ink)} /* numbers NOT bold */
-    .last{font-weight:500; color:var(--ink)}
-    .muted{color:var(--muted)}
-    .sub{display:block;color:var(--muted);font-size:13px;margin-top:2px}
-
-    /* modal (centered) */
-    .backdrop{
-      position:fixed;inset:0;background:rgba(2,6,23,.45);
-      display:none;align-items:center;justify-content:center;z-index:50
-    }
-    .backdrop.show{display:flex}
-    .sheet{
-      width:min(92vw,540px);max-height:80vh;overflow:auto;background:var(--card);
-      border-radius:16px;border:1px solid var(--line);padding:18px 18px 10px;
-      box-shadow:0 20px 60px rgba(2,6,23,.25)
-    }
-    .sheet h3{margin:0 28px 6px 0}
-    .close{
-      position:absolute;right:18px;top:14px;border:0;background:#eff4ff;color:#1f2937;
-      width:30px;height:30px;border-radius:8px;font-size:18px;cursor:pointer
-    }
-    .dl{display:grid;grid-template-columns:120px 1fr;gap:10px;padding:10px 0;border-top:1px solid var(--line)}
-    .dl b{color:var(--muted);font-weight:600}
-    @media (max-width:520px){
-      .thead,.row{grid-template-columns:1fr 64px 88px}
-    }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Loyalty</title>
+<link rel="preload" href="/img/locker.svg" as="image">
+<link rel="preload" href="/img/military.svg" as="image">
+<link rel="preload" href="/img/firstresponders.svg" as="image">
+<style>
+  :root{--bg:#f5f7fb;--card:#fff;--ink:#0f172a;--muted:#64748b;--line:#e5e7eb;--blue:#2563eb;--orange:#f97316;--row-even:#f8fafc}
+  *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
+  .wrap{max-width:960px;margin:auto;padding:16px 16px 120px}
+  .controls{display:grid;gap:12px;margin-bottom:8px}
+  .search{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+  .search input{width:100%;border:0;outline:0;background:transparent;font-size:16px}
+  .pills{display:flex;gap:12px}
+  .pill{flex:1;display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;cursor:pointer}
+  .dot{width:12px;height:12px;border-radius:50%}.blue{background:var(--blue)}.orange{background:var(--orange)} .chev{opacity:.55}
+  .dd{display:none;background:var(--card);border:1px solid var(--line);border-radius:14px;margin-top:6px;overflow:hidden}
+  .dd.open{display:block} .dd-item{padding:12px 14px;border-top:1px solid var(--line);cursor:pointer}
+  .dd-item:hover{background:#f1f5f9} .dd-name{font-weight:700}.dd-nick{font-size:12px;color:var(--muted);margin-top:2px}
+  .table{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+  .thead,.row{display:grid;grid-template-columns:1fr 88px 110px;align-items:center}
+  .thead{padding:12px 16px;background:#eef2ff;font-weight:800}
+  .row{padding:14px 16px;border-top:1px solid var(--line)} .row:nth-child(even){background:var(--row-even)}
+  .row.lock{background:#e8f0ff} .row.reg{background:#fff7ed}
+  .name{display:flex;align-items:center;gap:10px;cursor:pointer}
+  .badge{width:20px;height:20px;flex:0 0 20px;background-size:contain;background-repeat:no-repeat;background-position:center}
+  .sub{display:block;color:var(--muted);font-size:13px;margin-top:2px}
+  .val,.last{font-weight:500}
+  .err{margin-top:12px;padding:12px 14px;border:1px solid #fecaca;background:#fff1f2;color:#991b1b;border-radius:12px}
+  .backdrop{position:fixed;inset:0;background:rgba(2,6,23,.45);display:none;align-items:center;justify-content:center;z-index:50}
+  .backdrop.show{display:flex}
+  .sheet{width:min(92vw,540px);max-height:80vh;overflow:auto;background:var(--card);border-radius:16px;border:1px solid var(--line);padding:18px 18px 10px;box-shadow:0 20px 60px rgba(2,6,23,.25);position:relative}
+  .sheet h3{margin:0 28px 6px 0}.close{position:absolute;right:18px;top:14px;border:0;background:#eff4ff;color:#1f2937;width:30px;height:30px;border-radius:8px;font-size:18px;cursor:pointer}
+  .dl{display:grid;grid-template-columns:120px 1fr;gap:10px;padding:10px 0;border-top:1px solid var(--line)} .dl b{color:var(--muted);font-weight:600}
+  @media (max-width:540px){.thead,.row{grid-template-columns:1fr 64px 88px}}
+</style>
 </head>
 <body>
   <div class="wrap">
     <div class="controls">
+      <!-- search (own row) -->
       <div class="search">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M21 21l-4.2-4.2M10.8 18a7.2 7.2 0 1 1 0-14.4 7.2 7.2 0 0 1 0 14.4Z" stroke="#64748b" stroke-width="2" stroke-linecap="round"/></svg>
         <input id="q" placeholder="Search" />
       </div>
-
+      <!-- buttons under search -->
       <div class="pills">
-        <button id="pillLock" class="pill" type="button">
-          <span><span class="dot blue"></span> Locker members</span>
-          <span class="chev">▾</span>
-        </button>
-        <button id="pillReg" class="pill" type="button">
-          <span><span class="dot orange"></span> Regulars</span>
-          <span class="chev">▾</span>
-        </button>
+        <button id="pillLock" class="pill" type="button"><span><span class="dot blue"></span> Locker members</span><span class="chev">▾</span></button>
+        <button id="pillReg" class="pill"  type="button"><span><span class="dot orange"></span> Regulars</span><span class="chev">▾</span></button>
       </div>
-
       <div id="ddLock" class="dd"></div>
-      <div id="ddReg" class="dd"></div>
+      <div id="ddReg"  class="dd"></div>
     </div>
 
-    <div class="table" id="table">
-      <div class="thead">
-        <div>Name</div>
-        <div>Pts</div>
-        <div>Last Visit</div>
-      </div>
+    <div class="table">
+      <div class="thead"><div>Name</div><div>Pts</div><div>Last Visit</div></div>
       <div id="rows"></div>
     </div>
+
+    <div id="err" class="err" style="display:none"></div>
   </div>
 
   <!-- centered modal -->
@@ -127,189 +69,160 @@
       <button class="close" id="close">×</button>
       <h3 id="mName">Customer</h3>
       <div class="dl"><b>Nickname</b><span id="mNick">—</span></div>
-      <div class="dl"><b>Phone</b><a id="mPhone" href="#" class="muted">—</a></div>
-      <div class="dl"><b>Email</b><a id="mEmail" href="#" class="muted">—</a></div>
+      <div class="dl"><b>Phone</b><a id="mPhone" href="#">—</a></div>
+      <div class="dl"><b>Email</b><a id="mEmail" href="#">—</a></div>
       <div class="dl"><b>Birthday</b><span id="mBday">—</span></div>
       <div class="dl"><b>Points</b><span id="mPts">0</span></div>
     </div>
   </div>
 
 <script>
-/* -------------------- data & helpers -------------------- */
-let PEOPLE = [];         // full list
-let FILTERED = [];       // current view
-const rowsEl   = document.getElementById('rows');
-const qEl      = document.getElementById('q');
-const ddLockEl = document.getElementById('ddLock');
-const ddRegEl  = document.getElementById('ddReg');
+/* --- tiny CSV parser (handles quotes and commas) --- */
+function parseCSV(text){
+  const rows=[]; let i=0, field='', row=[], inQ=false;
+  while(i<text.length){
+    const c=text[i];
+    if(inQ){
+      if(c==='"' && text[i+1]==='"'){ field+='"'; i+=2; continue; }
+      if(c==='"'){ inQ=false; i++; continue; }
+      field+=c; i++; continue;
+    }
+    if(c===','){ row.push(field); field=''; i++; continue; }
+    if(c==='"'){ inQ=true; i++; continue; }
+    if(c==='\r'){ i++; continue; }
+    if(c==='\n'){ row.push(field); rows.push(row); row=[]; field=''; i++; continue; }
+    field+=c; i++;
+  }
+  row.push(field); rows.push(row);
+  return rows;
+}
+const badgeURL={locker:'/img/locker.svg',military:'/img/military.svg',responder:'/img/firstresponders.svg'};
+const hasAny=v=>v!=null && String(v).trim().toLowerCase()!=='' && !['0','false','no','n'].includes(String(v).trim().toLowerCase());
 
-const badgeURL = {
-  locker: '/img/locker.svg',
-  military: '/img/military.svg',
-  responder: '/img/firstresponders.svg'
-};
-
-function fmtLast(dt) {
-  if (!dt) return '—';
-  const d = new Date(dt);
-  if (isNaN(d)) return '—';
-  const now = new Date();
-  const diffDays = (now - d) / (1000*60*60*24);
-  const mo = d.toLocaleString('en-US',{month:'short'});
-  if (diffDays < 180) return `${d.getMonth()+1}/${d.getDate()}`;
-  if (diffDays < 365) return mo;
-  if (diffDays >= 730) return String(d.getFullYear());
+function normalizeHeaders(h){
+  // map possible headers to canonical keys
+  const map={
+    'first name':'first_name','first':'first_name',
+    'last name':'last_name','last':'last_name',
+    'nickname “aka”':'aka','nickname':'aka','aka':'aka',
+    'email':'email','phone':'phone','birthday':'birthday',
+    'last purchase':'lastPurchase','last':'lastPurchase',
+    'rewards':'points','points':'points',
+    'locker #':'locker','locker':'locker',
+    'regular':'regular','military':'military','first responder':'responder'
+  };
+  return h.map(x=>map[x.trim().toLowerCase()]||x.trim());
+}
+function rowsToObjects(matrix){
+  if(matrix.length<2) return [];
+  const head=normalizeHeaders(matrix[0]);
+  return matrix.slice(1).filter(r=>r.some(c=>String(c||'').trim()!=='')).map((r,i)=>{
+    const obj={id:i+1};
+    head.forEach((k,idx)=>{ obj[k]=(r[idx]??'').toString().trim(); });
+    return obj;
+  });
+}
+function fmtLast(dt){
+  if(!dt) return '—';
+  const d=new Date(dt); if(isNaN(d)) return '—';
+  const now=new Date(); const days=(now-d)/86400000;
+  const moFull=d.toLocaleString('en-US',{month:'long'});
+  if(days<180) return `${d.getMonth()+1}/${d.getDate()}`;
+  if(days<365) return moFull;
+  if(days>=730) return String(d.getFullYear());
   return 'Year +';
 }
 
-function hasAny(val){
-  if (val == null) return false;
-  const s = String(val).trim().toLowerCase();
-  return s !== '' && s !== '0' && s !== 'false' && s !== 'no' && s !== 'n';
-}
+let PEOPLE=[], FILTERED=[];
+const rowsEl=document.getElementById('rows'), qEl=document.getElementById('q');
+const ddLock=document.getElementById('ddLock'), ddReg=document.getElementById('ddReg');
+const errEl=document.getElementById('err');
 
-/* -------------------- rendering -------------------- */
-function renderRows(list){
-  rowsEl.innerHTML = '';
-  const frag = document.createDocumentFragment();
-
+function render(list){
+  rowsEl.innerHTML='';
+  const frag=document.createDocumentFragment();
   list.forEach(p=>{
-    const row = document.createElement('div');
-    row.className = 'row';
-    // row colors
-    if (hasAny(p.locker)) row.classList.add('lock');
-    else if (hasAny(p.regular)) row.classList.add('reg');
+    const row=document.createElement('div'); row.className='row';
+    if(hasAny(p.locker)) row.classList.add('lock'); else if(hasAny(p.regular)) row.classList.add('reg');
 
-    // name cell with badges
-    const name = document.createElement('div');
-    name.className = 'name';
-    const badge = document.createElement('span');
-    badge.className = 'badge';
+    const nm=document.createElement('div'); nm.className='name';
+    const badge=document.createElement('span'); badge.className='badge';
+    if(hasAny(p.locker)){badge.style.backgroundImage=`url(${badgeURL.locker})`; nm.appendChild(badge);}
+    else if(hasAny(p.military)){badge.style.backgroundImage=`url(${badgeURL.military})`; nm.appendChild(badge);}
+    else if(hasAny(p.responder)){badge.style.backgroundImage=`url(${badgeURL.responder})`; nm.appendChild(badge);}
+    const box=document.createElement('div');
+    box.innerHTML=`<strong>${(p.last_name||'').trim()} ${(p.first_name||'').trim()}</strong>${p.aka?`<span class="sub">“${p.aka}”</span>`:''}`;
+    nm.appendChild(box);
+    nm.onclick=()=>openModal(p);
 
-    if (hasAny(p.locker))      { badge.style.backgroundImage = `url(${badgeURL.locker})`; name.appendChild(badge); }
-    else if (hasAny(p.military)){ badge.style.backgroundImage = `url(${badgeURL.military})`; name.appendChild(badge); }
-    else if (hasAny(p.responder)){ badge.style.backgroundImage = `url(${badgeURL.responder})`; name.appendChild(badge); }
+    const pts=document.createElement('div'); pts.className='val'; pts.textContent=Number(p.points||0);
+    const last=document.createElement('div'); last.className='last'; last.textContent=fmtLast(p.lastPurchase);
 
-    const nameBox = document.createElement('div');
-    nameBox.innerHTML = `<strong>${p.last_name || ''} ${p.first_name || ''}</strong>` +
-                        (p.aka ? `<span class="sub">“${p.aka}”</span>` : '');
-    name.appendChild(nameBox);
-    name.style.cursor='pointer';
-    name.onclick = ()=>openModal(p);
-
-    // points + last
-    const pts  = document.createElement('div'); pts.className='val'; pts.textContent = Number(p.points || 0);
-    const last = document.createElement('div'); last.className='last'; last.textContent = fmtLast(p.lastPurchase || p.last_purchase || p.last);
-
-    row.appendChild(name);
-    row.appendChild(pts);
-    row.appendChild(last);
+    row.appendChild(nm); row.appendChild(pts); row.appendChild(last);
     frag.appendChild(row);
   });
-
   rowsEl.appendChild(frag);
 }
-
 function renderDropdowns(list){
-  // Locker
-  const locks = list.filter(p=>hasAny(p.locker));
-  ddLockEl.innerHTML = locks.map(p =>
-    `<div class="dd-item" data-id="${p.id}">
-       <div class="dd-name">${p.last_name || ''} ${p.first_name || ''}</div>
-       ${p.aka ? `<div class="dd-nick">“${p.aka}”</div>` : ``}
-     </div>`
-  ).join('') || `<div class="dd-item muted">No locker members</div>`;
-
-  // Regulars (explicit regular flag only)
-  const regs = list.filter(p=>!hasAny(p.locker) && hasAny(p.regular));
-  ddRegEl.innerHTML = regs.map(p =>
-    `<div class="dd-item" data-id="${p.id}">
-       <div class="dd-name">${p.last_name || ''} ${p.first_name || ''}</div>
-       ${p.aka ? `<div class="dd-nick">“${p.aka}”</div>` : ``}
-     </div>`
-  ).join('') || `<div class="dd-item muted">No regulars</div>`;
-
-  // click behavior -> scroll & flash the row
-  [...ddLockEl.querySelectorAll('.dd-item[data-id]'), ...ddRegEl.querySelectorAll('.dd-item[data-id]')].forEach(el=>{
-    el.addEventListener('click', ()=>{
-      const id = el.getAttribute('data-id');
-      const idx = FILTERED.findIndex(p=>String(p.id)===String(id));
-      if (idx>=0){
-        const target = rowsEl.children[idx];
-        target?.scrollIntoView({behavior:'smooth', block:'center'});
-        target?.animate([{background:'#fffbd1'},{background: target.classList.contains('lock') ? '#e8f0ff' : (target.classList.contains('reg') ? '#fff7ed' : 'transparent')}],{duration:900});
-      }
+  const locks=list.filter(p=>hasAny(p.locker));
+  ddLock.innerHTML=locks.map(p=>`<div class="dd-item" data-id="${p.id}"><div class="dd-name">${p.last_name||''} ${p.first_name||''}</div>${p.aka?`<div class="dd-nick">“${p.aka}”</div>`:''}</div>`).join('')||`<div class="dd-item muted">No locker members</div>`;
+  const regs=list.filter(p=>!hasAny(p.locker)&&hasAny(p.regular));
+  ddReg.innerHTML=regs.map(p=>`<div class="dd-item" data-id="${p.id}"><div class="dd-name">${p.last_name||''} ${p.first_name||''}</div>${p.aka?`<div class="dd-nick">“${p.aka}”</div>`:''}</div>`).join('')||`<div class="dd-item muted">No regulars</div>`;
+  [...ddLock.querySelectorAll('.dd-item[data-id]'),...ddReg.querySelectorAll('.dd-item[data-id]')].forEach(el=>{
+    el.addEventListener('click',()=>{
+      const id=el.getAttribute('data-id'); const idx=FILTERED.findIndex(p=>String(p.id)===String(id));
+      if(idx>=0){ const t=rowsEl.children[idx]; t?.scrollIntoView({behavior:'smooth',block:'center'}); t?.animate([{background:'#fffbd1'},{background:'transparent'}],{duration:900}); }
     });
   });
 }
 
-/* -------------------- modal -------------------- */
-const backdrop = document.getElementById('backdrop');
-document.getElementById('close').onclick = ()=> backdrop.classList.remove('show');
-backdrop.addEventListener('click', e=>{ if(e.target===backdrop) backdrop.classList.remove('show') });
-
+const backdrop=document.getElementById('backdrop');
+document.getElementById('close').onclick=()=>backdrop.classList.remove('show');
+backdrop.addEventListener('click',e=>{if(e.target===backdrop)backdrop.classList.remove('show');});
 function openModal(p){
-  document.getElementById('mName').textContent = `${p.first_name||''} ${p.last_name||''}`.trim();
-  document.getElementById('mNick').textContent = p.aka ? `“${p.aka}”` : '—';
-  const phoneText = (p.phone||'').toString().trim();
-  const emailText = (p.email||'').toString().trim();
-  const mPhone = document.getElementById('mPhone');
-  const mEmail = document.getElementById('mEmail');
-  if (phoneText){ mPhone.textContent = phoneText; mPhone.href = `tel:${phoneText.replace(/\D+/g,'')}` } else { mPhone.textContent='—'; mPhone.removeAttribute('href') }
-  if (emailText){ mEmail.textContent = emailText; mEmail.href = `mailto:${emailText}` } else { mEmail.textContent='—'; mEmail.removeAttribute('href') }
-  document.getElementById('mBday').textContent = p.birthday || p.Birthday || '—';
-  document.getElementById('mPts').textContent  = Number(p.points||0);
+  document.getElementById('mName').textContent=`${p.first_name||''} ${p.last_name||''}`.trim();
+  document.getElementById('mNick').textContent=p.aka?`“${p.aka}”`:'—';
+  const ph=(p.phone||'').trim(), em=(p.email||'').trim();
+  const mPh=document.getElementById('mPhone'), mEm=document.getElementById('mEmail');
+  if(ph){mPh.textContent=ph; mPh.href=`tel:${ph.replace(/\D+/g,'')}`} else {mPh.textContent='—'; mPh.removeAttribute('href')}
+  if(em){mEm.textContent=em; mEm.href=`mailto:${em}`} else {mEm.textContent='—'; mEm.removeAttribute('href')}
+  document.getElementById('mBday').textContent=p.birthday||'—';
+  document.getElementById('mPts').textContent=Number(p.points||0);
   backdrop.classList.add('show');
 }
 
-/* -------------------- interactions -------------------- */
-document.getElementById('pillLock').addEventListener('click',()=> ddLockEl.classList.toggle('open'));
-document.getElementById('pillReg').addEventListener('click',()=> ddRegEl.classList.toggle('open'));
-
-qEl.addEventListener('input', ()=>{
-  const s = qEl.value.trim().toLowerCase();
-  FILTERED = !s ? PEOPLE : PEOPLE.filter(p=>{
-    const hay = [
-      p.first_name,p.last_name,p.aka,p.email,p.phone,
-      p.company,p.notes
-    ].map(v=>String(v||'').toLowerCase()).join('|');
-    return hay.includes(s);
-  });
-  renderRows(FILTERED);
-});
-
-/* -------------------- bootstrap: fetch data -------------------- */
-/* The same function endpoint you already have: /netlify/functions/get-loyalty
-   It returns { ok:true, data:[...] } with normalized fields */
+/* ---------- load CSV directly from /img/contacts.csv ---------- */
 (async function init(){
   try{
-    const res = await fetch('/.netlify/functions/get-loyalty');
-    const json = await res.json();
-    const data = Array.isArray(json.data) ? json.data : [];
-    // Keep id + normalize key names we rely on
-    PEOPLE = data.map((r,i)=>({
-      id: r.id ?? i+1,
-      first_name: r.first_name ?? r.First?.trim?.() ?? '',
-      last_name:  r.last_name  ?? r.Last?.trim?.() ?? '',
-      aka:        r.aka ?? r.Nickname ?? r['Nickname “aka”'] ?? '',
-      email:      r.email ?? r.Email ?? '',
-      phone:      r.phone ?? r.Phone ?? '',
-      birthday:   r.birthday ?? r.Birthday ?? '',
-      lastPurchase: r.lastPurchase ?? r['Last Purchase'] ?? r.last ?? '',
-      points:     r.points ?? r.Rewards ?? 0,
-      locker:     r.locker ?? r['Locker #'] ?? '',
-      regular:    r.regular ?? r.Regular ?? '',
-      military:   r.military ?? r.Military ?? '',
-      responder:  r.responder ?? r['First Responder'] ?? ''
-    }));
+    const res = await fetch('/img/contacts.csv',{cache:'no-store'});
+    if(!res.ok) throw new Error(`GET /img/contacts.csv → ${res.status}`);
+    const txt = await res.text();
+    const rows = parseCSV(txt);
+    PEOPLE = rowsToObjects(rows);
+    // sort by last name, then first
+    PEOPLE.sort((a,b)=> (a.last_name||'').localeCompare(b.last_name||'') || (a.first_name||'').localeCompare(b.first_name||''));
     FILTERED = PEOPLE.slice();
-    renderRows(FILTERED);
+    render(FILTERED);
     renderDropdowns(PEOPLE);
-  }catch(err){
-    console.error(err);
-    rowsEl.innerHTML = `<div style="padding:16px;color:#b91c1c">Error loading loyalty data.</div>`;
+    errEl.style.display='none';
+  }catch(e){
+    console.error(e);
+    errEl.style.display='block';
+    errEl.textContent = `Error loading contacts.csv: ${e.message}. Make sure the file exists at /img/contacts.csv in the repo.`;
   }
 })();
+
+/* UI events */
+document.getElementById('pillLock').onclick=()=>ddLock.classList.toggle('open');
+document.getElementById('pillReg').onclick =()=>ddReg.classList.toggle('open');
+document.getElementById('q').addEventListener('input',e=>{
+  const s=e.target.value.trim().toLowerCase();
+  FILTERED=!s?PEOPLE:PEOPLE.filter(p=>{
+    const hay=[p.first_name,p.last_name,p.aka,p.email,p.phone].map(v=>String(v||'').toLowerCase()).join('|');
+    return hay.includes(s);
+  });
+  render(FILTERED);
+});
 </script>
 </body>
 </html>
