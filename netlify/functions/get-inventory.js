@@ -1,6 +1,4 @@
 // netlify/functions/get-inventory.js
-// Returns the latest CSV at the stable key "inventory.csv"
-
 import { getStore } from "@netlify/blobs";
 
 export async function handler() {
@@ -11,29 +9,35 @@ export async function handler() {
         : undefined;
 
     const store = getStore("inventory", opts);
-    const blob = await store.get("inventory.csv");
+    const key = "inventory.csv";
 
-    if (!blob) {
+    const exists = await store.has(key);
+    if (!exists) {
       return {
         statusCode: 404,
         headers: { "Content-Type": "text/plain", "Access-Control-Allow-Origin": "*" },
-        body: "No inventory.csv found in Blobs store.",
+        body: "inventory.csv not found",
       };
     }
+
+    const csv = await store.get(key, { type: "text" });
 
     return {
       statusCode: 200,
       headers: {
         "Content-Type": "text/csv; charset=utf-8",
         "Access-Control-Allow-Origin": "*",
+        "Cache-Control": "no-store",
       },
-      body: blob.body,
+      body: csv || "",
     };
   } catch (err) {
     return {
       statusCode: 500,
-      headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
-      body: JSON.stringify({ ok: false, error: err.message }),
+      headers: { "Content-Type": "text/plain", "Access-Control-Allow-Origin": "*" },
+      body:
+        err?.message ||
+        "The environment has not been configured to use Netlify Blobs. Ensure BLOBS_SITE_ID and BLOBS_TOKEN are set.",
     };
   }
 }
