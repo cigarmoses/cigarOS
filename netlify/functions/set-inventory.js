@@ -1,11 +1,8 @@
 // netlify/functions/set-inventory.js
-// Saves an uploaded CSV to the Netlify Blobs "inventory" store.
-// Accepts either raw text/csv (recommended) or multipart/form-data "file" field.
-
 import { getStore } from "@netlify/blobs";
 
-// Small helper to always return CORS + JSON
-const resp = (status, payload) => ({
+// Standard JSON + CORS helper
+const json = (status, payload) => ({
   statusCode: status,
   headers: {
     "Content-Type": "application/json",
@@ -17,89 +14,62 @@ const resp = (status, payload) => ({
 });
 
 export async function handler(event) {
-  if (event.httpMethod === "OPTIONS") {
-    return resp(200, { ok: true });
+  if (event.httpMethod === "OPTIONS") return json(200, { ok: true });
+  if (event.httpMethod !== "POST") {
+    return { statusCode: 405, headers: { "Content-Type": "text/plain" }, body: "Use POST" };
   }
 
-  if (event.httpMethod !== "POST") {
-    return {
-      statusCode: 405,
-      headers: { "Content-Type": "text/plain" },
-      body: "Use POST",
-    };
+  const siteID = process.env.BLOBS_SITE_ID;
+  const token  = process.env.BLOBS_TOKEN;
+
+  if (!siteID || !token) {
+    return json(500, {
+      ok: false,
+      error: "Missing Netlify Blobs credentials in function environment.",
+      have: { BLOBS_SITE_ID: !!siteID, BLOBS_TOKEN: !!token }
+    });
   }
 
   try {
-    // Use explicit siteID/token if provided (your screenshot shows you added them)
-    const opts =
-      process.env.BLOBS_SITE_ID && process.env.BLOBS_TOKEN
-        ? { siteID: process.env.BLOBS_SITE_ID, token: process.env.BLOBS_TOKEN }
-        : undefined;
+    const store = getStore("inventory", { siteID, token });
 
-    const store = getStore("inventory", opts);
-
-    // ---- Read CSV from request ----
     const ct = event.headers["content-type"] || event.headers["Content-Type"] || "";
-
-    let csvText = "";
+    let csv = "";
 
     if (ct.startsWith("text/csv")) {
-      // Uploader posts the CSV text body with Content-Type: text/csv
-      csvText = event.body || "";
-      if (event.isBase64Encoded) {
-        csvText = Buffer.from(csvText, "base64").toString("utf8");
-      }
+      csv = event.isBase64Encoded ? Buffer.from(event.body, "base64").toString("utf8") : (event.body || "");
     } else if (ct.startsWith("multipart/form-data")) {
-      // Very light multipart parser for single 'file' field (CSV)
-      // Works for small files; for huge files use a streaming parser (busboy)
       const boundary = /boundary=([^;]+)/i.exec(ct)?.[1];
-      if (!boundary) {
-        return resp(400, { ok: false, error: "Multipart boundary not found." });
-      }
-      const bodyBuf = event.isBase64Encoded
-        ? Buffer.from(event.body, "base64")
-        : Buffer.from(event.body || "", "utf8");
+      if (!boundary) return json(400, { ok:false, error:"Multipart boundary not found" });
 
-      const parts = bodyBuf.toString("binary").split(`--${boundary}`);
-      // Find the part named "file"
+      const body = event.isBase64Encoded ? Buffer.from(event.body, "base64").toString("binary")
+                                         : Buffer.from(event.body || "", "utf8").toString("binary");
+
+      const parts = body.split(`--${boundary}`);
       for (const p of parts) {
-        const headerEnd = p.indexOf("\r\n\r\n");
-        if (headerEnd === -1) continue;
-        const header = p.slice(0, headerEnd);
-        if (/name="file"/i.test(header)) {
-          const raw = p.slice(headerEnd + 4).replace(/\r\n--$/, "");
-          csvText = Buffer.from(raw, "binary").toString("utf8");
+        const i = p.indexOf("\r\n\r\n");
+        if (i === -1) continue;
+        const head = p.slice(0, i);
+        if (/name="file"/i.test(head)) {
+          csv = Buffer.from(p.slice(i + 4).replace(/\r\n--$/, ""), "binary").toString("utf8");
           break;
         }
       }
-      if (!csvText) {
-        return resp(400, { ok: false, error: "CSV not found in multipart 'file' field." });
-      }
+      if (!csv) return json(400, { ok:false, error:"CSV not found in multipart 'file' field" });
     } else {
-      return resp(400, {
-        ok: false,
-        error:
-          "Unsupported Content-Type. Send text/csv body or multipart/form-data with a 'file' field.",
-        got: ct,
+      return json(400, {
+        ok:false,
+        error:"Unsupported Content-Type. Send text/csv or multipart/form-data with 'file'.",
+        got: ct
       });
     }
 
-    if (!csvText.trim()) {
-      return resp(400, { ok: false, error: "Empty CSV." });
-    }
+    if (!csv.trim()) return json(400, { ok:false, error:"Empty CSV" });
 
-    // ---- Save to Blobs ----
-    // Use a stable key so POS can always fetch the latest easily.
-    // You can also add a versioned key if you like.
-    await store.set("inventory.csv", csvText, {
-      contentType: "text/csv; charset=utf-8",
-    });
+    await store.set("inventory.csv", csv, { contentType: "text/csv; charset=utf-8" });
 
-    return resp(200, { ok: true, saved: "inventory.csv", bytes: Buffer.byteLength(csvText) });
+    return json(200, { ok:true, saved:"inventory.csv", bytes: Buffer.byteLength(csv) });
   } catch (err) {
-    const message =
-      err?.message ||
-      "The environment has not been configured to use Netlify Blobs. If you see this, ensure BLOBS_SITE_ID and BLOBS_TOKEN are set, then redeploy.";
-    return resp(500, { ok: false, error: message });
+    return json(500, { ok:false, error: String(err && err.message || err) });
   }
 }
