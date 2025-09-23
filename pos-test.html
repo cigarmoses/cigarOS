@@ -1,0 +1,27 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>POS CSV Debug</title>
+<pre id="out">Checking /img/inventory.csv …</pre>
+<script>
+(async () => {
+  const out = document.getElementById('out');
+  try {
+    const res = await fetch('/img/inventory.csv', { cache: 'no-store' });
+    out.textContent += `\nHTTP ${res.status} ${res.statusText}`;
+    const text = await res.text();
+    out.textContent += `\n\n--- First 500 chars ---\n` + text.slice(0, 500);
+    // very naive header check
+    const firstLine = text.split(/\r?\n/)[0].trim();
+    out.textContent += `\n\nHeader row: ${firstLine}`;
+    const need = ['brand','item','vitola','price','inventory'];
+    const have = firstLine.split(',').map(h => h.trim().toLowerCase());
+    const missing = need.filter(h => !have.includes(h));
+    out.textContent += missing.length
+      ? `\n\n❌ Missing required headers: ${missing.join(', ')}`
+      : `\n\n✅ Required headers present`;
+  } catch (e) {
+    out.textContent += `\n\n❌ Fetch failed: ${e.message}`;
+  }
+})();
+</script>
