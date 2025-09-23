@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>POS • Inventory</title>
+  <link rel="icon" href="/img/iconPOS.svg" />
+  <style>
+    :root{
+      --bg:#f6f7fb; --card:#fff; --txt:#0f172a;
+      --muted:#64748b; --border:#e5e7eb;
+      --row-alt:#f9fafb; --accent:#1DA1F2;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font:16px/1.45 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      color:var(--txt); background:var(--bg);
+    }
+    header{
+      position:sticky; top:0; z-index:10; background:var(--bg);
+      padding:12px 16px; border-bottom:1px solid var(--border);
+      display:flex; align-items:center; gap:12px;
+    }
+    .back {
+      appearance:none; border:1px solid var(--border); background:#fff;
+      border-radius:10px; padding:8px 12px; cursor:pointer;
+    }
+    .title{font-size:18px; font-weight:700; margin-left:4px}
+    .wrap{max-width:980px; margin:16px auto; padding:0 16px}
+    .toolbar{
+      display:flex; gap:10px; flex-wrap:wrap; margin-bottom:12px;
+    }
+    input[type="search"]{
+      flex:1 1 240px; padding:10px 12px; border:1px solid var(--border);
+      border-radius:12px; outline:none; background:#fff;
+    }
+    select{
+      appearance:none; padding:10px 12px; border:1px solid var(--border);
+      border-radius:12px; background:#fff;
+    }
+    .card{
+      background:var(--card); border:1px solid var(--border); border-radius:14px;
+      overflow:hidden;
+    }
+    table{width:100%; border-collapse:collapse; font-size:15px}
+    th, td{padding:12px 14px; border-bottom:1px solid var(--border)}
+    thead th{
+      background:#fbfbfd; text-align:left; font-weight:800; font-size:12px; letter-spacing:.02em; color:#0b1220;
+      position:sticky; top:62px; z-index:5;
+    }
+    tbody tr:nth-child(odd){background:var(--row-alt)}
+    .muted{color:var(--muted)}
+    .qty{font-variant-numeric:tabular-nums; text-align:right}
+    .price{white-space:nowrap}
+    .brandchip{display:inline-flex; gap:8px; align-items:center}
+    .brandchip img{width:18px; height:18px; object-fit:contain}
+    .empty{padding:24px; text-align:center; color:var(--muted)}
+    @media (max-width:600px){
+      th:nth-child(3), td:nth-child(3) {display:none} /* hide vitola on narrow screens */
+    }
+  </style>
+  <!-- PapaParse for CSV parsing -->
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js" defer></script>
+</head>
+<body>
+  <header>
+    <button class="back" onclick="location.href='/'">← Home</button>
+    <span class="title">Inventory</span>
+  </header>
+
+  <div class="wrap">
+    <div class="toolbar">
+      <input id="q" type="search" placeholder="Search brand, item, vitola…" />
+      <select id="brand">
+        <option value="">All brands</option>
+      </select>
+      <select id="sort">
+        <option value="item">Sort: Item (A→Z)</option>
+        <option value="brand">Sort: Brand (A→Z)</option>
+        <option value="inventory-desc">Sort: Inventory (high→low)</option>
+        <option value="price-asc">Sort: Price (low→high)</option>
+      </select>
+    </div>
+
+    <div class="card">
+      <table>
+        <thead>
+          <tr>
+            <th>Brand</th>
+            <th>Item</th>
+            <th>Vitola</th>
+            <th class="price">Price</th>
+            <th class="qty">Inventory</th>
+          </tr>
+        </thead>
+        <tbody id="rows"><tr><td class="empty" colspan="5">Loading…</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    const state = { rows: [], filtered: [] };
+
+    function normalizePrice(v){
+      if (typeof v !== 'string') return Number(v)||0;
+      const n = Number(String(v).replace(/[^0-9.]/g,''));
+      return isFinite(n) ? n : 0;
+    }
+
+    function render(){
+      const TB = document.getElementById('rows');
+      if (!state.filtered.length){
+        TB.innerHTML = '<tr><td class="empty" colspan="5">No matching items</td></tr>';
+        return;
+      }
+      TB.innerHTML = state.filtered.map(r=>{
+        const icon = r.icon ? `<img src="${r.icon}" alt="" loading="lazy">` : '';
+        return `
+          <tr>
+            <td><span class="brandchip">${icon}<span>${r.brand||''}</span></span></td>
+            <td>${r.item||''}</td>
+            <td class="muted">${r.vitola||''}</td>
+            <td class="price">${r.price||''}</td>
+            <td class="qty">${r.inventory ?? ''}</td>
+          </tr>`;
+      }).join('');
+    }
+
+    function applyFilters(){
+      const q = document.getElementById('q').value.trim().toLowerCase();
+      const brand = document.getElementById('brand').value;
+      let rows = state.rows.slice();
+
+      if (brand) rows = rows.filter(r => (r.brand||'') === brand);
+      if (q){
+        rows = rows.filter(r=>{
+          const hay = `${r.brand||''} ${r.item||''} ${r.vitola||''}`.toLowerCase();
+          return hay.includes(q);
+        });
+      }
+
+      const sort = document.getElementById('sort').value;
+      rows.sort((a,b)=>{
+        switch (sort){
+          case 'brand': return (a.brand||'').localeCompare(b.brand||'');
+          case 'inventory-desc': return (Number(b.inventory)||0) - (Number(a.inventory)||0);
+          case 'price-asc': return normalizePrice(a.price) - normalizePrice(b.price);
+          default: return (a.item||'').localeCompare(b.item||'');
+        }
+      });
+
+      state.filtered = rows;
+      render();
+    }
+
+    async function loadCSV(){
+      try{
+        const res = await fetch('/img/inventory.csv', {cache:'no-store'});
+        if (!res.ok) throw new Error('Missing /img/inventory.csv');
+        const text = await res.text();
+
+        const parsed = Papa.parse(text, {header:true, skipEmptyLines:true});
+        const rows = parsed.data.map(row => ({
+          brand: row.brand?.trim() ?? '',
+          item: row.item?.trim() ?? '',
+          vitola: row.vitola?.trim() ?? '',
+          price: row.price?.trim() ?? '',
+          inventory: row.inventory?.trim() ?? '',
+          icon: row.icon?.trim() ?? ''
+        }));
+
+        state.rows = rows;
+
+        // populate brand filter
+        const brands = Array.from(new Set(rows.map(r=>r.brand).filter(Boolean))).sort();
+        document.getElementById('brand').innerHTML =
+          '<option value="">All brands</option>' +
+          brands.map(b=>`<option>${b}</option>`).join('');
+
+        applyFilters();
+      }catch(err){
+        document.getElementById('rows').innerHTML =
+          `<tr><td class="empty" colspan="5">Error: ${err.message}</td></tr>`;
+      }
+    }
+
+    // events
+    ['q','brand','sort'].forEach(id=>{
+      document.getElementById(id).addEventListener('input', applyFilters);
+      document.getElementById(id).addEventListener('change', applyFilters);
+    });
+
+    loadCSV();
+  </script>
+</body>
+</html>
