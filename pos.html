@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>POS Inventory</title>
+  <style>
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;margin:24px}
+    .card{max-width:1000px;margin:0 auto}
+    table{border-collapse:collapse;width:100%;margin-top:16px}
+    th,td{padding:8px 10px;border-bottom:1px solid #e5e7eb;text-align:left;font-size:14px}
+    th{background:#f3f4f6}
+    input{width:100%;max-width:360px;padding:10px;border:1px solid #d1d5db;border-radius:8px}
+    .muted{color:#6b7280}
+  </style>
+</head>
+<body>
+<div class="card">
+  <h1>POS Inventory</h1>
+  <input id="q" placeholder="Search…"/>
+  <div id="meta" class="muted" style="margin-top:8px"></div>
+  <div id="table"></div>
+</div>
+<script>
+const $=s=>document.querySelector(s);
+let rows=[];
+async function load(){
+  $("#meta").textContent="Loading…";
+  const res=await fetch("/api/get-inventory");
+  const data=await res.json();
+  rows=data.rows||[];
+  $("#meta").textContent=`${rows.length} items`;
+  render(rows);
+}
+function render(list){
+  if(!list.length){ $("#table").innerHTML="<p class='muted'>No items</p>"; return; }
+  const cols=Object.keys(list[0]);
+  const head=cols.map(c=>`<th>${c}</th>`).join("");
+  const body=list.map(r=>`<tr>${cols.map(c=>`<td>${(r[c]??"")}</td>`).join("")}</tr>`).join("");
+  $("#table").innerHTML=`<table><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table>`;
+}
+$("#q").addEventListener("input", e=>{
+  const t=e.target.value.toLowerCase();
+  render(rows.filter(r=>JSON.stringify(r).toLowerCase().includes(t)));
+});
+load();
+</script>
+</body>
+</html>
