@@ -1,0 +1,684 @@
+brand,item,vitola,price,inventory,icon
+Acid,Acid 1400cc,Toro,$14.05,7,/img/acid.svg
+Acid,Acid 20 Connecticut Toro,Toro,$12.55,0,/img/acid.svg
+Acid,Acid 20 Maduro Robusto,Robusto,$12.25,0,/img/acid.svg
+Acid,Acid 20 Maduro Toro,Toro,$12.55,0,/img/acid.svg
+Acid,Acid Blondie Belicoso,Belicoso,$11.25,19,/img/acid.svg
+Acid,Acid Blondie Gold,Cigarillo,$7.30,0,/img/acid.svg
+Acid,Acid Blondie Maduro,Cigarillo,$7.30,0,/img/acid.svg
+Acid,Acid Blondie Red,Cigarillo,$7.30,0,/img/acid.svg
+Acid,Acid C Notes,Cigarillo,$11.05,6,/img/acid.svg
+Acid,Acid Krush Tin Blue CT,Cigarillo,$22.00,0,/img/acid.svg
+Acid,Acid Krush Tin Candela,Cigarillo,$22.00,0,/img/acid.svg
+Acid,Acid Krush Tin Gold Sumatra,Cigarillo,$22.00,0,/img/acid.svg
+Acid,Acid Krush Tin Maduro,Cigarillo,$22.00,0,/img/acid.svg
+Acid,Acid Krush Tin Red Cameroon,Cigarillo,$22.00,0,/img/acid.svg
+Acid,Acid Kuba Deluxe,Toro,$15.05,0,/img/acid.svg
+Acid,Acid Kuba Grande,Gordo,$15.65,0,/img/acid.svg
+Acid,Acid Kuba Kuba,Robusto,$12.05,23,/img/acid.svg
+Acid,Acid Kuba Maduro,Robusto,$12.05,13,/img/acid.svg
+Aging Room,Aging Room Quattro Nicaragua Espressivo,Robusto,$13.55,52,/img/agingroom.svg
+Aging Room,Aging Room Quattro Nicaragua Vibrato,Toro,$13.75,0,/img/agingroom.svg
+Aladino,Aladino 85 Aniversario Robusto,Robusto,$17.55,0,/img/placeholder.svg
+Aladino,Aladino Cameroon Robusto,Robusto,$11.15,0,/img/placeholder.svg
+Aladino,Aladino Cameroon Super Toro,Toro,$11.75,0,/img/placeholder.svg
+Aladino,Aladino Classic Robusto,Robusto,$9.25,0,/img/placeholder.svg
+Aladino,Aladino Classic Toro,Toro,$10.15,0,/img/placeholder.svg
+Aladino,Aladino Connecticut Gordo,Gordo,$10.55,0,/img/placeholder.svg
+Aladino,Aladino Connecticut Queens Perfecto,Perfecto,$7.65,0,/img/placeholder.svg
+Aladino,Aladino Connecticut Toro,Toro,$10.75,0,/img/placeholder.svg
+Aladino,Aladino Corojo Reserva Figurado,Figurado,$16.85,0,/img/placeholder.svg
+Aladino,Aladino Corojo Reserva No.4,Corona,$10.55,0,/img/placeholder.svg
+Aladino,Aladino Corojo Reserva Robusto,Robusto,$14.15,0,/img/placeholder.svg
+Aladino,Aladino Corojo Reserva Toro,Toro,$16.25,0,/img/placeholder.svg
+Aladino,Aladino Rothschild Sampler,Rothschild,$24.00,0,/img/placeholder.svg
+Aladino,Aladino Sumatra Toro,Toro,$16.85,0,/img/placeholder.svg
+Aladino,Aladino Vintage Selection Elegante,Lancero,$9.95,0,/img/placeholder.svg
+Aladino,Aladino Vintage Selection Rothschild,Rothschild,$7.15,0,/img/placeholder.svg
+Aladino,Aladino Vintage Selection Toro,Toro,$10.25,0,/img/placeholder.svg
+Alec Bradley,AB Double Broadleaf Toro,Toro,$12.05,0,/img/placeholder.svg
+Alec Bradley,AB Filthy Hooligan Toro,Toro,$13.95,0,/img/placeholder.svg
+Alec Bradley,AB Lineage Gordo,Gordo,$10.85,0,/img/placeholder.svg
+Alec Bradley,AB Prensado Lost Art Gran Toro,Toro,$11.85,0,/img/placeholder.svg
+Alec Bradley,AB Trilogy Authentic Corojo,Figurado,$15.75,0,/img/placeholder.svg
+Alec Bradley,AB Trilogy Exotic Maduro,Figurado,$15.75,8,/img/placeholder.svg
+Alec Bradley,AB Trilogy Native Cameroon,Figurado,$15.75,0,/img/placeholder.svg
+Arturo Fuente,AF Anejo Reserva #888 Maduro Lonsdale,Lonsdale,$14.55,0,/img/arturofuente.svg
+Arturo Fuente,AF Best Seller Natural,Figurado,$10.75,0,/img/arturofuente.svg
+Arturo Fuente,AF Canones Natural,Gigante,$14.55,0,/img/arturofuente.svg
+Arturo Fuente,AF Casa Fuente 808 Maduro,Toro,$21.95,0,/img/arturofuente.svg
+Arturo Fuente,AF Casa Fuente RSL Robusto,Robusto,$24.99,0,/img/arturofuente.svg
+Arturo Fuente,AF Chateau Fuente King T,Churchill,$16.55,0,/img/arturofuente.svg
+Arturo Fuente,AF Chateau Maduro,Robusto,$9.75,0,/img/arturofuente.svg
+Arturo Fuente,AF Chateau Natural,Robusto,$9.75,0,/img/arturofuente.svg
+Arturo Fuente,AF Chateau Sun Grown,Robusto,$9.75,0,/img/arturofuente.svg
+Arturo Fuente,AF Churchill Maduro,Churchill,$11.05,0,/img/arturofuente.svg
+Arturo Fuente,AF Churchill Natural,Churchill,$11.05,0,/img/arturofuente.svg
+Arturo Fuente,AF Cubanitos Maduro Red Tin,Cigarillo,$32.00,24,/img/arturofuente.svg
+Arturo Fuente,AF Curly Head Deluxe Maduro,Lonsdale,$5.15,0,/img/arturofuente.svg
+Arturo Fuente,AF Curly Head Deluxe Natural,Lonsdale,$5.15,0,/img/arturofuente.svg
+Arturo Fuente,AF Curly Head Natural,Lonsdale,$4.55,0,/img/arturofuente.svg
+Arturo Fuente,AF Don Carlos #2 Torpedo,Torpedo,$19.55,0,/img/arturofuente.svg
+Arturo Fuente,AF Don Carlos Eye Of The Shark,Belicoso,$40.00,0,/img/arturofuente.svg
+Arturo Fuente,AF Don Carlos Personal Reserve,Robusto,$35.00,0,/img/arturofuente.svg
+Arturo Fuente,AF Don Carlos Robusto,Robusto,$14.85,0,/img/arturofuente.svg
+Arturo Fuente,AF Double Chateau Maduro,Churchill,$11.65,0,/img/arturofuente.svg
+Arturo Fuente,AF Double Chateau Natural,Churchill,$11.65,0,/img/arturofuente.svg
+Arturo Fuente,AF Double Chateau Sungrown,Churchill,$11.65,0,/img/arturofuente.svg
+Arturo Fuente,AF Flor Fina 8-5-8 Maduro,Corona Grande,$9.95,0,/img/arturofuente.svg
+Arturo Fuente,AF Flor Fina 8-5-8 Natural,Corona Grande,$9.95,0,/img/arturofuente.svg
+Arturo Fuente,AF Flor Fina 8-5-8 Rosado,Corona Grande,$11.85,0,/img/arturofuente.svg
+Arturo Fuente,AF Hemingway Classic Natural,Presidente,$14.25,0,/img/arturofuente.svg
+Arturo Fuente,AF Hemingway Signature Maduro,Presidente,$12.25,0,/img/arturofuente.svg
+Arturo Fuente,AF Hemingway Signature Natural,Presidente,$13.05,0,/img/arturofuente.svg
+Arturo Fuente,AF Hemingway Untold Story,Presidente,$18.15,0,/img/arturofuente.svg
+Arturo Fuente,AF Opus X 20th Anniversary Ashtray,nan,$129.95,0,/img/arturofuente.svg
+Arturo Fuente,AF Opus X Double Corona,Corona,$39.95,0,/img/arturofuente.svg
+Arturo Fuente,AF Opus X Oro Oscuro Belicoso XXX,Belicoso,$39.95,0,/img/arturofuente.svg
+Arturo Fuente,AF Opus X Oro Oscuro Robusto,Robusto,$28.95,0,/img/arturofuente.svg
+Arturo Fuente,AF Opus X Oro Oscuro Super Belicoso,Belicoso,$39.99,0,/img/arturofuente.svg
+Arturo Fuente,AF Opus X Power Ranger Belicoso X3,Belicoso,$29.95,0,/img/arturofuente.svg
+Arturo Fuente,AF Opus X Super Belicoso,Belicoso,$34.99,0,/img/arturofuente.svg
+Arturo Fuente,AF Oro Oscuro Robusto Tins,Robusto,$79.95,0,/img/arturofuente.svg
+Arturo Fuente,AF Rosado Super 60,Gordo,$16.45,0,/img/arturofuente.svg
+Arturo Fuente,AF Short Story Maduro,Perfecto,$8.75,0,/img/arturofuente.svg
+Arturo Fuente,AF Short Story Natural,Perfecto,$9.15,0,/img/arturofuente.svg
+Ashton,Ashton ESG 20 Year Salute,Churchill,$28.35,0,/img/placeholder.svg
+Ashton,Ashton ESG 21 Year Salute,Robusto,$26.45,0,/img/placeholder.svg
+Ashton,Ashton ESG 22 Year Salute,Torpedo,$29.25,0,/img/placeholder.svg
+Ashton,Ashton ESG 23 Year Salute,Toro,$28.65,0,/img/placeholder.svg
+Ashton,Ashton Symmetry Belicoso,Belicoso,$17.45,0,/img/placeholder.svg
+Ashton,Ashton Symmetry Robusto,Robusto,$17.25,0,/img/placeholder.svg
+Ashton,Ashton Symmetry Sublime,Toro,$18.05,0,/img/placeholder.svg
+Ashton,Ashton VSG Robusto,Robusto,$16.25,0,/img/placeholder.svg
+Ashton,Ashton VSG Spellbound,Double Corona,$20.55,0,/img/placeholder.svg
+Ashton,Ashton VSG Tres Mystique Petit Corona,Petit Corona,$14.65,0,/img/placeholder.svg
+Asylum,Asylum 13 60x6,Gigante,$10.45,0,/img/placeholder.svg
+Asylum,Asylum 13 Connecticut 7x70,Gigante,$11.55,0,/img/placeholder.svg
+Asylum,Asylum 13 Cool Brew Gordo,Gordo,$12.65,0,/img/placeholder.svg
+Asylum,Asylum 13 Cool Brew Toro,Toro,$11.55,0,/img/placeholder.svg
+Asylum,Asylum 867 Zero Robusto,Robusto,$10.55,0,/img/placeholder.svg
+Asylum,Asylum 867 Zero Toro,Toro,$11.05,0,/img/placeholder.svg
+Asylum,Asylum 9 70x7,Gigante,$26.55,0,/img/placeholder.svg
+Asylum,Asylum April Fools 90x9,Gigante,$40.00,0,/img/placeholder.svg
+Asylum,Asylum Insidious 50x5,Robusto,$8.55,0,/img/placeholder.svg
+Asylum,Asylum Insidious 52x6,Toro,$8.75,0,/img/placeholder.svg
+Asylum,Asylum Insidious 64x7,Gigante,$9.15,0,/img/placeholder.svg
+Asylum,Asylum Insidious Maduro 52x6,Toro,$8.75,0,/img/placeholder.svg
+Asylum,Asylum Nyctophilia 60x6,Gordo,$11.25,0,/img/placeholder.svg
+Asylum,Asylum PCA 50x5,Robusto,$16.85,0,/img/placeholder.svg
+Camacho,Camacho Broadleaf Toro,Toro,$10.25,0,/img/placeholder.svg
+Camacho,Camacho Connecticut Gordo,Gordo,$10.55,0,/img/placeholder.svg
+Camacho,Camacho Connecticut Robusto,Robusto,$9.25,0,/img/placeholder.svg
+Camacho,Camacho Connecticut Toro,Toro,$9.45,0,/img/placeholder.svg
+Camacho,Camacho Corojo Gordo,Gordo,$10.55,0,/img/placeholder.svg
+Camacho,Camacho Corojo Robusto,Robusto,$9.25,22,/img/placeholder.svg
+Camacho,Camacho Corojo Toro,Toro,$9.45,0,/img/placeholder.svg
+Camacho,Camacho Coyolar Super Toro,Toro,$9.95,0,/img/placeholder.svg
+Camacho,Camacho Ecuador BXP Gordo,Gordo,$10.25,0,/img/placeholder.svg
+Camacho,Camacho Ecuador BXP Robusto,Robusto,$8.95,0,/img/placeholder.svg
+Camacho,Camacho Ecuador BXP Toro,Toro,$9.25,0,/img/placeholder.svg
+Camacho,Camacho Ecuador Gordo,Gordo,$10.55,0,/img/placeholder.svg
+Camacho,Camacho Ecuador Robusto,Robusto,$9.25,46,/img/placeholder.svg
+Camacho,Camacho Ecuador Toro,Toro,$9.45,38,/img/placeholder.svg
+Camacho,Camacho Nicaragua Robusto,Robusto,$9.25,0,/img/placeholder.svg
+Camacho,Camacho Nicaragua Toro,Toro,$9.45,0,/img/placeholder.svg
+Camacho,Camacho Scorpion Fumas Connecticut Gordo,Gordo,$44.85,0,/img/placeholder.svg
+Camacho,Camacho Triple Maduro Gordo,Gordo,$13.15,0,/img/placeholder.svg
+Camacho,Camacho Triple Maduro Toro,Toro,$12.35,0,/img/placeholder.svg
+CAO,CAO America Landmark,Gordo,$11.25,0,/img/placeholder.svg
+CAO,CAO Brazilia Amazon,Gordo,$11.25,0,/img/placeholder.svg
+CAO,CAO BX3 Toro,Toro,$10.75,0,/img/placeholder.svg
+CAO,CAO Columbia Bogota,Gordo,$11.25,0,/img/placeholder.svg
+CAO,CAO Fasa Noche Gigante,Gordo,$8.45,0,/img/placeholder.svg
+CAO,CAO Fasa Sol Gigante,Gordo,$8.45,0,/img/placeholder.svg
+CAO,CAO Fasa Sol Toro,Toro,$7.35,0,/img/placeholder.svg
+CAO,CAO Fasa Sombra Gigante,Gordo,$8.45,0,/img/placeholder.svg
+CAO,CAO Flathead V554 Camshaft,Robusto Extra,$11.55,0,/img/placeholder.svg
+CAO,CAO Flathead V660 Carb,Gordo,$12.55,0,/img/placeholder.svg
+CAO,CAO Flathead V770 Big Block,Gigante,$13.95,0,/img/placeholder.svg
+CAO,CAO Flavours Corona - Cherrybomb,Corona,$9.25,0,/img/placeholder.svg
+CAO,CAO Flavours Corona - Eileen's Dream,Corona,$9.25,0,/img/placeholder.svg
+CAO,CAO Flavours Corona - Moontrance,Corona,$9.25,0,/img/placeholder.svg
+CAO,CAO Italia Piazza,Gordo,$11.25,0,/img/placeholder.svg
+CAO,CAO Pilon Anejo Gigante,Gordo,$10.55,0,/img/placeholder.svg
+CAO,CAO Pilon Anejo Toro,Toro,$9.95,0,/img/placeholder.svg
+CAO,CAO Pilon Gigante,Gordo,$11.25,0,/img/placeholder.svg
+CAO,CAO Pilon Robusto,Robusto,$10.55,0,/img/placeholder.svg
+CAO,CAO Pilon Toro,Toro,$10.95,0,/img/placeholder.svg
+CAO,CAO Zocalo Gigante,Gordo,$11.25,0,/img/placeholder.svg
+Casa Cuba,Divine Inspiration Natural,nan,$12.95,16,/img/placeholder.svg
+Chillin Moose,Chillin Moose Gigante (Gray),Gordo,$5.95,0,/img/placeholder.svg
+Chillin Moose,Chillin Moose Too Gigante (Red),Gordo,$5.95,0,/img/placeholder.svg
+CLE,CLE 25th Anniversary 54x6,Toro,$19.45,0,/img/placeholder.svg
+CLE,CLE 25th Anniversary 60x6,Gordo,$20.55,0,/img/placeholder.svg
+CLE,CLE Azabache 54x6,Toro,$11.75,0,/img/placeholder.svg
+CLE,CLE Chele 50x5,Robusto,$10.65,0,/img/placeholder.svg
+CLE,CLE Chele 52x6,Toro,$11.75,0,/img/placeholder.svg
+CLE,CLE Chele 60x6,Gordo,$12.75,0,/img/placeholder.svg
+CLE,CLE Connecticut 54x6,Toro,$11.45,0,/img/placeholder.svg
+CLE,CLE Connecticut 60x6,Gordo,$11.75,0,/img/placeholder.svg
+CLE,CLE Corojo 50x5,Robusto,$10.65,0,/img/placeholder.svg
+CLE,CLE Corojo 54x6,Toro,$11.45,0,/img/placeholder.svg
+CLE,CLE Habano 50x5,Robusto,$10.65,0,/img/placeholder.svg
+CLE,CLE Habano 54x6,Toro,$11.45,0,/img/placeholder.svg
+CLE,CLE Prieto 46x6,Corona,$10.65,0,/img/placeholder.svg
+CLE,CLE Prieto 50x5,Robusto,$10.65,0,/img/placeholder.svg
+CLE,CLE Prieto 52x6,Toro,$11.75,0,/img/placeholder.svg
+CLE,CLE Prieto 6x60,Gordo,$12.75,0,/img/placeholder.svg
+CLE,CLE Signature 50x5,Robusto,$18.45,0,/img/placeholder.svg
+CLE,CLE Signature 54x6,Toro,$19.45,0,/img/placeholder.svg
+CLE,CLE Signature 60x6,Gordo,$20.55,0,/img/placeholder.svg
+CLE,Eiroa 20-Year Colorado 50x5,Robusto,$15.95,1,/img/placeholder.svg
+CLE,Eiroa 20-Year Colorado 54x6,Toro,$16.95,0,/img/placeholder.svg
+CLE,Eiroa 20-Year Maduro 50x5,Robusto,$15.95,0,/img/placeholder.svg
+CLE,Eiroa 20-Year Maduro 54x6,Toro,$16.95,0,/img/placeholder.svg
+CLE,Eiroa 20-Year Maduro 60x6,Gordo,$18.05,0,/img/placeholder.svg
+CLE,Eiroa CBT 54x6,Toro,$15.75,0,/img/placeholder.svg
+CLE,Eiroa PCA 50x5,Robusto,$16.85,0,/img/placeholder.svg
+Cohiba,Cohiba Black Churchill,Churchill,$29.95,4,/img/placeholder.svg
+Cohiba,Cohiba Black Robusto Tubo,Robusto,$27.95,0,/img/placeholder.svg
+Cohiba,Cohiba Blue Robusto,Robusto,$14.25,0,/img/placeholder.svg
+Cohiba,Cohiba Blue Robusto Tubo,Robusto,$16.85,0,/img/placeholder.svg
+Cohiba,Cohiba Blue Toro,Toro,$14.95,3,/img/placeholder.svg
+Cohiba,Cohiba Connecticut Toro,Toro,$28.55,1,/img/placeholder.svg
+Cohiba,Cohiba Connecticut Toro Tubo,Toro,$29.55,7,/img/placeholder.svg
+Cohiba,Cohiba Connecticut Tubo Robusto,Robusto,$27.55,3,/img/placeholder.svg
+Cohiba,Cohiba Macassar Double Corona,Corona,$39.55,0,/img/placeholder.svg
+Cohiba,Cohiba Macassar Toro Grande,Toro,$33.95,14,/img/placeholder.svg
+Cohiba,Cohiba Nicaragua N54 Robusto,Robusto,$22.95,14,/img/placeholder.svg
+Cohiba,Cohiba Nicaragua Tubo Robusto,Robusto,$22.65,2,/img/placeholder.svg
+Cohiba,Cohiba Red Dot Churchill,Churchill,$29.95,53,/img/placeholder.svg
+Cohiba,Cohiba Red Dot Crytal Corona,Corona,$27.95,47,/img/placeholder.svg
+Cohiba,Cohiba Red Dot Pequenos,,$29.95,0,/img/placeholder.svg
+Cohiba,Cohiba Red Dot Robusto,Robusto,$26.95,13,/img/placeholder.svg
+Cohiba,Cohiba Red Dot Toro Tubo,Toro,$28.55,1,/img/placeholder.svg
+Cohiba,Cohiba Riviera Toro,Toro,$23.55,13,/img/placeholder.svg
+Cohiba,Cohiba Royale Robusto,Robusto,$33.55,0,/img/placeholder.svg
+Cohiba,Cohiba Royale Toro,Toro,$36.95,0,/img/placeholder.svg
+Curivari,Curivari Buenaventura BV 500,nan,$7.35,0,/img/placeholder.svg
+Curivari,Curivari Buenaventura BV 600,Gordo,$8.45,0,/img/placeholder.svg
+Curivari,Curivari Buenaventura Cremas C200,Robusto,$7.35,0,/img/placeholder.svg
+Curivari,Curivari Buenaventura Cremas C300,Toro,$7.35,0,/img/placeholder.svg
+Curivari,Curivari Buenaventura Cremas C400,Gordo,$8.45,0,/img/placeholder.svg
+Curivari,Curivari Buenaventura Dimensiones D5,Robusto,$6.05,0,/img/placeholder.svg
+Curivari,Curivari Buenaventura Dimensiones D8,Churchill,$7.20,0,/img/placeholder.svg
+Curivari,Curivari Anniversario 550 Robusto,Robusto,$10.05,3,/img/placeholder.svg
+Davidoff,Davidoff Winston Churchill Belicoso,Belicoso,$39.25,0,/img/placeholder.svg
+Davidoff,Davidoff Winston Churchill Panatela,Churchill,$44.00,0,/img/placeholder.svg
+Drunk Chicken,DCG Sweet Dreams Robusto,Robusto,$12.00,31,/img/placeholder.svg
+Emilio,Emilio Audiophile Short Robusto,Robusto,$10.75,0,/img/placeholder.svg
+Emilio,Emilio Audiophile Toro,Toro,$11.55,0,/img/placeholder.svg
+Emilio,Emilio Cavatina Toro,Toro,$9.95,0,/img/placeholder.svg
+Emilio,Emilio Grimalkin Robusto,Robusto,$11.55,0,/img/placeholder.svg
+Emilio,Emilio La Musa Robusto,Robusto,$11.05,0,/img/placeholder.svg
+Emilio,Emilio LJZ Toro,Toro,$11.55,0,/img/placeholder.svg
+Emilio,Emilio Papa Joe Robusto,Robusto,$9.45,0,/img/placeholder.svg
+Emilio,Emilio Side 1 Robusto,Robusto,$9.95,0,/img/placeholder.svg
+Emilio,Emilio Side 1 Toro,Toro,$10.55,0,/img/placeholder.svg
+Emilio,Emilio Side 2 Robusto,Robusto,$9.45,0,/img/placeholder.svg
+Emilio,Emilio Side 2 Toro,Toro,$9.95,0,/img/placeholder.svg
+Emilio,Emilio Suave Maduro Robusto,Robusto,$10.55,0,/img/placeholder.svg
+Espinosa,Espinosa Especial Lancero,Lancero,$10.75,0,/img/placeholder.svg
+Espinosa,Espinosa Habano No.4 Robusto,Robusto,$9.25,0,/img/placeholder.svg
+Espinosa,Espinosa Habano No.5 Toro,Toro,$9.45,0,/img/placeholder.svg
+Espinosa,Espinosa Knuckle Sandwich CT Robusto,Robusto,$14.05,0,/img/placeholder.svg
+Espinosa,Espinosa Knuckle Sandwich CT Short Churchill,Churchill,$14.65,0,/img/placeholder.svg
+Espinosa,Espinosa Knuckle Sandwich CT Toro,Toro,$15.15,0,/img/placeholder.svg
+Espinosa,Espinosa Knuckle Sandwich Habano Corona Gorda,Corona Gorda,$12.95,0,/img/placeholder.svg
+Espinosa,Espinosa Knuckle Sandwich Habano Robusto,Robusto,$14.05,0,/img/placeholder.svg
+Espinosa,Espinosa Knuckle Sandwich Habano Toro,Toro,$15.75,0,/img/placeholder.svg
+Espinosa,Espinosa Knuckle Sandwich Maduro Robusto,Robusto,$14.55,0,/img/placeholder.svg
+Espinosa,Espinosa Knuckle Sandwich Maduro Toro,Toro,$15.65,0,/img/placeholder.svg
+Espinosa,Espinosa Laranja Reserva Azulejo Corona Gorda,Corona Gorda,$12.95,0,/img/placeholder.svg
+Espinosa,Espinosa Laranja Reserva Azulejo Robusto Extra,Robusto,$13.75,0,/img/placeholder.svg
+Espinosa,Espinosa Laranja Reserva Azulejo Toro,Toro,$14.25,0,/img/placeholder.svg
+Espinosa,Espinosa Laranja Reserva Lancero,Lancero,$13.05,0,/img/placeholder.svg
+Espinosa,Espinosa Laranja Reserva Robusto Extra,Robusto,$13.65,0,/img/placeholder.svg
+Espinosa,Espinosa Laranja Reserva Toro,Toro,$14.15,0,/img/placeholder.svg
+Espinosa,Espinosa Sumatra Robusto,Robusto,$11.55,0,/img/placeholder.svg
+Espinosa,Espinosa Sumatra Toro,Toro,$12.05,0,/img/placeholder.svg
+Flor de las Antillas,MF FDLA BP Robusto,nan,$nan,0,/img/placeholder.svg
+Freud,Freud Sigmund Doble Corona 7.5x50,Double Corona,$44.15,2,/img/placeholder.svg
+Gurkha,Gurkha 35th Anniversary Figurado,Figurado,$12.55,0,/img/placeholder.svg
+Gurkha,Gurkha 35th Anniversary Toro,Toro,$12.55,0,/img/placeholder.svg
+Gurkha,Gurkha CR 21 Year Hedonism Perfecto,Perfecto,$15.75,29,/img/placeholder.svg
+Gurkha,Gurkha Coleccion Especial Robusto,Robusto,$13.65,0,/img/placeholder.svg
+Gurkha,Gurkha Coleccion Especial Toro,Toro,$15.65,0,/img/placeholder.svg
+Gurkha,Gurkha Ghost CT Shadow Robusto,Robusto,$8.45,0,/img/placeholder.svg
+Gurkha,Gurkha Ghost Exorcist,Gordo,$11.05,0,/img/placeholder.svg
+Gurkha,Gurkha Ghost Shadow Robusto,Robusto,$8.00,0,/img/placeholder.svg
+Gurkha,Gurkha Nica Series Toro,Toro,$10.50,0,/img/placeholder.svg
+Gurkha,Gurkha Revenant Corojo Robusto,Robusto,$8.15,0,/img/placeholder.svg
+Gurkha,Gurkha Revenant Corojo Toro,Toro,$8.45,0,/img/placeholder.svg
+Gurkha,Gurkha Revenant Maduro Robusto,Robusto,$8.15,0,/img/placeholder.svg
+Gurkha,Gurkha Revenant Maduro Toro,Toro,$8.45,0,/img/placeholder.svg
+Gurkha,Gurkha Treinta 30th Year Robusto,Robusto,$10.50,0,/img/placeholder.svg
+Gurkha,Gurkha Treinta 30th Year Toro,Toro,$10.95,0,/img/placeholder.svg
+H Upmann,H Upmann AJF Nicaragua Robusto,Robusto,$10.95,0,/img/placeholder.svg
+H Upmann,H Upmann Nicaragua Heritage Robusto,Robusto,$10.95,0,/img/placeholder.svg
+Henry Clay,Henry Clay War Hawk Robusto,Robusto,$9.15,0,/img/placeholder.svg
+Henry Clay,Henry Clay War Hawk Toro,Toro,$9.95,0,/img/placeholder.svg
+Hoyo de Monterrey,HDM Excalibur 660 Gordo,Gordo,$11.55,0,/img/placeholder.svg
+Hoyo de Monterrey,HDM Excalibur Cameroon Lancelot Churchill,Churchill,$11.55,0,/img/placeholder.svg
+Hoyo de Monterrey,HDM Excalibur Cigarillos,Cigarillo,$20.95,0,/img/placeholder.svg
+Hoyo de Monterrey,HDM Excalibur Epicure Robusto,Robusto,$10.95,0,/img/placeholder.svg
+Hoyo de Monterrey,HDM Excalibur Miniatures,Cigarillo,$16.95,0,/img/placeholder.svg
+Hoyo de Monterrey,HDM Excalibur No. I Churchill,Churchill,$11.55,0,/img/placeholder.svg
+Hoyo de Monterrey,HDM Excalibur No. III Toro,Toro,$10.95,0,/img/placeholder.svg
+Hoyo de Monterrey,HDM Excalibur No. IV Corona Gorda,Corona Gorda,$10.95,0,/img/placeholder.svg
+Hoyo de Monterrey,HDM La Amistad Black Gigante,Gordo,$11.95,0,/img/placeholder.svg
+Hoyo de Monterrey,HDM La Amistad Black Rothschild,Rothschild,$9.95,0,/img/placeholder.svg
+Hoyo de Monterrey,HDM La Amistad Black Toro,Toro,$10.95,0,/img/placeholder.svg
+Hoyo de Monterrey,HDM La Amistad Dark Sumatra Espresso,nan,$9.95,0,/img/placeholder.svg
+Hoyo de Monterrey,HDM La Amistad Dark Sumatra Media Noche,nan,$11.55,0,/img/placeholder.svg
+Hoyo de Monterrey,HDM La Amistad Dark Sumatra Noche,Toro,$10.95,0,/img/placeholder.svg
+JFR,JFR Connecticut Super Toro,Toro,$8.65,0,/img/placeholder.svg
+JFR,JFR Corojo Super Toro,Toro,$7.95,0,/img/placeholder.svg
+JFR,JFR Lunatic Maduro Short Titan Robusto,Robusto,$8.95,0,/img/placeholder.svg
+Joya de Nicaragua,JDN Antano CT Robusto,Robusto,$11.75,0,/img/placeholder.svg
+Joya de Nicaragua,JDN Antano CT Toro,Toro,$12.75,0,/img/placeholder.svg
+Joya de Nicaragua,JDN Antano Tins,Cigarillo,$22.00,0,/img/placeholder.svg
+Joya de Nicaragua,JDN Antono Gran Reserva GT20,Toro,$6.55,0,/img/placeholder.svg
+Joya de Nicaragua,JDN Black Doble Robusto,Robusto,$9.35,0,/img/placeholder.svg
+Joya de Nicaragua,JDN Black Tin,Cigarillo,$11.00,2,/img/placeholder.svg
+Joya de Nicaragua,JDN Cabinetta Toro,Toro,$9.65,0,/img/placeholder.svg
+Joya de Nicaragua,JDN Cuatro Cinco Toro,Toro,$15.95,0,/img/placeholder.svg
+Joya de Nicaragua,JDN Dark Corojo El Martillo,Robusto Extra,$11.75,0,/img/placeholder.svg
+Joya de Nicaragua,JDN Red Robusto,Robusto,$9.05,0,/img/placeholder.svg
+Joya de Nicaragua,JDN Red Toro,Toro,$9.65,0,/img/placeholder.svg
+Kentucky Fire Cured,KFC Fat Molly,Robusto Extra,$7.95,0,/img/placeholder.svg
+Kentucky Fire Cured,KFC Just A Friend,Toro,$9.35,0,/img/placeholder.svg
+Kentucky Fire Cured,KFC Swamp Thang  Sweet Tin,Small Panatela,$13.00,0,/img/placeholder.svg
+Kentucky Fire Cured,KFC Swamp Thang Tin,Small Panatela,$13.00,0,/img/placeholder.svg
+Kentucky Fire Cured,KFC Sweets Fat Molly,Robusto Extra,$7.95,0,/img/placeholder.svg
+Kentucky Fire Cured,KFC Sweets Just A Friend,Toro,$9.35,0,/img/placeholder.svg
+Kristoff,Kristoff 685 Woodland Perfecto,Perfecto,$nan,20,/img/placeholder.svg
+Kristoff,Kristoff Cameroon Robusto,Robusto,$9.95,0,/img/placeholder.svg
+Kristoff,Kristoff Corojo Robusto,Robusto,$9.95,0,/img/placeholder.svg
+Kristoff,Kristoff CT 6x60 Gordo,Gordo,$11.35,0,/img/placeholder.svg
+Kristoff,Kristoff CT Robusto,Robusto,$9.95,0,/img/placeholder.svg
+Kristoff,Kristoff GC 6x60 Gordo,Gordo,$11.35,61,/img/placeholder.svg
+Kristoff,Kristoff GC Robusto,Robusto,$9.95,31,/img/placeholder.svg
+Kristoff,Kristoff Guardrail Robusto,Robusto,$10.75,0,/img/placeholder.svg
+Kristoff,Kristoff Ligero Maduro Matador,Gordo,$11.30,0,/img/placeholder.svg
+Kristoff,Kristoff Ligero Maduro Robusto,Robusto,$9.65,0,/img/placeholder.svg
+Kristoff,Kristoff Nicaragua Toro,Toro,$11.05,8,/img/placeholder.svg
+Kristoff,Kristoff Original Criollo Robusto,Robusto,$9.05,27,/img/placeholder.svg
+Kristoff,Kristoff Pistoff Robusto,Robusto,$10.05,0,/img/placeholder.svg
+Kristoff,Kristoff San Andres 6x60 Gordo,Gordo,$10.25,0,/img/placeholder.svg
+Kristoff,Kristoff San Andres Robusto,Robusto,$9.30,0,/img/placeholder.svg
+Kristoff,Kristoff Shade Grown Matador,Gordo,$11.35,0,/img/placeholder.svg
+Kristoff,Kristoff Shade Grown Robusto,Robusto,$9.95,0,/img/placeholder.svg
+Kristoff,Kristoff Sumatra Matador,Gordo,$11.35,13,/img/placeholder.svg
+Kristoff,Kristoff Sumatra Robusto,Robusto,$9.15,0,/img/placeholder.svg
+Kristoff,Kristoff Vengeance Robusto,Robusto,$9.35,0,/img/placeholder.svg
+Kristoff,Kristoff Vengence Toro,Toro,$10.05,1,/img/placeholder.svg
+Liga Privada,Liga #9 Corona Doble,Corona,$19.95,0,/img/placeholder.svg
+Liga Privada,Liga #9 Flying Pig,Perfecto,$20.55,0,/img/placeholder.svg
+Liga Privada,Liga #9 Robusto,Robusto,$17.95,0,/img/placeholder.svg
+Liga Privada,Liga #9 Toro,Toro,$18.95,0,/img/placeholder.svg
+Liga Privada,Liga H99 Robusto,Robusto,$17.95,0,/img/placeholder.svg
+Liga Privada,Liga H99 Toro,Toro,$18.95,0,/img/placeholder.svg
+Liga Privada,Liga Privada 10 Aniversario Toro,Toro,$25.00,0,/img/placeholder.svg
+Liga Privada,Liga T52 Belicoso,Belicoso,$18.95,0,/img/placeholder.svg
+Liga Privada,Liga T52 Corona Doble,Corona,$19.95,0,/img/placeholder.svg
+Liga Privada,Liga T52 Flying Pig,nan,$20.55,0,/img/placeholder.svg
+Liga Privada,Liga T52 Robusto,Robusto,$17.95,0,/img/placeholder.svg
+Liga Privada,Liga T52 Toro,Toro,$18.95,0,/img/placeholder.svg
+Liga Privada,Liga Unico Dirty Rat,Corona Extra,$18.85,0,/img/placeholder.svg
+Liga Privada,Liga Unico Feral Flying Pig,Perfecto,$23.65,0,/img/placeholder.svg
+Liga Privada,Liga Unico L40 Lancero,Lancero,$19.95,0,/img/placeholder.svg
+Liga Privada,Liga Unico Papas Fritas,Petite Corona,$7.85,0,/img/placeholder.svg
+Liga Privada,Liga Unico Ratzilla,Corona Extra,$20.45,0,/img/placeholder.svg
+Liga Privada,Liga Unico Velvet Rat,Perfecto,$19.75,0,/img/placeholder.svg
+Macanudo,Emissary France Toro,nan,$nan,0,/img/placeholder.svg
+Macanudo,Emissary France Robusto,Robusto,$15.75,0,/img/placeholder.svg
+Macanudo,Macanudo Ascots,Cigarillo,$24.95,0,/img/placeholder.svg
+Macanudo,Macanudo Cafe Baron de Rothschild,Lonsdale,$10.95,0,/img/placeholder.svg
+Macanudo,Macanudo Cafe Crystal,Robusto,$11.95,0,/img/placeholder.svg
+Macanudo,Macanudo Cafe Duke of York Robusto,Robusto,$11.95,0,/img/placeholder.svg
+Macanudo,Macanudo Cafe Gigante,Gordo,$11.95,0,/img/placeholder.svg
+Macanudo,Macanudo Cafe Hyde Park Robusto,Robusto,$10.95,0,/img/placeholder.svg
+Macanudo,Macanudo Cafe Prince Philip Churchill,Churchill,$11.85,0,/img/placeholder.svg
+Macanudo,Macanudo Cafe Tudor Toro,Toro,$12.25,0,/img/placeholder.svg
+Macanudo,Macanudo Cru Royale Gigante,Gordo,$13.75,0,/img/placeholder.svg
+Macanudo,Macanudo Cru Royale Toro,Toro,$11.95,0,/img/placeholder.svg
+Macanudo,Macanudo Emissary Espana Toro,Toro,$16.55,0,/img/placeholder.svg
+Macanudo,Macanudo Inspirado Black Robusto,Robusto,$9.25,0,/img/placeholder.svg
+Macanudo,Macanudo Inspirado Black Toro,Toro,$10.55,0,/img/placeholder.svg
+Macanudo,Macanudo Inspirado Green Giagante,Gordo,$9.95,0,/img/placeholder.svg
+Macanudo,Macanudo Inspirado Green Robusto,Robusto,$8.95,0,/img/placeholder.svg
+Macanudo,Macanudo Inspirado Green Toro,Toro,$9.55,0,/img/placeholder.svg
+Macanudo,Macanudo Inspirado Orange Cigarillos,Cigarillo,$20.00,0,/img/placeholder.svg
+Macanudo,Macanudo Inspirado Orange Gigante,Gordo,$9.95,0,/img/placeholder.svg
+Macanudo,Macanudo Inspirado Orange Robusto,Robusto,$8.95,0,/img/placeholder.svg
+Macanudo,Macanudo Inspirado Orange Tins,Cigarillo,$14.95,0,/img/placeholder.svg
+Macanudo,Macanudo Inspirado Orange Toro,Toro,$9.55,0,/img/placeholder.svg
+Macanudo,Macanudo Inspirado Red Robusto,Robusto,$8.95,0,/img/placeholder.svg
+Macanudo,Macanudo Inspirado Red Tins,Cigarillo,$14.95,0,/img/placeholder.svg
+Macanudo,Macanudo Inspirado Red Toro,Toro,$9.55,0,/img/placeholder.svg
+Macanudo,Macanudo Inspirado White Churchill,Churchill,$10.55,0,/img/placeholder.svg
+Macanudo,Macanudo Inspirado White Cigarillos,Cigarillo,$17.95,0,/img/placeholder.svg
+Macanudo,Macanudo Inspirado White Gigante,Gordo,$10.95,0,/img/placeholder.svg
+Macanudo,Macanudo Inspirado White Robusto,Robusto,$8.95,0,/img/placeholder.svg
+Macanudo,Macanudo Inspirado White Tins,Cigarillo,$14.95,0,/img/placeholder.svg
+Macanudo,Macanudo Inspirado White Toro,Toro,$9.55,0,/img/placeholder.svg
+Macanudo,Macanudo M Coffee Toro,Toro,$10.25,0,/img/placeholder.svg
+Macanudo,Macanudo M Espresso & Cream Toro,Toro,$10.25,0,/img/placeholder.svg
+Macanudo,Macanudo M Irish Cream,Toro,$10.15,0,/img/placeholder.svg
+Macanudo,Macanudo M Vanilla Bourbon,Toro,$10.15,0,/img/placeholder.svg
+Macanudo,Macanudo Vintage 2006 Toro,Toro,$15.95,0,/img/placeholder.svg
+Macanudo,Macanudo Vintage 2010 Churchill,Churchill,$13.95,0,/img/placeholder.svg
+Macanudo,Macanudo Vintage 2010 Toro Grande,Toro,$13.95,0,/img/placeholder.svg
+Macanudo,Macanudo Vintage 2013 Maduro Toro,Toro,$13.95,0,/img/placeholder.svg
+Montecristo,Montecristo 1935 Anniversary Toro,Toro,$18.65,0,/img/placeholder.svg
+Montecristo,Montecristo Classic Churchill,Churchill,$17.95,0,/img/placeholder.svg
+Montecristo,Montecristo Classic El Conde,Toro,$17.45,0,/img/placeholder.svg
+Montecristo,Montecristo Classic Robusto,Robusto,$15.85,0,/img/placeholder.svg
+Montecristo,Montecristo Classic Toro,Toro,$16.75,0,/img/placeholder.svg
+Montecristo,Montecristo Diamante Robusto,Robusto,$23.95,0,/img/placeholder.svg
+Montecristo,Montecristo Diamante Toro,Toro,$24.95,0,/img/placeholder.svg
+Montecristo,Montecristo Epic Vintage 12 Toro,Toro,$18.95,0,/img/placeholder.svg
+Montecristo,Montecristo Espada Oscuro Quillon,Double Corona,$17.95,0,/img/placeholder.svg
+Montecristo,Montecristo Espada Oscuro Ricasso,Robusto,$15.95,0,/img/placeholder.svg
+Montecristo,Montecristo Espada Quillon,Double Corona,$17.95,0,/img/placeholder.svg
+Montecristo,Montecristo Espada Ricasso,Robusto,$15.95,0,/img/placeholder.svg
+Montecristo,Montecristo Nicaragua Toro,Toro,$15.95,0,/img/placeholder.svg
+Montecristo,Montecristo Platinum Robusto,Robusto,$12.95,1,/img/placeholder.svg
+Montecristo,Montecristo Platinum Toro,Toro,$13.95,6,/img/placeholder.svg
+Montecristo,Montecristo White Churchill,Churchill,$17.45,0,/img/placeholder.svg
+Montecristo,Montecristo White Rothschild,Rothschild,$14.95,0,/img/placeholder.svg
+Montecristo,Montecristo White Toro,Toro,$15.95,0,/img/placeholder.svg
+Montecristo,Montecristo Yellow Churchill,Churchill,$22.95,0,/img/placeholder.svg
+Montecristo,Montecristo Yellow Robusto,Robusto,$20.95,0,/img/placeholder.svg
+My Father,MF DPG Original Generosos Toro,Toro,$11.55,0,/img/placeholder.svg
+My Father,MF DPG Original Invictos Robusto,Robusto,$9.55,0,/img/placeholder.svg
+My Father,MF El Centurion H-2K-CT BP Toro,Toro,$9.95,0,/img/placeholder.svg
+My Father,MF Le Bijou 1922 BP Torpedo,Torpedo,$13.35,0,/img/placeholder.svg
+My Father,MF Le Bijou 1922 Grand Robusto,Robusto,$12.45,0,/img/placeholder.svg
+My Father,MF Le Bijou 1922 Toro,Toro,$12.95,0,/img/placeholder.svg
+My Father,MF My Father CT Robusto,Robusto,$9.75,0,/img/placeholder.svg
+My Father,MF My Father CT Toro,Toro,$10.55,0,/img/placeholder.svg
+My Father,MF My Father No.1 Robusto,Robusto,$11.45,0,/img/placeholder.svg
+My Father,MF My Father No.5 Toro,Toro,$13.55,0,/img/placeholder.svg
+My Father,MF The Judge BP Grand Robusto,Robusto,$13.95,0,/img/placeholder.svg
+My Father,MF The Judge Toro Fino,Toro,$13.25,0,/img/placeholder.svg
+NUB,NUB Cafe Single Roast 4x60 Cappuccino,Short Gordo,$10.15,0,/img/placeholder.svg
+NUB,NUB Cameroon 460,Short Gordo,$8.55,0,/img/placeholder.svg
+NUB,NUB Connecticut 460,Short Gordo,$10.15,0,/img/placeholder.svg
+NUB,NUB Habano 460,Short Gordo,$9.85,0,/img/placeholder.svg
+NUB,NUB Maduro 460,Short Gordo,$10.85,0,/img/placeholder.svg
+Odyssey,Odyssey CT Gigante,Gordo,$3.25,0,/img/placeholder.svg
+Odyssey,Odyssey CT Robusto,Robusto,$2.55,0,/img/placeholder.svg
+Odyssey,Odyssey CT Toro,Toro,$2.85,0,/img/placeholder.svg
+Oliva,Oliva 135 Aniversario Serie V,nan,$14.75,0,/img/placeholder.svg
+Oliva,Oliva CT Reserve Churchill,Churchill,$13.55,1,/img/placeholder.svg
+Oliva,Oliva CT Reserve Double Toro,Toro,$14.35,0,/img/placeholder.svg
+Oliva,Oliva CT Reserve Robusto,Robusto,$9.75,0,/img/placeholder.svg
+Oliva,Oliva CT Reserve Toro,Toro,$11.75,0,/img/placeholder.svg
+Oliva,Oliva Melanio Churchill,Churchill,$18.65,0,/img/placeholder.svg
+Oliva,Oliva Melanio Double Toro,Toro,$19.95,0,/img/placeholder.svg
+Oliva,Oliva Melanio Maduro Churchill,Churchill,$18.65,0,/img/placeholder.svg
+Oliva,Oliva Melanio Maduro Double Toro,Toro,$19.95,0,/img/placeholder.svg
+Oliva,Oliva Melanio Maduro Robusto,Robusto,$13.85,0,/img/placeholder.svg
+Oliva,Oliva Melanio Maduro Toro,Toro,$17.65,0,/img/placeholder.svg
+Oliva,Oliva Melanio Robusto,Robusto,$13.85,0,/img/placeholder.svg
+Oliva,Oliva Melanio Toro,Toro,$17.65,0,/img/placeholder.svg
+Oliva,Oliva Serie G Double Robusto,Robusto,$9.85,0,/img/placeholder.svg
+Oliva,Oliva Serie G Maduro Robusto,Robusto,$8.25,0,/img/placeholder.svg
+Oliva,Oliva Serie G Toro,Toro,$8.35,0,/img/placeholder.svg
+Oliva,Oliva Serie O #4,nan,$7.55,0,/img/placeholder.svg
+Oliva,Oliva Serie O Double Toro,Toro,$11.95,0,/img/placeholder.svg
+Oliva,Oliva Serie O Maduro Double Robusto,Robusto,$11.65,0,/img/placeholder.svg
+Oliva,Oliva Serie O Maduro Double Toro,Toro,$13.65,0,/img/placeholder.svg
+Oliva,Oliva Serie O Robusto,Robusto,$8.85,0,/img/placeholder.svg
+Oliva,Oliva Serie O Toro,Toro,$9.55,0,/img/placeholder.svg
+Oliva,Oliva Serie V Double Robusto,Robusto,$11.85,0,/img/placeholder.svg
+Oliva,Oliva Serie V Double Toro,Gordo,$14.65,0,/img/placeholder.svg
+Oliva,Oliva Serie V Figurado,Figurado,$16.55,0,/img/placeholder.svg
+Oliva,Oliva Serie V Lancero,Lancero,$10.85,0,/img/placeholder.svg
+Oliva,Oliva Serie V Maduro Double Robusto,Robusto,$12.45,0,/img/placeholder.svg
+Oliva,Oliva Serie V Maduro Double Toro,Toro,$13.45,0,/img/placeholder.svg
+Omar Ortez,Omar Ortez Connecticut Robusto,Robusto,$7.65,0,/img/placeholder.svg
+Padron,Padron Panetela Natural,Panetela,$nan,0,/img/padron.svg
+Padron,Padron Panetela Maduro,Panetela,$nan,0,/img/padron.svg
+Padron,Padron Palmas Natural,Long Corona,$nan,0,/img/padron.svg
+Padron,Padron Palmas Maduro,Long Corona,$nan,0,/img/padron.svg
+Padron,Padron Magnum Natural,Gigante,$nan,0,/img/padron.svg
+Padron,Padron Magnum Maduro,Gigante,$nan,0,/img/padron.svg
+Padron,Padron Londres Natural,Corona,$nan,0,/img/padron.svg
+Padron,Padron Londres Maduro,Corona,$nan,0,/img/padron.svg
+Padron,Padron Family Reserve #96 Natural,Robusto Gordo,$31.95,7,/img/padron.svg
+Padron,Padron Family Reserve #96 Maduro,Robusto Gordo,$31.95,15,/img/padron.svg
+Padron,Padron Family Reserve #95 Natural,Short Gordo,$nan,0,/img/padron.svg
+Padron,Padron Family Reserve #95 Maduro,Short Gordo,$nan,0,/img/padron.svg
+Padron,Padron Family Reserve #85 Natural,Robusto,$nan,0,/img/padron.svg
+Padron,Padron Family Reserve #85 Maduro,Robusto,$nan,0,/img/padron.svg
+Padron,Padron Family Reserve #50 Natural,Robusto,$29.95,0,/img/padron.svg
+Padron,Padron Family Reserve #50 Maduro,Robusto,$29.95,0,/img/padron.svg
+Padron,Padron Family Reserve #46 Natural,Toro,$31.95,0,/img/padron.svg
+Padron,Padron Family Reserve #46 Maduro,Toro,$31.95,1,/img/padron.svg
+Padron,Padron Family Reserve #45 Natural,Toro,$31.95,0,/img/padron.svg
+Padron,Padron Family Reserve #45 Maduro,Toro,$31.95,0,/img/padron.svg
+Padron,Padron Family Reserve #44 Natural Torpedo,Torpedo,$36.95,0,/img/padron.svg
+Padron,Padron Family Reserve #44 Maduro Torpedo,Torpedo,$36.95,7,/img/padron.svg
+Padron,Padron Executive Natural,Churchill,$nan,0,/img/padron.svg
+Padron,Padron Executive Maduro,Churchill,$nan,0,/img/padron.svg
+Padron,Padron Delicias Natural,Corona Extra,$nan,0,/img/padron.svg
+Padron,Padron Delicias Maduro,Corona Extra,$nan,0,/img/padron.svg
+Padron,Padron Damaso Series No. 8,Corona,$nan,0,/img/padron.svg
+Padron,Padron Damaso Series No. 34 Red Label,Torpedo,$nan,0,/img/padron.svg
+Padron,Padron Damaso Series No. 32 Red Label,Robusto,$nan,0,/img/padron.svg
+Padron,Padron Damaso Series No. 17,Churchill,$nan,0,/img/padron.svg
+Padron,Padron Damaso Series No. 15,Toro,$nan,0,/img/padron.svg
+Padron,Padron Damaso Series No. 12,Robusto,$nan,0,/img/padron.svg
+Padron,Padron Corticos Natural,Cigarillo,$nan,0,/img/padron.svg
+Padron,Padron Corticos Maduro,Cigarillo,$nan,0,/img/padron.svg
+Padron,Padron Churchill Natural,Churchill,$nan,0,/img/padron.svg
+Padron,Padron Churchill Maduro,Churchill,$nan,0,/img/padron.svg
+Padron,Padron Ambassador Natural,Lonsdale,$nan,0,/img/padron.svg
+Padron,Padron Ambassador Maduro,Lonsdale,$nan,0,/img/padron.svg
+Padron,Padron 7000 Natural,Gordo,$12.95,0,/img/padron.svg
+Padron,Padron 7000 Maduro,Gordo,$12.95,6,/img/padron.svg
+Padron,Padron 6000 Natural,Torpedo,$11.95,0,/img/padron.svg
+Padron,Padron 6000 Maduro,Torpedo,$11.95,0,/img/padron.svg
+Padron,Padron 5000 Natural,Robusto Gordo,$11.25,0,/img/padron.svg
+Padron,Padron 5000 Maduro,Robusto Gordo,$11.25,0,/img/padron.svg
+Padron,Padron 50 Years Toro Natural,Toro,$50.00,0,/img/padron.svg
+Padron,Padron 50 Years Toro Maduro,Toro,$50.00,2,/img/padron.svg
+Padron,Padron 4000 Natural,Toro,$11.25,0,/img/padron.svg
+Padron,Padron 4000 Maduro,Toro,$11.25,16,/img/padron.svg
+Padron,Padron 3000 Natural,Robusto,$10.25,0,/img/padron.svg
+Padron,Padron 3000 Maduro,Robusto,$10.25,0,/img/padron.svg
+Padron,Padron 2000 Natural,Robusto,$9.25,0,/img/padron.svg
+Padron,Padron 2000 Maduro,Robusto,$9.25,0,/img/padron.svg
+Padron,Padron 1964 Torpedo Natural,Torpedo,$nan,0,/img/padron.svg
+Padron,Padron 1964 Torpedo Maduro,Torpedo,$nan,8,/img/padron.svg
+Padron,Padron 1964 Toro TAA Exclusive Natural,Toro,$nan,0,/img/padron.svg
+Padron,Padron 1964 Toro TAA Exclusive Maduro,Toro,$nan,0,/img/padron.svg
+Padron,Padron 1964 Superior Natural,Lonsdale,$nan,0,/img/padron.svg
+Padron,Padron 1964 Superior Maduro,Lonsdale,$nan,0,/img/padron.svg
+Padron,Padron 1964 Soberano Natural Tubo,Robusto,$nan,0,/img/padron.svg
+Padron,Padron 1964 Soberano Maduro Tubo,Robusto,$nan,0,/img/padron.svg
+Padron,Padron 1964 Series A Maduro,Gigante,$nan,0,/img/padron.svg
+Padron,Padron 1964 Principe Natural,Petit Corona,$nan,0,/img/padron.svg
+Padron,Padron 1964 Principe Maduro,Petit Corona,$nan,0,/img/padron.svg
+Padron,Padron 1964 Presidente Natural Tubo,Toro,$nan,0,/img/padron.svg
+Padron,Padron 1964 Presidente Maduro Tubo,Toro,$nan,0,/img/padron.svg
+Padron,Padron 1964 Piramide Natural,Pyramid,$nan,0,/img/padron.svg
+Padron,Padron 1964 Piramide Maduro,Pyramid,$nan,0,/img/padron.svg
+Padron,Padron 1964 No. 4 Natural,Gordo,$nan,0,/img/padron.svg
+Padron,Padron 1964 No. 4 Maduro,Gordo,$nan,0,/img/padron.svg
+Padron,Padron 1964 Monarca Natural,Toro,$nan,0,/img/padron.svg
+Padron,Padron 1964 Monarca Maduro,Toro,$nan,0,/img/padron.svg
+Padron,Padron 1964 Imperial Natural,Toro,$nan,0,/img/padron.svg
+Padron,Padron 1964 Imperial Maduro,Toro,$nan,0,/img/padron.svg
+Padron,Padron 1964 Hermoso Natural,Short Robusto,$nan,0,/img/padron.svg
+Padron,Padron 1964 Hermoso Maduro,Short Robusto,$nan,0,/img/padron.svg
+Padron,Padron 1964 Exclusivo Natural,Toro,$nan,0,/img/padron.svg
+Padron,Padron 1964 Exclusivo Maduro,Toro,$nan,46,/img/padron.svg
+Padron,Padron 1964 Diplomatico Natural,Churchill,$18.95,0,/img/padron.svg
+Padron,Padron 1964 Diplomatico Maduro,Churchill,$18.95,22,/img/padron.svg
+Padron,Padron 1964 Corona Natural,Corona,$nan,0,/img/padron.svg
+Padron,Padron 1964 Corona Maduro,Corona,$nan,0,/img/padron.svg
+Padron,Padron 1964 Belicoso Natural,Belicoso,$nan,0,/img/padron.svg
+Padron,Padron 1964 Belicoso Maduro,Belicoso,$nan,0,/img/padron.svg
+Padron,Padron 1964 A Natural,Gigante,$nan,0,/img/padron.svg
+Padron,Padron 1926 No. 90 Natural,Robusto Gordo,$nan,0,/img/padron.svg
+Padron,Padron 1926 No. 90 Maduro,Robusto Gordo,$nan,0,/img/padron.svg
+Padron,Padron 1926 No. 9 Natural,Toro,$26.95,0,/img/padron.svg
+Padron,Padron 1926 No. 9 Maduro,Toro,$26.95,24,/img/padron.svg
+Padron,Padron 1926 No. 6 Natural,Robusto,$nan,0,/img/padron.svg
+Padron,Padron 1926 No. 6 Maduro,Robusto,$nan,0,/img/padron.svg
+Padron,Padron 1926 No. 48 Natural,Gordo,$nan,0,/img/padron.svg
+Padron,Padron 1926 No. 48 Maduro,Gordo,$nan,0,/img/padron.svg
+Padron,Padron 1926 No. 47 Natural,Robusto,$nan,0,/img/padron.svg
+Padron,Padron 1926 No. 47 Maduro,Robusto,$nan,0,/img/padron.svg
+Padron,Padron 1926 No. 35 Natural,Corona,$nan,0,/img/padron.svg
+Padron,Padron 1926 No. 35 Maduro,Corona,$nan,0,/img/padron.svg
+Padron,Padron 1926 No. 2 Natural,Belicoso,$nan,0,/img/padron.svg
+Padron,Padron 1926 No. 2 Maduro,Belicoso,$nan,0,/img/padron.svg
+Padron,Padron 1926 No. 1 Natural,Churchill,$29.25,0,/img/padron.svg
+Padron,Padron 1926 No. 1 Maduro,Churchill,$29.25,7,/img/padron.svg
+Padron,Padron 1926 80 Years Perfecto Natural,Perfecto,$nan,0,/img/padron.svg
+Padron,Padron 1926 80 Years Perfecto Maduro,Perfecto,$nan,0,/img/padron.svg
+Padron,Padron 1926 40 Years Torpedo Natural,Torpedo,$31.95,0,/img/padron.svg
+Padron,Padron 1926 40 Years Torpedo Maduro,Torpedo,$31.95,4,/img/padron.svg
+Padron,Millennium Maduro,Toro,$nan,0,/img/padron.svg
+Pappy Van Winkle,Pappy Van Winkle Family Reserve Churchill,Churchill,$17.55,0,/img/placeholder.svg
+Pappy Van Winkle,Pappy Van Winkle Family Reserve Robusto,Robusto,$16.55,0,/img/placeholder.svg
+Pappy Van Winkle,Pappy Van Winkle Family Reserve Toro,Toro,$17.55,0,/img/placeholder.svg
+Plasencia,Plasencia Alma Fuerte Nestor IV,Toro,$20.70,0,/img/placeholder.svg
+Plasencia,Plasencia Reserva Robusto,Robusto,$9.10,0,/img/placeholder.svg
+Plasencia,Plasencia Reserva Toro,Toro,$10.25,0,/img/placeholder.svg
+Punch,Punch Diablo Brute Gordo,Gordo,$10.95,0,/img/placeholder.svg
+Punch,Punch Golden Era Robusto,Robusto,$10.55,2,/img/placeholder.svg
+Punch,Punch Golden Era Toro,Toro,$11.05,0,/img/placeholder.svg
+Punch,Punch Gran Puro Nicaragua Rancho,Robusto Extra,$9.25,0,/img/placeholder.svg
+Punch,Punch Gran Puro Nicaragua Toro,Toro,$8.95,0,/img/placeholder.svg
+Punch,Punch Gran Puro Rancho,Robusto Extra,$9.75,0,/img/placeholder.svg
+Punch,Punch Gran Puro Sesenta Gordo,Gordo,$9.95,0,/img/placeholder.svg
+Punch,Punch Knuckle Buster Gordo,Gordo,$7.25,0,/img/placeholder.svg
+Punch,Punch Knuckle Buster Toro,Toro,$6.55,0,/img/placeholder.svg
+Punch,Punch Knuckle Buster Shade Toro,Toro,$6.45,0,/img/placeholder.svg
+Punch,Punch Knucklebuster Shade Gordo,Gordo,$6.95,0,/img/placeholder.svg
+Punch,Punch Knucklebuster Shade Robusto,Robusto,$5.75,0,/img/placeholder.svg
+Punch,Punch Signature Gigante,Gordo,$11.95,0,/img/placeholder.svg
+Punch,Punch Signature Pita 6x50,Toro,$10.55,0,/img/placeholder.svg
+Punch,Punch Signature Robusto,Robusto,$10.65,0,/img/placeholder.svg
+Rocky Patel,Hamlet Tabaquero Robusto Grande,Robusto,$10.45,0,/img/placeholder.svg
+Rocky Patel,Java Latte Corona,Corona,$9.85,0,/img/placeholder.svg
+Rocky Patel,Java Latte Toro,Toro,$11.65,0,/img/placeholder.svg
+Rocky Patel,Java Maduro Corona,Corona,$9.85,0,/img/placeholder.svg
+Rocky Patel,Java Maduro Toro,Toro,$11.65,0,/img/placeholder.svg
+Rocky Patel,Java Mint Corona,Corona,$9.85,0,/img/placeholder.svg
+Rocky Patel,Java Mint Robusto,Robusto,$8.00,0,/img/placeholder.svg
+Rocky Patel,Java Mint Toro,Toro,$11.65,0,/img/placeholder.svg
+Rocky Patel,Java Red Corona,Corona,$9.85,0,/img/placeholder.svg
+Rocky Patel,Java Red Toro,Toro,$11.65,0,/img/placeholder.svg
+Rocky Patel,RP A-10 Robusto,Robusto,$9.25,0,/img/placeholder.svg
+Rocky Patel,RP A-10 Sixty,Gordo,$13.75,0,/img/placeholder.svg
+Rocky Patel,RP A-10 Toro,Toro,$10.95,0,/img/placeholder.svg
+Rocky Patel,RP ALR Robusto,Robusto,$15.85,0,/img/placeholder.svg
+Rocky Patel,RP ALR Sixty,Gordo,$18.25,0,/img/placeholder.svg
+Rocky Patel,RP ALR Toro,Toro,$17.05,0,/img/placeholder.svg
+Rocky Patel,RP Conviction Toro,Toro,$100.00,3,/img/placeholder.svg
+Rocky Patel,RP Dark Star Sixty,Gordo,$13.15,0,/img/placeholder.svg
+Rocky Patel,RP Dark Star Toro,Robusto,$nan,0,/img/placeholder.svg
+Rocky Patel,RP Dark Star Toro,Toro,$12.05,0,/img/placeholder.svg
+Rocky Patel,RP DBS Robusto,Robusto,$20.95,0,/img/placeholder.svg
+Rocky Patel,RP DBS Sixty,Gordo,$23.05,0,/img/placeholder.svg
+Rocky Patel,RP DBS Toro,Toro,$22.05,0,/img/placeholder.svg
+Rocky Patel,RP Decade Robusto,Robusto,$13.55,0,/img/placeholder.svg
+Rocky Patel,RP Decade Toro,Toro,$14.95,0,/img/placeholder.svg
+Rocky Patel,RP Disciple Robusto,Robusto,$12.25,0,/img/placeholder.svg
+Rocky Patel,RP Disciple Sixty,Gordo,$15.05,0,/img/placeholder.svg
+Rocky Patel,RP Disciple Toro,Toro,$13.35,0,/img/placeholder.svg
+Rocky Patel,RP Disciple Bala Perfecto,Perfecto,$nan,0,/img/placeholder.svg
+Rocky Patel,RP Disciple Half Corona,Petit Corona,$nan,0,/img/placeholder.svg
+Rocky Patel,RP Edge 20th Anniversary Robusto,Robusto Gordo,$12.75,0,/img/placeholder.svg
+Rocky Patel,RP Edge 20th Anniversary Sixty,Gordo,$15.65,0,/img/placeholder.svg
+Rocky Patel,RP Edge 20th Anniversary Toro,Toro,$13.85,0,/img/placeholder.svg
+Rocky Patel,RP Edge B52 Corojo,Short Gordo,$9.55,0,/img/placeholder.svg
+Rocky Patel,RP Edge B52 Maduro,Short Gordo,$9.85,0,/img/placeholder.svg
+Rocky Patel,RP Edge Corojo Toro,Toro,$8.95,0,/img/placeholder.svg
+Rocky Patel,RP Edge Habano Toro,Toro,$8.75,0,/img/placeholder.svg
+Rocky Patel,RP Edge Lite Toro,Toro,$9.05,0,/img/placeholder.svg
+Rocky Patel,RP Edge Maduro Toro,Toro,$8.75,0,/img/placeholder.svg
+Rocky Patel,RP Edge Sumatra Toro,Toro,$8.85,0,/img/placeholder.svg
+Rocky Patel,RP Emerald Robusto,Robusto,$12.35,0,/img/placeholder.svg
+Rocky Patel,RP Emerald Sixty,Gordo,$14.45,0,/img/placeholder.svg
+Rocky Patel,RP Emerald Toro,Toro,$13.35,0,/img/placeholder.svg
+Rocky Patel,RP Fifty-Five Robusto,Robusto,$13.15,0,/img/placeholder.svg
+Rocky Patel,RP Fifty-Five Toro,Toro,$14.55,0,/img/placeholder.svg
+Rocky Patel,RP Gold Label Toro,Toro,$13.65,0,/img/placeholder.svg
+Rocky Patel,RP Gold Label Robusto,Robusto,$nan,0,/img/placeholder.svg
+Rocky Patel,RP Its A Boy Toro,Toro,$105.00,0,/img/placeholder.svg
+Rocky Patel,RP Its A Girl Toro,Toro,$105.00,0,/img/placeholder.svg
+Rocky Patel,RP Number 6 Robusto,Robusto,$11.65,0,/img/placeholder.svg
+Rocky Patel,RP Number 6 Sixty,Gordo,$14.35,0,/img/placeholder.svg
+Rocky Patel,RP Number 6 Toro,Toro,$12.35,0,/img/placeholder.svg
+Rocky Patel,RP Quarter Century Toro,Toro,$15.65,0,/img/placeholder.svg
+Rocky Patel,RP Seed To Smoke Maduro Toro,Toro,$2.75,0,/img/placeholder.svg
+Rocky Patel,RP Seed To Smoke Shade Toro,Toro,$2.75,0,/img/placeholder.svg
+Rocky Patel,RP Sixty Robusto,Robusto,$18.53,0,/img/placeholder.svg
+Rocky Patel,RP Sixty Sixty,Gordo,$20.85,0,/img/placeholder.svg
+Rocky Patel,RP Sixty Toro,Gordo,$19.65,0,/img/placeholder.svg
+Rocky Patel,RP Sun Grown Maduro Robusto,Robusto,$11.85,0,/img/placeholder.svg
+Rocky Patel,RP Sun Grown Maduro Sixty,Gordo,$14.25,0,/img/placeholder.svg
+Rocky Patel,RP Sun Grown Maduro Toro,Toro,$12.05,0,/img/placeholder.svg
+Rocky Patel,RP Vintage 1990 Sixty,Gordo,$14.75,0,/img/placeholder.svg
+Rocky Patel,RP Vintage 1990 Toro,Toro,$12.65,0,/img/placeholder.svg
+Rocky Patel,RP Vintage 1992 Sixty,Gordo,$14.75,0,/img/placeholder.svg
+Rocky Patel,RP Vintage 1992 Toro,Toro,$12.65,0,/img/placeholder.svg
+Rocky Patel,RP Vintage 1999 Churchill,Churchill,$12.65,0,/img/placeholder.svg
+Rocky Patel,RP Vintage 1999 Robusto,Robusto,$11.95,0,/img/placeholder.svg
+Rocky Patel,RP Vintage 1999 Sixty,Gordo,$14.75,0,/img/placeholder.svg
+Rocky Patel,RP Vintage 1999 Toro,Toro,$12.65,0,/img/placeholder.svg
+Rocky Patel,RP Vintage 1999 Torpedo,Torpedo,$13.05,0,/img/placeholder.svg
+Rocky Patel,RP Vintage 2003 Sixty,Gordo,$14.75,0,/img/placeholder.svg
+Rocky Patel,RP Vintage 2003 Toro,Toro,$12.65,0,/img/placeholder.svg
+Rocky Patel,RP Vintage 2006 Sixty,Gordo,$14.75,0,/img/placeholder.svg
+Rocky Patel,RP Vintage 2006 Toro,Toro,$12.65,0,/img/placeholder.svg
+Rocky Patel,RP White Label Churchill,Churchill,$23.15,0,/img/placeholder.svg
+Rocky Patel,RP White Label Robusto,Robusto,$21.95,0,/img/placeholder.svg
+Rocky Patel,RP White Label Sixty,Gordo,$24.35,0,/img/placeholder.svg
+Rocky Patel,RP White Label Toro,Toro,$23.15,0,/img/placeholder.svg
+Romeo y Julieta,RYJ 1875 Bully,Robusto,$9.95,0,/img/placeholder.svg
+Romeo y Julieta,RYJ 1875 Churchill,Churchill,$10.15,0,/img/placeholder.svg
+Romeo y Julieta,RYJ 1875 Gordo,Gordo,$10.65,0,/img/placeholder.svg
+Romeo y Julieta,RYJ 1875 Nicaragua Magnum,Gordo,$13.15,0,/img/placeholder.svg
+Romeo y Julieta,RYJ Reserva Real Churchill,Churchill,$10.75,0,/img/placeholder.svg
+Romeo y Julieta,RYJ Reserva Real Magnum,Gordo,$11.75,0,/img/placeholder.svg
+Romeo y Julieta,RYJ Reserva Real Nicaragua Magnum,Gordo,$12.15,0,/img/placeholder.svg
+Romeo y Julieta,RYJ Reserva Real Nicaragua Robusto,Robusto,$10.55,0,/img/placeholder.svg
+Romeo y Julieta,RYJ Reserva Real Nicaragua Toro,Toro,$10.95,0,/img/placeholder.svg
+Romeo y Julieta,RYJ Reserva Real Robusto,Robusto,$10.15,0,/img/placeholder.svg
+Romeo y Julieta,RYJ Reserva Real Toro,Toro,$10.45,0,/img/placeholder.svg
+Romeo y Julieta,RYJ Reserve Toro,Toro,$9.95,0,/img/placeholder.svg
+Romeo y Julieta,RYJ Vintage II,Corona,$13.55,0,/img/placeholder.svg
+Romeo y Julieta,RYJ Vintage VI,Torpedo,$15.95,0,/img/placeholder.svg
+Room 101,Johnny Tobacconaut Gordo,Gordo,$nan,0,/img/placeholder.svg
+Room 101,Johnny Tobacconaut Robusto,Robusto,$9.95,0,/img/placeholder.svg
+Room 101,Johnny Tobacconaut Toro,Toro,$10.95,0,/img/placeholder.svg
+Saint Luis Rey,SLR Carenas Magnum,Gordo,$10.95,0,/img/placeholder.svg
+Saint Luis Rey,SLR Carenas Robusto,Robusto,$9.75,0,/img/placeholder.svg
+Saint Luis Rey,SLR Carenas Toro,Toro,$7.75,0,/img/placeholder.svg
+Saint Luis Rey,SLR Maduro Rothchild,Robusto Gordo,$7.55,0,/img/placeholder.svg
+Saint Luis Rey,SLR Maduro Titan,Toro Gordo,$10.30,0,/img/placeholder.svg
+Saint Luis Rey,SLR Natural Rothschild,Robusto Gordo,$7.55,0,/img/placeholder.svg
+San Cristobal,San Cristobal Clasico Robusto,Robusto,$9.85,0,/img/placeholder.svg
+San Cristobal,San Cristobal Elegancia Churchill,Churchill,$9.95,0,/img/placeholder.svg
+San Cristobal,San Cristobal Elegancia Robusto,Robusto,$9.35,0,/img/placeholder.svg
+San Cristobal,San Cristobal Papagayo XXL,Gordo,$11.25,0,/img/placeholder.svg
+Trinidad,Trinidad Espiritu Series No. 2 Robusto,Robusto,$11.15,0,/img/placeholder.svg
+Trinidad,Trinidad Espiritu Series No 2 Toro,Toro,$12.15,0,/img/placeholder.svg
+Trinidad,Trinidad Espiritu Series No 3 Robusto,Robusto,$11.65,0,/img/placeholder.svg
+Undercrown,Undercrown 10 Lonsdale,Lonsdale,$14.70,0,/img/placeholder.svg
+Undercrown,Undercrown 10 Robusto,Robusto,$14.05,0,/img/placeholder.svg
+Undercrown,Undercrown 10 Toro,Toro,$14.35,0,/img/placeholder.svg
+Undercrown,Undercrown Maduro Robusto,Robusto,$10.35,0,/img/placeholder.svg
+Undercrown,Undercrown Shade Robusto,Robusto,$10.35,0,/img/placeholder.svg
+Undercrown,Undercrown Sun Grown Robusto,Robusto,$10.35,0,/img/placeholder.svg
+Leather Rose,Leather Rose Torpedo,Torpedo,$11.45,33,/img/placeholder.svg
