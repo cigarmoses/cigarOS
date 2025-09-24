@@ -1,170 +1,68 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>cigarOS • Home</title>
-  <meta name="theme-color" content="#f4f5f7"/>
-
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CigarOS2</title>
   <style>
-    :root{
-      /* Tune these if you want tiles a bit larger/smaller */
-      --bg: #f5f6f8;
-      --tile: 120px;        /* mobile tile side */
-      --gap: 18px;          /* mobile gap between tiles */
-      --radius: 28px;
-      --shadow: 0 14px 38px rgba(26, 39, 68, .12),
-                0 4px 10px rgba(26, 39, 68, .06);
-      --tile-icon-scale: 0.58; /* icon is 58% of tile on mobile */
-      --logo-max-w: 340px;  /* mobile logo max width */
-      --canvas-pad: 18px;   /* mobile page padding */
+    :root { --bg:#f2f2f2; }
+
+    body{
+      margin:0;
+      background:var(--bg);
+      font-family:sans-serif;
     }
 
-    /* Larger screens (tablet/desktop) */
-    @media (min-width: 600px){
-      :root{
-        --tile: 156px;
-        --gap: 22px;
-        --radius: 32px;
-        --tile-icon-scale: 0.52;
-        --logo-max-w: 420px;
-        --canvas-pad: 28px;
-      }
-    }
+    .home-wrap{ max-width:900px; margin:0 auto; padding:20px 12px 40px; }
+    .logo-wrap{ display:flex; justify-content:center; margin:8px 0 16px; }
+    .logo-wrap img{ height:72px; width:auto; display:block; }
 
-    *{ box-sizing: border-box; }
-    html, body{
-      height: 100%;
-      margin: 0;
-      background: var(--bg);
-      color: #0e1525;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
-    }
-
-    .wrap{
-      min-height: 100dvh;
-      display: grid;
-      grid-template-rows: auto 1fr;
-      place-items: center;
-      padding: var(--canvas-pad);
-    }
-
-    /* ---------- header logo ---------- */
-    .brand{
-      width: 100%;
-      display: grid;
-      place-items: center;
-      margin-top: 8px;
-      margin-bottom: 10px;
-    }
-    .brand img{
-      max-width: min(90vw, var(--logo-max-w));
-      height: auto;
-      display: block;
-      filter: drop-shadow(0 2px 0 rgba(0,0,0,.04));
-      user-select: none;
-      -webkit-user-drag: none;
-    }
-
-    /* ---------- tiles grid ---------- */
+    /* tighter grid */
     .grid{
-      width: 100%;
-      display: grid;
-      /* 2 columns on mobile; grid centers itself */
-      grid-template-columns: repeat(2, var(--tile));
-      grid-auto-rows: var(--tile);
-      gap: var(--gap);
-      justify-content: center;
-      align-content: start;
-      padding-bottom: 12px;
+      display:grid;
+      grid-template-columns: repeat(2,1fr);
+      gap:20px 24px; /* smaller spacing */
+      justify-items:center;
     }
 
-    /* tile card */
     .tile{
-      display: grid;
-      place-items: center;
-      width: var(--tile);
-      height: var(--tile);
-      background: #fff;
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      transition: transform .08s ease-out, box-shadow .12s ease-out;
-      -webkit-tap-highlight-color: transparent;
+      display:inline-grid;
+      place-items:center;
+      background:transparent;
+      text-decoration:none;
     }
-    .tile:active{ transform: scale(.98); }
-    .tile img{
-      width: calc(var(--tile) * var(--tile-icon-scale));
-      height: auto;
-      display: block;
-      user-select: none;
-      -webkit-user-drag: none;
+    .tile > img{
+      display:block;
+      width:140px;   /* larger default size */
+      height:140px;
     }
 
-    /* little breathing room on very short phones */
-    @media (max-height: 700px){
-      .brand{ margin-bottom: 6px; }
-      .grid{ gap: calc(var(--gap) - 2px); }
-    }
+    .tile--hub{ grid-column:1 / -1; justify-self:center; margin-top:12px; }
+    .tile--hub > img{ width:200px; height:auto; }
 
-    /* desktop: four tiles in two rows + fifth below centered */
-    @media (min-width: 900px){
-      .grid{
-        grid-template-columns: repeat(4, var(--tile));
-      }
-    }
-
-    /* optional focus outline for accessibility */
-    .tile:focus-visible{
-      outline: 3px solid #5aa6ff;
-      outline-offset: 4px;
-    }
-
-    /* make sure there’s no scroll if we can avoid it on common phones */
-    .main{
-      width: 100%;
-      max-width: 1100px;
+    @media (min-width:720px){
+      .logo-wrap img{ height:84px; }
+      .tile > img{ width:160px; height:160px; }
+      .tile--hub > img{ width:240px; }
+      .grid{ gap:28px 36px; } /* a touch more spacing on large screens */
     }
   </style>
 </head>
-
 <body>
-  <main class="wrap">
-    <!-- header / logo -->
-    <header class="brand" aria-label="Smoke Cigar Shop & Lounge">
-      <img src="/img/smokehomescreen.svg" alt="Smoke Cigar Shop & Lounge" />
-    </header>
+  <div class="home-wrap">
+    <div class="logo-wrap">
+      <img src="img/logo.svg" alt="Shop logo">
+    </div>
 
-    <!-- tiles -->
-    <section class="main">
-      <nav class="grid" aria-label="App sections">
-        <!-- POS -->
-        <a class="tile" href="/pos.html" aria-label="POS">
-          <img src="/img/iconPOS.svg" alt="" />
-        </a>
-
-        <!-- Reports -->
-        <a class="tile" href="/reports.html" aria-label="Reports">
-          <img src="/img/iconREPORTS.svg" alt="" />
-        </a>
-
-        <!-- Loyalty -->
-        <a class="tile" href="/loyalty.html" aria-label="Loyalty">
-          <img src="/img/iconLOYALTY.svg" alt="" />
-        </a>
-
-        <!-- Learn -->
-        <a class="tile" href="/learn.html" aria-label="Learn">
-          <img src="/img/iconLEARN.svg" alt="" />
-        </a>
-
-        <!-- Cigar Hub / Database -->
-        <a class="tile" href="/hub.html" aria-label="Cigar Hub">
-          <img src="/img/iconCIGARS.svg" alt="" />
-        </a>
-      </nav>
-    </section>
-  </main>
+    <div class="grid">
+      <a class="tile" href="pos.html"><img src="img/icons/pos.svg" alt="POS"></a>
+      <a class="tile" href="today.html"><img src="img/icons/today.svg" alt="Today"></a>
+      <a class="tile" href="loyalty.html"><img src="img/icons/loyalty.svg" alt="Loyalty"></a>
+      <a class="tile" href="reports.html"><img src="img/icons/reports.svg" alt="Reports"></a>
+      <a class="tile" href="learn.html"><img src="img/icons/learn.svg" alt="Learn"></a>
+      <a class="tile" href="news.html"><img src="img/icons/news.svg" alt="News"></a>
+      <a class="tile tile--hub" href="hub.html"><img src="img/icons/hub.svg" alt="Hub"></a>
+    </div>
+  </div>
 </body>
 </html>
