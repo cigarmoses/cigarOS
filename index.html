@@ -1,68 +1,161 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CigarOS2</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>cigarOS</title>
+  <meta name="theme-color" content="#f2f2f2" />
   <style>
-    :root { --bg:#f2f2f2; }
-
+    :root{
+      --bg:#f2f2f2;
+      --card:#ffffff;
+      --shadow-hi: rgba(0,0,0,.08);
+      --shadow-lo: rgba(255,255,255,.9);
+      --hub1:#0ab6ff; --hub2:#0077ff;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
     body{
       margin:0;
       background:var(--bg);
-      font-family:sans-serif;
+      font-family:ui-sans-serif,-apple-system,Segoe UI,Roboto,Helvetica,Arial,Apple Color Emoji,Segoe UI Emoji;
+      color:#2a2f35;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
     }
 
-    .home-wrap{ max-width:900px; margin:0 auto; padding:20px 12px 40px; }
-    .logo-wrap{ display:flex; justify-content:center; margin:8px 0 16px; }
-    .logo-wrap img{ height:72px; width:auto; display:block; }
+    .wrap{
+      max-width:980px;
+      margin:0 auto;
+      padding:18px 16px 64px;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:22px;
+    }
 
-    /* tighter grid */
+    /* Logo */
+    .logo{
+      display:block;
+      width:min(360px,68vw);
+      height:auto;
+      margin:6px auto 4px;
+      user-select:none;
+      pointer-events:none;
+    }
+
+    /* Grid of icons */
     .grid{
+      width:100%;
       display:grid;
-      grid-template-columns: repeat(2,1fr);
-      gap:20px 24px; /* smaller spacing */
+      grid-template-columns:repeat(2,1fr);
+      gap:18px 18px; /* tighter rows & columns */
+      align-items:center;
       justify-items:center;
     }
+    @media (min-width:680px){
+      .grid{ gap:22px 28px; }
+    }
 
-    .tile{
-      display:inline-grid;
-      place-items:center;
-      background:transparent;
+    a.tile{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      width:100%;
+      aspect-ratio:1 / 1;           /* perfect square */
+      max-width:360px;
+      border-radius:26px;
+      background:var(--bg);          /* flat bg, no extra white card */
       text-decoration:none;
+      position:relative;
+      /* soft inset look */
+      box-shadow:
+        -10px -10px 18px var(--lo, #ffffff80),
+        10px 10px 18px var(--shadow-hi);
     }
-    .tile > img{
+
+    /* ICON images */
+    .icon{
+      width:70%;                     /* bigger icons */
+      height:auto;
       display:block;
-      width:140px;   /* larger default size */
-      height:140px;
+      filter: drop-shadow(0 1px 0 rgba(0,0,0,.04));
+      user-select:none;
     }
 
-    .tile--hub{ grid-column:1 / -1; justify-self:center; margin-top:12px; }
-    .tile--hub > img{ width:200px; height:auto; }
+    /* HUB button */
+    .hub-row{
+      width:100%;
+      display:flex;
+      justify-content:center;
+      margin-top:6px;
+    }
+    .hub{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      width:min(92%,560px);
+      padding:18px 22px;
+      border-radius:999px;
+      background:linear-gradient(135deg,var(--hub1),var(--hub2));
+      color:#fff;
+      font-weight:800;
+      letter-spacing:.4px;
+      text-decoration:none;
+      box-shadow: 0 14px 24px rgba(0, 119, 255, .25), 0 2px 6px rgba(0,0,0,.06);
+      transition: transform .08s ease, box-shadow .2s ease;
+      will-change: transform;
+    }
+    .hub:active{ transform: translateY(1px) scale(.995); }
 
-    @media (min-width:720px){
-      .logo-wrap img{ height:84px; }
-      .tile > img{ width:160px; height:160px; }
-      .tile--hub > img{ width:240px; }
-      .grid{ gap:28px 36px; } /* a touch more spacing on large screens */
+    /* hit-area affordance */
+    a.tile:active { transform: translateY(1px); transition: transform .06s ease; }
+
+    footer{
+      margin-top:28px;
+      font-size:.85rem;
+      color:#88929c;
     }
   </style>
 </head>
 <body>
-  <div class="home-wrap">
-    <div class="logo-wrap">
-      <img src="img/logo.svg" alt="Shop logo">
+  <main class="wrap">
+    <!-- shop logo -->
+    <img class="logo" src="/img/logo.svg?v=2" alt="Smoke Cigar Shop & Lounge" />
+
+    <!-- icon grid -->
+    <section class="grid" aria-label="Main apps">
+      <a class="tile" href="/pos.html" aria-label="POS">
+        <img class="icon" src="/img/icons/pos.svg?v=2" alt="POS" loading="eager" />
+      </a>
+
+      <a class="tile" href="/today.html" aria-label="Today">
+        <img class="icon" src="/img/icons/today.svg?v=2" alt="Today" loading="eager" />
+      </a>
+
+      <a class="tile" href="/loyalty.html" aria-label="Loyalty">
+        <img class="icon" src="/img/icons/loyalty.svg?v=2" alt="Loyalty" />
+      </a>
+
+      <a class="tile" href="/reports.html" aria-label="Reports">
+        <img class="icon" src="/img/icons/reports.svg?v=2" alt="Reports" />
+      </a>
+
+      <a class="tile" href="/learn.html" aria-label="Learn">
+        <img class="icon" src="/img/icons/learn.svg?v=2" alt="Learn" />
+      </a>
+
+      <a class="tile" href="/news.html" aria-label="News">
+        <img class="icon" src="/img/icons/news.svg?v=2" alt="News" />
+      </a>
+    </section>
+
+    <!-- hub CTA -->
+    <div class="hub-row">
+      <a class="hub" href="/hub.html">HUB</a>
     </div>
 
-    <div class="grid">
-      <a class="tile" href="pos.html"><img src="img/icons/pos.svg" alt="POS"></a>
-      <a class="tile" href="today.html"><img src="img/icons/today.svg" alt="Today"></a>
-      <a class="tile" href="loyalty.html"><img src="img/icons/loyalty.svg" alt="Loyalty"></a>
-      <a class="tile" href="reports.html"><img src="img/icons/reports.svg" alt="Reports"></a>
-      <a class="tile" href="learn.html"><img src="img/icons/learn.svg" alt="Learn"></a>
-      <a class="tile" href="news.html"><img src="img/icons/news.svg" alt="News"></a>
-      <a class="tile tile--hub" href="hub.html"><img src="img/icons/hub.svg" alt="Hub"></a>
-    </div>
-  </div>
+    <footer>© 2025 cigarOS</footer>
+  </main>
 </body>
 </html>
